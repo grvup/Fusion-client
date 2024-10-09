@@ -9,7 +9,8 @@ import LoginPage from "./pages/login";
 import ForgotPassword from "./pages/forgotPassword";
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
-
+import Admin_view_all_courses from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_courses";
+import Faculty_view_all_courses from "./Modules/Program_curriculum/Faculty/Faculty_view_all_courses";
 export default function App() {
   const location = useLocation();
   return (
@@ -29,6 +30,22 @@ export default function App() {
           element={
             <Layout>
               <Dashboard />
+            </Layout>
+          }
+        />
+        <Route
+          path="/programme_curriculum/admin_courses"
+          element={
+            <Layout>
+              <Admin_view_all_courses />
+            </Layout>
+          }
+        />
+        <Route
+          path="/programme_curriculum/faculty_courses"
+          element={
+            <Layout>
+              <Faculty_view_all_courses/>
             </Layout>
           }
         />
