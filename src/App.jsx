@@ -11,6 +11,8 @@ import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
 import Admin_view_all_courses from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_courses";
 import Faculty_view_all_courses from "./Modules/Program_curriculum/Faculty/Faculty_view_all_courses";
+import Admin_view_semesters_of_a_curriculum from "./Modules/Program_curriculum/Acad_admin/Admin_view_semesters_of_a_curriculum";
+
 export default function App() {
   const location = useLocation();
   return (
@@ -42,7 +44,23 @@ export default function App() {
           }
         />
         <Route
+          path="/programme_curriculum/view_curriculum"
+          element={
+            <Layout>
+              <Admin_view_semesters_of_a_curriculum/>
+            </Layout>
+          }
+        />
+        <Route
           path="/programme_curriculum/faculty_courses"
+          element={
+            <Layout>
+              <Faculty_view_all_courses/>
+            </Layout>
+          }
+        />
+         <Route
+          path="/programme_curriculum/view_curriculum"
           element={
             <Layout>
               <Faculty_view_all_courses/>
