@@ -1,6 +1,6 @@
 
 import { ActionIcon, Table } from '@mantine/core';
-import { IconBell } from '@tabler/icons-react';
+import { Bell } from '@phosphor-icons/react';
 import React, { useState } from 'react';
 import './Admin_view_semesters_of_a_curriculum.css'; 
 
@@ -122,7 +122,7 @@ const Admin_view_semesters_of_a_curriculum = () => {
                       {semester} 
                     </text>
                     <ActionIcon variant="light">
-                      <IconBell size={20} />
+                      <Bell size={20} />
                     </ActionIcon>
                   </div>
                 ))}
