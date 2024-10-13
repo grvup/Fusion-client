@@ -1,7 +1,7 @@
 import { Button, Card, ScrollArea, Table } from "@mantine/core";
 import React, { useState } from "react";
 // import { FaSearch, FaTimes } from "react-icons/fa";
-import { MagnifyingGlass, X } from '@phosphor-icons/react';
+import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
 function Admin_view_a_courses() {
   // const [selectedOption, setSelectedOption] = useState(null);

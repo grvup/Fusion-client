@@ -10,97 +10,97 @@ import FacultyViewAllCourses from "./Faculty/Faculty_view_all_courses";
 import FacultyViewACourse from "./Faculty/Faculty_view_a_course";
 import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
 import ViewAllCourses from "./View_all_courses";
-import ViewAllBatches from "./View_all_batches"
-import ViewACourse from "./View_a_course"
+import ViewAllBatches from "./View_all_batches";
+import ViewACourse from "./View_a_course";
+
 export default function ProgrammeCurriculumRoutes() {
   return (
     <>
       {/* Admin Routes */}
       <Routes>
-
         <Route
-            path="/admin_courses"
-            element={
+          path="/admin_courses"
+          element={
             <Layout>
-                <AdminViewAllCourses />
+              <AdminViewAllCourses />
             </Layout>
-            }
+          }
         />
         <Route
-            path="/admin_course/:id"
-            element={
+          path="/admin_course/:id"
+          element={
             <Layout>
-                <AdminViewACourse />
+              <AdminViewACourse />
             </Layout>
-            }
+          }
         />
         <Route
-            path="/admin_batches"
-            element={
+          path="/admin_batches"
+          element={
             <Layout>
-                <AdminViewAllBatches />
+              <AdminViewAllBatches />
             </Layout>
-            }
+          }
         />
         <Route
-            path="/view_curriculum"
-            element={
+          path="/view_curriculum"
+          element={
             <Layout>
-                <AdminViewSemestersOfACurriculum />
+              <AdminViewSemestersOfACurriculum />
             </Layout>
-            }
+          }
         />
 
         {/* Faculty Routes */}
         <Route
-            path="/faculty_courses"
-            element={
+          path="/faculty_courses"
+          element={
             <Layout>
-                <FacultyViewAllCourses />
+              <FacultyViewAllCourses />
             </Layout>
-            }
+          }
         />
         <Route
-            path="/faculty_course/:id"
-            element={
+          path="/faculty_course/:id"
+          element={
             <Layout>
-                <FacultyViewACourse />
+              <FacultyViewACourse />
             </Layout>
-            }
+          }
         />
         <Route
-            path="/faculty_batches"
-            element={
+          path="/faculty_batches"
+          element={
             <Layout>
-                <FacultyViewAllBatches />
+              <FacultyViewAllBatches />
             </Layout>
-            }
+          }
         />
 
         {/* Student Routes */}
         <Route
-            path="/student_courses"
-            element={
+          path="/student_courses"
+          element={
             <Layout>
-                <ViewAllCourses />
+              <ViewAllCourses />
             </Layout>
-            }
+          }
         />
         <Route
-            path="/student_course/:id"
-            element={
+          path="/student_course/:id"
+          element={
             <Layout>
-                <ViewACourse />
+              <ViewACourse />
             </Layout>
-            }
+          }
         />
         <Route
-            path="/student_batches"
-            element={
+          path="/student_batches"
+          element={
             <Layout>
-                <ViewAllBatches />
+              <ViewAllBatches />
             </Layout>
-            }
+          }
         />
       </Routes>
     </>

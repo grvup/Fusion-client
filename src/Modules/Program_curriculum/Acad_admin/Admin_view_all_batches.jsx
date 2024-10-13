@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ScrollArea, Button, Select, TextInput } from "@mantine/core";
 // import { BiSearch } from "react-icons/bi"; // Search icon
 // import { AiOutlineClose } from "react-icons/ai"; // Close icon
-import { MagnifyingGlass, X } from '@phosphor-icons/react';
+import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
 function Batches() {
   const [activeTab, setActiveTab] = useState("Batches");
