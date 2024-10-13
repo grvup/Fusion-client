@@ -9,9 +9,16 @@ import LoginPage from "./pages/login";
 import ForgotPassword from "./pages/forgotPassword";
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
-import Admin_view_all_courses from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_courses";
-import Faculty_view_all_courses from "./Modules/Program_curriculum/Faculty/Faculty_view_all_courses";
-import Admin_view_semesters_of_a_curriculum from "./Modules/Program_curriculum/Acad_admin/Admin_view_semesters_of_a_curriculum";
+import AdminViewAllCourses from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_courses";
+import FacultyViewAllCourses from "./Modules/Program_curriculum/Faculty/Faculty_view_all_courses";
+import FacultyViewACourse from "./Modules/Program_curriculum/Faculty/Faculty_view_a_course";
+import FacultyViewAllBatches from "./Modules/Program_curriculum/Faculty/Faculty_view_all_batches";
+import AdminViewSemestersOfACurriculum from "./Modules/Program_curriculum/Acad_admin/Admin_view_semesters_of_a_curriculum";
+import ViewAllCourses from "./Modules/Program_curriculum/View_all_courses";
+import ViewACourse from "./Modules/Program_curriculum/View_a_course";
+import ViewAllBatches from "./Modules/Program_curriculum/View_all_batches";
+import AdminViewACourse from "./Modules/Program_curriculum/Acad_admin/Admin_view_a_course";
+import AdminViewAllBatches from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_batches";
 
 export default function App() {
   const location = useLocation();
@@ -39,7 +46,9 @@ export default function App() {
           path="/programme_curriculum/admin_courses"
           element={
             <Layout>
-              <Admin_view_all_courses />
+              <AdminViewAllCourses />
+              <AdminViewACourse />
+              <AdminViewAllBatches />
             </Layout>
           }
         />
@@ -47,7 +56,7 @@ export default function App() {
           path="/programme_curriculum/view_curriculum"
           element={
             <Layout>
-              <Admin_view_semesters_of_a_curriculum/>
+              <AdminViewSemestersOfACurriculum />
             </Layout>
           }
         />
@@ -55,15 +64,20 @@ export default function App() {
           path="/programme_curriculum/faculty_courses"
           element={
             <Layout>
-              <Faculty_view_all_courses/>
+              <FacultyViewAllCourses />
+              <FacultyViewACourse />
+              <FacultyViewAllBatches />
             </Layout>
           }
         />
-         <Route
-          path="/programme_curriculum/view_curriculum"
+
+        <Route
+          path="/programme_curriculum/student_courses"
           element={
             <Layout>
-              <Faculty_view_all_courses/>
+              <ViewAllCourses />
+              <ViewACourse />
+              <ViewAllBatches />
             </Layout>
           }
         />

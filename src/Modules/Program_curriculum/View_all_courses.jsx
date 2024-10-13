@@ -6,6 +6,25 @@ function Admin_view_a_courses() {
   // const [selectedOption, setSelectedOption] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
 
+  // Uncomment for actual DB API call
+  // const [courses, setCourses] = useState([]);
+  // const [loading, setLoading] = useState(true);
+
+  // useEffect(() => {
+  //   // Fetch data from Django backend API
+  //   fetch('http://127.0.0.1:8000/api/courses/') // Replace with your actual Django API URL
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setCourses(data); // Assuming the data is an array of courses
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching course data:", error);
+  //       setLoading(false);
+  //     });
+  // }, []);
+
+  // Temporary mock data for testing
   const courses = [
     {
       code: "NS205c",
@@ -157,7 +176,7 @@ function Admin_view_a_courses() {
                     <th>Course Name</th>
                     <th>Version</th>
                     <th>Credits</th>
-                    <th>Edit</th>
+                    {/* <th>Edit</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -174,14 +193,11 @@ function Admin_view_a_courses() {
                       <td>{course.name}</td>
                       <td>{course.version}</td>
                       <td>{course.credits}</td>
-                      <td>
-                        <Button
-                          href={`/edit-course/${course.code}`}
-                          className="courses-edit-button"
-                        >
+                      {/* <td>
+                        <Button href={`/edit-course/${course.code}`} className="courses-edit-button">
                           Edit
                         </Button>
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </tbody>
