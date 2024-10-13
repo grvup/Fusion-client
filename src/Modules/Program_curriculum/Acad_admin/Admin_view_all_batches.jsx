@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { ScrollArea, Button, Select, TextInput } from "@mantine/core";
-import { BiSearch } from "react-icons/bi"; // Search icon
-import { AiOutlineClose } from "react-icons/ai"; // Close icon
+// import { BiSearch } from "react-icons/bi"; // Search icon
+// import { AiOutlineClose } from "react-icons/ai"; // Close icon
+import { MagnifyingGlass, X } from '@phosphor-icons/react';
 
 function Batches() {
   const [activeTab, setActiveTab] = useState("Batches");
@@ -178,7 +179,7 @@ function Batches() {
 
           {/* Toggle search icon and close icon based on search visibility */}
           {!isSearchVisible ? (
-            <BiSearch
+            <MagnifyingGlass
               size={24}
               onClick={() => setIsSearchVisible(true)}
               style={{ cursor: "pointer", color: "#007bff" }}
@@ -292,7 +293,7 @@ function Batches() {
             <div className="courses-search-card">
               <div className="filter-form">
                 {/* Close icon in the search section */}
-                <AiOutlineClose
+                <X
                   size={24}
                   onClick={() => setIsSearchVisible(false)}
                   style={{

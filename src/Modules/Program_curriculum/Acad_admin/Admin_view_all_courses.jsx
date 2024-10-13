@@ -1,6 +1,7 @@
 import { Button, Card, ScrollArea, Table } from "@mantine/core";
 import React, { useState } from "react";
-import { FaSearch, FaTimes } from "react-icons/fa";
+// import { FaSearch, FaTimes } from "react-icons/fa";
+import { MagnifyingGlass, X } from '@phosphor-icons/react';
 
 function Admin_view_a_courses() {
   // const [selectedOption, setSelectedOption] = useState(null);
@@ -148,7 +149,7 @@ function Admin_view_a_courses() {
           {/* <Button className="search-btn" onClick={() => setShowSearch(!showSearch)}>
           {showSearch ? 'Hide Search' : 'Search Courses'}
         </Button> */}
-          <FaSearch
+          <MagnifyingGlass
             className="search-icon"
             onClick={() => setShowSearch(!showSearch)} // Toggle search form
             size={24} // Set the size of the icon
@@ -218,7 +219,19 @@ function Admin_view_a_courses() {
               withBorder
               className="courses-search-card"
             >
-              <FaTimes
+              {/* <FaTimes
+                className="close-search-icon"
+                onClick={() => setShowSearch(false)} // Close search when clicked
+                size={20}
+                color="red"
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  cursor: "pointer",
+                }}
+              /> */}
+              <X
                 className="close-search-icon"
                 onClick={() => setShowSearch(false)} // Close search when clicked
                 size={20}
@@ -230,7 +243,6 @@ function Admin_view_a_courses() {
                   cursor: "pointer",
                 }}
               />
-
               <h4 className="courses-form-title">FILTER SEARCH</h4>
               {/* <ScrollArea>
                 <label htmlFor="code-input">Code contains</label>

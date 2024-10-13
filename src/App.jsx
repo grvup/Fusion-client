@@ -9,16 +9,7 @@ import LoginPage from "./pages/login";
 import ForgotPassword from "./pages/forgotPassword";
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
-import AdminViewAllCourses from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_courses";
-import FacultyViewAllCourses from "./Modules/Program_curriculum/Faculty/Faculty_view_all_courses";
-import FacultyViewACourse from "./Modules/Program_curriculum/Faculty/Faculty_view_a_course";
-import FacultyViewAllBatches from "./Modules/Program_curriculum/Faculty/Faculty_view_all_batches";
-import AdminViewSemestersOfACurriculum from "./Modules/Program_curriculum/Acad_admin/Admin_view_semesters_of_a_curriculum";
-import ViewAllCourses from "./Modules/Program_curriculum/View_all_courses";
-import ViewACourse from "./Modules/Program_curriculum/View_a_course";
-import ViewAllBatches from "./Modules/Program_curriculum/View_all_batches";
-import AdminViewACourse from "./Modules/Program_curriculum/Acad_admin/Admin_view_a_course";
-import AdminViewAllBatches from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_batches";
+import ProgrammeCurriculumRoutes from "./Modules/Program_curriculum/programmCurriculum";
 
 export default function App() {
   const location = useLocation();
@@ -42,42 +33,11 @@ export default function App() {
             </Layout>
           }
         />
-        <Route
-          path="/programme_curriculum/admin_courses"
+         <Route
+          path="/programme_curriculum/*"
           element={
             <Layout>
-              <AdminViewAllCourses />
-              <AdminViewACourse />
-              <AdminViewAllBatches />
-            </Layout>
-          }
-        />
-        <Route
-          path="/programme_curriculum/view_curriculum"
-          element={
-            <Layout>
-              <AdminViewSemestersOfACurriculum />
-            </Layout>
-          }
-        />
-        <Route
-          path="/programme_curriculum/faculty_courses"
-          element={
-            <Layout>
-              <FacultyViewAllCourses />
-              <FacultyViewACourse />
-              <FacultyViewAllBatches />
-            </Layout>
-          }
-        />
-
-        <Route
-          path="/programme_curriculum/student_courses"
-          element={
-            <Layout>
-              <ViewAllCourses />
-              <ViewACourse />
-              <ViewAllBatches />
+              <ProgrammeCurriculumRoutes />
             </Layout>
           }
         />
