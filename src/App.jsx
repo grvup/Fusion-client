@@ -17,8 +17,7 @@ import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
 
 // Admin Views and Forms
-import Admin_view_all_courses from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_courses";
-import Faculty_view_all_courses from "./Modules/Program_curriculum/Faculty/Faculty_view_all_courses";
+import ProgrammeCurriculumRoutes from "./Modules/Program_curriculum/programmCurriculum";
 import Admin_add_batch_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_batch_form";
 import Admin_add_course_slot_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_course_slot_form";
 import Admin_add_curriculum_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_curriculum_form";
@@ -28,6 +27,8 @@ import Admin_add_course_proposal_form from "./Modules/Program_curriculum/Acad_ad
 // import Admin_course_slot_form from "./Modules/Program_curriculum/Acad_admin/Admin_course_slot_form.jsx";
 // import Admin_course_form_after from "./Modules/Program_curriculum/Acad_admin/Admin_course_form_after";
 // import Admin_course_form from "./Modules/Program_curriculum/Acad_admin/Admin_course_form";
+import Admin_view_all_courses from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_courses";
+import Faculty_view_all_courses from "./Modules/Program_curriculum/Faculty/Faculty_view_all_courses";
 
 export default function App() {
   const location = useLocation();
@@ -63,6 +64,14 @@ export default function App() {
         <Route
           path="/programme_curriculum/acad_admin_add_course_proposal_form"
           element={renderLayout(Admin_add_course_proposal_form)}
+        />
+        <Route
+          path="/programme_curriculum/*"
+          element={
+            <Layout>
+              <ProgrammeCurriculumRoutes />
+            </Layout>
+          }
         />
         <Route
           path="/programme_curriculum/acad_admin_add_courseslot_form"
