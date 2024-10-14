@@ -12,15 +12,15 @@ import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
 import ViewAllCourses from "./View_all_courses";
 import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
-
-//forms
-import Admin_add_batch_form from "./Acad_admin/Admin_add_batch_form";
-import Admin_add_course_proposal_form from "./Acad_admin/Admin_add_course_proposal_form";
-import Admin_add_course_slot_form from "./Acad_admin/Admin_add_course_slot_form";
-import Admin_add_curriculum_form from "./Acad_admin/Admin_add_curriculum_form";
-import Admin_add_discipline_form from "./Acad_admin/Admin_add_discipline_form";
-import Admin_add_programme_form from "./Acad_admin/Admin_add_programme_form";
-
+import BDesAcadView from "./Acad_admin/BDesAcadView";
+import DisciplineAcad from "./Acad_admin/DisciplineAcad";
+// forms
+import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
+import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
+import AdminAddCourseSlotForm from "./Acad_admin/Admin_add_course_slot_form";
+import AdminAddCurriculumForm from "./Acad_admin/Admin_add_curriculum_form";
+import AdminAddDisciplineForm from "./Acad_admin/Admin_add_discipline_form";
+import AdminAddProgrammeForm from "./Acad_admin/Admin_add_programme_form";
 
 export default function ProgrammeCurriculumRoutes() {
   return (
@@ -59,7 +59,22 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
-
+        <Route
+          path="/acad_view"
+          element={
+            <Layout>
+              <BDesAcadView />
+            </Layout>
+          }
+        />
+        <Route
+          path="/acad_discipline_view"
+          element={
+            <Layout>
+              <DisciplineAcad />
+            </Layout>
+          }
+        />
         {/* Faculty Routes */}
         <Route
           path="/faculty_courses"
@@ -112,60 +127,55 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
 
-        //forms
+        {/* forms */}
         <Route
           path="/acad_admin_add_batch_form"
-          element=
-            {
-              <Layout>
-                <Admin_add_batch_form/>
-              </Layout>
-            }
+          element={
+            <Layout>
+              <AdminAddBatchForm />
+            </Layout>
+          }
         />
         <Route
           path="/acad_admin_add_course_proposal_form"
           element={
             <Layout>
-                <Admin_add_course_proposal_form/>
+              <AdminAddCourseProposalForm />
             </Layout>
           }
-        />  
+        />
         <Route
           path="/acad_admin_add_courseslot_form"
           element={
             <Layout>
-                <Admin_add_course_slot_form/>
-              </Layout>
-           
+              <AdminAddCourseSlotForm />
+            </Layout>
           }
         />
         <Route
           path="/acad_admin_add_curriculum_form"
           element={
             <Layout>
-                <Admin_add_curriculum_form/>
-              </Layout>
-           
+              <AdminAddCurriculumForm />
+            </Layout>
           }
         />
         <Route
           path="/acad_admin_add_discipline_form"
           element={
             <Layout>
-                <Admin_add_discipline_form/>
+              <AdminAddDisciplineForm />
             </Layout>
-           
           }
         />
         <Route
           path="/acad_admin_add_programme_form"
           element={
             <Layout>
-                <Admin_add_programme_form/>
+              <AdminAddProgrammeForm />
             </Layout>
           }
         />
-
       </Routes>
     </>
   );
