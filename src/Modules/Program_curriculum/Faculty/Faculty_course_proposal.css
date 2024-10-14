@@ -1,0 +1,217 @@
+.admin-course-proposal-container {
+  background-color: white; /* White background */
+  padding: 20px; /* Add padding for space around content */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.breadcrumbs {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.breadcrumbs > span {
+  margin-right: 5px;
+  font-size: 0.8vw;
+  font-weight: bold;
+}
+
+.breadcrumbs > span::after {
+  content: ">";
+  margin-left: 5px;
+}
+
+.breadcrumbs > span:last-child::after {
+  content: ""; /* Remove the '>' from the last breadcrumb */
+}
+
+/* Program Options Bar Styling */
+.program-options {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 0;
+  font-size: 0.8vw;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.program-options > p {
+  margin: 0;
+  color: #666;
+  cursor: pointer;
+}
+
+.program-options > p:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+/* Active option styling (Programmes) */
+.program-options .active {
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+}
+
+.program-options > p::after {
+  content: "|";
+  margin-left: 10px;
+  color: #ddd;
+}
+
+.program-options > p:last-child::after {
+  content: ""; /* Remove the '|' from the last item */
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%; /* Make it expand to full width */
+  margin: 0 auto; /* Center it */
+}
+
+.form-container{
+  width: 100%;
+}
+
+.tabs {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 10px;
+}
+
+.tab.active {
+  font-weight: bold;
+  background-color: #f0f8ff;
+  border-bottom: 3px solid #007bff;
+}
+
+.content-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  gap: 20px;
+}
+
+.table-container {
+  width: 100%; /* Full width */
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+}
+
+.table-header {
+  padding: 10px;
+  background-color: #b0e0ff;
+  color: black;
+  text-align: center;
+  border: 1px solid #007bff;
+}
+
+.table-data {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #007bff;
+}
+
+.view-button,
+.submit-button,
+.archive-button,
+.add-button {
+  padding: 5px 5px;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  margin: 0 10px 0 0 ;
+}
+
+.view-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.archive-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.add-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.view-button,
+.submit-button,
+.archive-button,
+.add-button {
+  padding: 8px 12px; /* Adjust padding for a better fit */
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  font-weight: bold; /* Make text bold for better visibility */
+}
+
+.view-button {
+  background-color: #28a745;
+  color: white;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.archive-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+.add-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  align-self: flex-start;
+  font-weight: bold; /* Make text bold for better visibility */
+  font-size: 12px;
+  height: 60px;
+}
+
+/* Add this to ensure buttons in the table fit nicely */
+.table-data button {
+  width: 100%; /* Make buttons take the full width of the cell */
+  box-shadow: none; /* Remove any box shadow */
+  transition: background-color 0.3s ease; /* Add transition for hover effect */
+}
+
+.table-data button:hover {
+  opacity: 0.9; /* Add a hover effect for feedback */
+}
+
+

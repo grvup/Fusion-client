@@ -14,6 +14,8 @@ import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
 import BDesAcadView from "./Acad_admin/BDesAcadView";
 import DisciplineAcad from "./Acad_admin/DisciplineAcad";
+import FacultyCourseProposal from "./Faculty/Faculty_course_proposal"
+import VCourseProposalForm from "./Faculty/VCourseProposalForm"
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -21,6 +23,7 @@ import AdminAddCourseSlotForm from "./Acad_admin/Admin_add_course_slot_form";
 import AdminAddCurriculumForm from "./Acad_admin/Admin_add_curriculum_form";
 import AdminAddDisciplineForm from "./Acad_admin/Admin_add_discipline_form";
 import AdminAddProgrammeForm from "./Acad_admin/Admin_add_programme_form";
+import InstigateForm from "./Acad_admin/Instigate_form"
 
 export default function ProgrammeCurriculumRoutes() {
   return (
@@ -100,6 +103,22 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
+        <Route
+          path="/faculty_view_course_proposal"
+          element={
+            <Layout>
+              <FacultyCourseProposal/>
+            </Layout>
+          }
+        />
+        <Route
+          path="/faculty_forward_form"
+          element={
+            <Layout>
+              <VCourseProposalForm/>
+            </Layout>
+          }
+        />
 
         {/* Student Routes */}
         <Route
@@ -173,6 +192,14 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <AdminAddProgrammeForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/acad_admin_instigate_form"
+          element={
+            <Layout>
+              <InstigateForm />
             </Layout>
           }
         />
