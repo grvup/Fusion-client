@@ -14,8 +14,10 @@ import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
 import BDesAcadView from "./Acad_admin/BDesAcadView";
 import DisciplineAcad from "./Acad_admin/DisciplineAcad";
-import FacultyCourseProposal from "./Faculty/Faculty_course_proposal"
-import VCourseProposalForm from "./Faculty/VCourseProposalForm"
+import FacultyCourseProposal from "./Faculty/Faculty_course_proposal";
+import VCourseProposalForm from "./Faculty/VCourseProposalForm";
+import CourseSlotDetails from "./CourseSlotDetails";
+import SemesterInfo from "./SemesterInfo";
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -23,7 +25,7 @@ import AdminAddCourseSlotForm from "./Acad_admin/Admin_add_course_slot_form";
 import AdminAddCurriculumForm from "./Acad_admin/Admin_add_curriculum_form";
 import AdminAddDisciplineForm from "./Acad_admin/Admin_add_discipline_form";
 import AdminAddProgrammeForm from "./Acad_admin/Admin_add_programme_form";
-import InstigateForm from "./Acad_admin/Instigate_form"
+import InstigateForm from "./Acad_admin/Instigate_form";
 
 export default function ProgrammeCurriculumRoutes() {
   return (
@@ -107,7 +109,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_view_course_proposal"
           element={
             <Layout>
-              <FacultyCourseProposal/>
+              <FacultyCourseProposal />
             </Layout>
           }
         />
@@ -115,7 +117,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_forward_form"
           element={
             <Layout>
-              <VCourseProposalForm/>
+              <VCourseProposalForm />
             </Layout>
           }
         />
@@ -200,6 +202,22 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <InstigateForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/course_slot_details"
+          element={
+            <Layout>
+              <CourseSlotDetails />
+            </Layout>
+          }
+        />
+        <Route
+          path="/semester_info"
+          element={
+            <Layout>
+              <SemesterInfo />
             </Layout>
           }
         />
