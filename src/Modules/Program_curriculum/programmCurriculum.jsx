@@ -1,4 +1,4 @@
-// src/Modules/Program_curriculum/programmeCurriculum.jsx
+// src/programmeCurriculum.jsx
 
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "../../components/layout";
@@ -12,6 +12,15 @@ import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
 import ViewAllCourses from "./View_all_courses";
 import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
+
+//forms
+import Admin_add_batch_form from "./Acad_admin/Admin_add_batch_form";
+import Admin_add_course_proposal_form from "./Acad_admin/Admin_add_course_proposal_form";
+import Admin_add_course_slot_form from "./Acad_admin/Admin_add_course_slot_form";
+import Admin_add_curriculum_form from "./Acad_admin/Admin_add_curriculum_form";
+import Admin_add_discipline_form from "./Acad_admin/Admin_add_discipline_form";
+import Admin_add_programme_form from "./Acad_admin/Admin_add_programme_form";
+
 
 export default function ProgrammeCurriculumRoutes() {
   return (
@@ -102,6 +111,61 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
+
+        //forms
+        <Route
+          path="/acad_admin_add_batch_form"
+          element=
+            {
+              <Layout>
+                <Admin_add_batch_form/>
+              </Layout>
+            }
+        />
+        <Route
+          path="/acad_admin_add_course_proposal_form"
+          element={
+            <Layout>
+                <Admin_add_course_proposal_form/>
+            </Layout>
+          }
+        />  
+        <Route
+          path="/acad_admin_add_courseslot_form"
+          element={
+            <Layout>
+                <Admin_add_course_slot_form/>
+              </Layout>
+           
+          }
+        />
+        <Route
+          path="/acad_admin_add_curriculum_form"
+          element={
+            <Layout>
+                <Admin_add_curriculum_form/>
+              </Layout>
+           
+          }
+        />
+        <Route
+          path="/acad_admin_add_discipline_form"
+          element={
+            <Layout>
+                <Admin_add_discipline_form/>
+            </Layout>
+           
+          }
+        />
+        <Route
+          path="/acad_admin_add_programme_form"
+          element={
+            <Layout>
+                <Admin_add_programme_form/>
+            </Layout>
+          }
+        />
+
       </Routes>
     </>
   );

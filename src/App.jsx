@@ -16,19 +16,9 @@ import ForgotPassword from "./pages/forgotPassword";
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
 
-// Admin Views and Forms
+// Programe and curriculum
 import ProgrammeCurriculumRoutes from "./Modules/Program_curriculum/programmCurriculum";
-import Admin_add_batch_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_batch_form";
-import Admin_add_course_slot_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_course_slot_form";
-import Admin_add_curriculum_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_curriculum_form";
-import Admin_add_discipline_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_discipline_form";
-import Admin_add_programme_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_programme_form";
-import Admin_add_course_proposal_form from "./Modules/Program_curriculum/Acad_admin/Admin_add_course_proposal_form";
-// import Admin_course_slot_form from "./Modules/Program_curriculum/Acad_admin/Admin_course_slot_form.jsx";
-// import Admin_course_form_after from "./Modules/Program_curriculum/Acad_admin/Admin_course_form_after";
-// import Admin_course_form from "./Modules/Program_curriculum/Acad_admin/Admin_course_form";
-import Admin_view_all_courses from "./Modules/Program_curriculum/Acad_admin/Admin_view_all_courses";
-import Faculty_view_all_courses from "./Modules/Program_curriculum/Faculty/Faculty_view_all_courses";
+
 
 export default function App() {
   const location = useLocation();
@@ -54,18 +44,6 @@ export default function App() {
         <Route path="/" element={<Navigate to="/accounts/login" replace />} />
         <Route path="/dashboard" element={renderLayout(Dashboard)} />
         <Route
-          path="/programme_curriculum/admin_courses"
-          element={renderLayout(Admin_view_all_courses)}
-        />
-        <Route
-          path="/programme_curriculum/acad_admin_add_batch_form"
-          element={renderLayout(Admin_add_batch_form)}
-        />
-        <Route
-          path="/programme_curriculum/acad_admin_add_course_proposal_form"
-          element={renderLayout(Admin_add_course_proposal_form)}
-        />
-        <Route
           path="/programme_curriculum/*"
           element={
             <Layout>
@@ -73,30 +51,6 @@ export default function App() {
             </Layout>
           }
         />
-        <Route
-          path="/programme_curriculum/acad_admin_add_courseslot_form"
-          element={renderLayout(Admin_add_course_slot_form)}
-        />
-        <Route
-          path="/programme_curriculum/acad_admin_add_curriculum_form"
-          element={renderLayout(Admin_add_curriculum_form)}
-        />
-        <Route
-          path="/programme_curriculum/acad_admin_add_discipline_form"
-          element={renderLayout(Admin_add_discipline_form)}
-        />
-        <Route
-          path="/programme_curriculum/acad_admin_add_programme_form"
-          element={renderLayout(Admin_add_programme_form)}
-        />
-        {/* <Route path="/programme_curriculum/acad_admin_course_proposal_form" element={renderLayout(Admin_course_proposal_form)} /> */}
-        {/* <Route path="/programme_curriculum/acad_admin_course_slot_form" element={renderLayout(Admin_course_slot_form)} /> */}
-        <Route
-          path="/programme_curriculum/faculty_courses"
-          element={renderLayout(Faculty_view_all_courses)}
-        />
-        {/* <Route path="/programme_curriculum/acad_admin_course_form" element={renderLayout(Admin_course_form)} /> */}
-        {/* <Route path="/programme_curriculum/acad_admin_course_form_after" element={renderLayout(Admin_course_form_after)} /> */}
         <Route path="/academics" element={renderLayout(AcademicPage)} />
         <Route path="/profile" element={renderLayout(Profile)} />
         <Route path="/accounts/login" element={<LoginPage />} />
