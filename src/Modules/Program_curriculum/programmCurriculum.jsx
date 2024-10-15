@@ -12,12 +12,16 @@ import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
 import ViewAllCourses from "./View_all_courses";
 import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
+import ViewAllWorkingCurriculums from "./View_all_working_curriculums";
+import ViewAllProgrammes from "./View_all_programmes";
 import BDesAcadView from "./Acad_admin/BDesAcadView";
 import DisciplineAcad from "./Acad_admin/DisciplineAcad";
 import FacultyCourseProposal from "./Faculty/Faculty_course_proposal";
 import VCourseProposalForm from "./Faculty/VCourseProposalForm";
 import CourseSlotDetails from "./CourseSlotDetails";
 import SemesterInfo from "./SemesterInfo";
+import AdminViewAllProgrammes from "./Acad_admin/Admin_view_all_programmes";
+import AdminViewAllWorkingCurriculum from "./Acad_admin/Admin_view_all_working_curriculums";
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -80,6 +84,22 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
+        <Route
+          path="/acad_view_all_programme"
+          element={
+            <Layout>
+              <AdminViewAllProgrammes />
+            </Layout>
+          }
+        />
+        <Route
+          path="/acad_view_all_working_curriculums"
+          element={
+            <Layout>
+              <AdminViewAllWorkingCurriculum />
+            </Layout>
+          }
+        />
         {/* Faculty Routes */}
         <Route
           path="/faculty_courses"
@@ -121,6 +141,22 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
+        <Route
+          path="/view_all_programmes"
+          element={
+            <Layout>
+              <ViewAllProgrammes />
+            </Layout>
+          }
+        />
+        <Route
+          path="/view_all_working_curriculums"
+          element={
+            <Layout>
+              <ViewAllWorkingCurriculums />
+            </Layout>
+          }
+        />
 
         {/* Student Routes */}
         <Route
@@ -147,7 +183,6 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
-
         {/* forms */}
         <Route
           path="/acad_admin_add_batch_form"
