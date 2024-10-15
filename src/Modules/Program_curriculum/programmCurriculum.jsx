@@ -15,6 +15,7 @@ import ViewACourse from "./View_a_course";
 import ViewAllWorkingCurriculums from "./View_all_working_curriculums";
 import ViewAllProgrammes from "./View_all_programmes";
 import BDesAcadView from "./Acad_admin/BDesAcadView";
+import BDesstudView from "./BDesStudView";
 import DisciplineAcad from "./Acad_admin/DisciplineAcad";
 import FacultyCourseProposal from "./Faculty/Faculty_course_proposal";
 import VCourseProposalForm from "./Faculty/VCourseProposalForm";
@@ -157,7 +158,14 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
-
+        <Route
+          path="/BDesstudView"
+          element={
+            <Layout>
+              <BDesstudView />
+            </Layout>
+          }
+        />
         {/* Student Routes */}
         <Route
           path="/student_courses"
