@@ -88,7 +88,7 @@ function BDesAcadView() {
         style={{
           border: "2px solid #1e90ff",
           borderCollapse: "collapse",
-          width: "100%",
+          width: "65vw",
           marginTop: "20px", // Margin for the table
         }}
       >
@@ -213,7 +213,7 @@ function BDesAcadView() {
           style={{
             border: "2px solid #1e90ff",
             borderCollapse: "collapse",
-            width: "100%",
+            width: "65vw",
           }}
         >
           <thead>
@@ -392,7 +392,7 @@ function BDesAcadView() {
           style={{
             border: "2px solid #1e90ff",
             borderCollapse: "collapse",
-            width: "100%",
+            width: "65vw",
           }}
         >
           <thead>
