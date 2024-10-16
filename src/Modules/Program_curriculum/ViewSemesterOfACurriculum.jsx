@@ -1,9 +1,8 @@
-import { ActionIcon, Table } from "@mantine/core";
-import { Bell } from "@phosphor-icons/react";
+import { Table } from "@mantine/core";
 import React, { useState } from "react";
-import "./Admin_view_semesters_of_a_curriculum.css";
+import "./Acad_admin/Admin_view_semesters_of_a_curriculum.css";
 
-function Admin_view_semesters_of_a_curriculum() {
+function ViewSemesterOfACurriculum() {
   // Demo data (matches the example layout)
   const curriculum = {
     name: "CSE UG Curriculum",
@@ -184,80 +183,6 @@ function Admin_view_semesters_of_a_curriculum() {
       </div>
       <h2>{curriculum.name} Table</h2>
 
-      <button
-        className="options-button"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        Options
-      </button>
-
-      {/* Options visible on hover */}
-      {isHovered && (
-        <div
-          className={`options-dropdown ${isHovered ? "open" : ""}`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <div className="dropdown-section">
-            <h4 className="section-title">CURRICULUM</h4>
-            <button className="dropdown-btn green-btn">EDIT CURRICULUM</button>
-            <div
-              className="instigate-semester"
-              onMouseEnter={() => setIsInstigateSemesterHovered(true)}
-              onMouseLeave={() => setIsInstigateSemesterHovered(false)}
-            >
-              <button className="add-instigate-semester-button">
-                INSTIGATE SEMESTER
-              </button>
-
-              {/* Semester options visible on hover */}
-              {isInstigateSemesterHovered && (
-                <div className="instigate-semester-dropdown">
-                  {semesterscnt.map((semester, index) => (
-                    <div key={index} className="instigate-semester-option">
-                      <text>{semester}</text>
-                      <ActionIcon variant="light">
-                        <Bell size={20} />
-                      </ActionIcon>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div
-              className="add-course-slot"
-              onMouseEnter={() => setIsAddCourseSlotHovered(true)}
-              onMouseLeave={() => setIsAddCourseSlotHovered(false)}
-            >
-              <button className="add-course-slot-button">
-                ADD COURSE SLOT
-              </button>
-
-              {/* Semester options visible on hover */}
-              {isAddCourseSlotHovered && (
-                <div className="semester-dropdown">
-                  {semesterscnt.map((semester, index) => (
-                    <div key={index} className="semester-option">
-                      <text>{semester}</text>
-                      <text>+</text>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="dropdown-section">
-            <h4 className="section-title">BATCHES</h4>
-            <button className="dropdown-btn blue-btn">NEW BATCH</button>
-            <button className="dropdown-btn green-btn">EDIT BATCH</button>
-            {/* <button className="dropdown-btn black-btn">LINK BATCH</button> */}
-          </div>
-        </div>
-      )}
-
       <Table
         striped
         highlightOnHover
@@ -395,4 +320,4 @@ function Admin_view_semesters_of_a_curriculum() {
   );
 }
 
-export default Admin_view_semesters_of_a_curriculum;
+export default ViewSemesterOfACurriculum;

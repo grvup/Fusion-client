@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+
 import {
   Table,
   Anchor,
@@ -47,8 +48,18 @@ const CURRICULUM_DATA = {
     },
   ],
 };
+const semesterscnt = [
+  "Semester 1",
+  "Semester 2",
+  "Semester 3",
+  "Semester 4",
+  "Semester 5",
+  "Semester 6",
+  "Semester 7",
+  "Semester 8",
+];
 
-function BDesAcadView() {
+function BDesStudView() {
   const [activeTab, setActiveTab] = useState("info");
 
   // New States for Filtering
@@ -59,7 +70,7 @@ function BDesAcadView() {
   const filteredWorkingCurriculums = CURRICULUM_DATA.workingCurriculums.filter(
     (curr) =>
       curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
+      curr.version.toLowerCase().includes(searchVersion.toLowerCase())
   );
 
   // Filter Logic for Obsolete Curriculums
@@ -67,7 +78,7 @@ function BDesAcadView() {
     CURRICULUM_DATA.obsoleteCurriculums.filter(
       (curr) =>
         curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
+        curr.version.toLowerCase().includes(searchVersion.toLowerCase())
     );
 
   const handleSearch = () => {
@@ -76,9 +87,12 @@ function BDesAcadView() {
       "Search initiated with Name:",
       searchName,
       "and Version:",
-      searchVersion,
+      searchVersion
     );
   };
+  const [isHovered, setIsHovered] = useState(false);
+  const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
+  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
 
   const renderInfo = () => (
     <div style={{ marginBottom: "20px", display: "flex" }}>
@@ -171,36 +185,6 @@ function BDesAcadView() {
           </tr>
         </tbody>
       </Table>
-      {/* Search Filter Section for Info Page */}
-      <Paper
-        shadow="xs"
-        p="md"
-        style={{ marginLeft: "20px", minWidth: "250px", marginTop: "20px" }}
-      >
-        <Text weight={700} mb={10}>
-          FILTER SEARCH
-        </Text>
-
-        <TextInput
-          label="Name contains:"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          placeholder="Search by Name"
-          mb={10}
-        />
-
-        <TextInput
-          label="Version"
-          value={searchVersion}
-          onChange={(e) => setSearchVersion(e.target.value)}
-          placeholder="Search by Version"
-          mb={10}
-        />
-
-        <Button onClick={handleSearch} variant="outline" fullWidth>
-          Search
-        </Button>
-      </Paper>
     </div>
   );
 
@@ -259,6 +243,7 @@ function BDesAcadView() {
               >
                 No. of Semesters
               </th>
+        
             </tr>
           </thead>
           <tbody>
@@ -323,13 +308,13 @@ function BDesAcadView() {
                   >
                     {curr.semesters}
                   </td>
-                  {/* Removed the Action column here */}
+                 
                 </tr>
               ))
             ) : (
               <tr>
                 <td
-                  colSpan="4"
+                  colSpan="5"
                   style={{ textAlign: "center", padding: "10px" }}
                 >
                   No results found
@@ -339,36 +324,6 @@ function BDesAcadView() {
           </tbody>
         </Table>
       </ScrollArea>
-      {/* Search Filter Section for Working Curriculums */}
-      <Paper
-        shadow="xs"
-        p="md"
-        style={{ marginLeft: "20px", minWidth: "250px" }}
-      >
-        <Text weight={700} mb={10}>
-          FILTER SEARCH
-        </Text>
-
-        <TextInput
-          label="Name contains:"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          placeholder="Search by Name"
-          mb={10}
-        />
-
-        <TextInput
-          label="Version"
-          value={searchVersion}
-          onChange={(e) => setSearchVersion(e.target.value)}
-          placeholder="Search by Version"
-          mb={10}
-        />
-
-        <Button onClick={handleSearch} variant="outline" fullWidth>
-          Search
-        </Button>
-      </Paper>
     </div>
   );
 
@@ -506,37 +461,41 @@ function BDesAcadView() {
           </tbody>
         </Table>
       </ScrollArea>
-      {/* Search Filter Section for Obsolete Curriculums */}
-      <Paper
-        shadow="xs"
-        p="md"
-        style={{ marginLeft: "20px", minWidth: "250px" }}
-      >
-        <Text weight={700} mb={10}>
-          FILTER SEARCH
-        </Text>
-
-        <TextInput
-          label="Name contains:"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          placeholder="Search by Name"
-          mb={10}
-        />
-
-        <TextInput
-          label="Version"
-          value={searchVersion}
-          onChange={(e) => setSearchVersion(e.target.value)}
-          placeholder="Search by Version"
-          mb={10}
-        />
-
-        <Button onClick={handleSearch} variant="outline" fullWidth>
-          Search
-        </Button>
-      </Paper>
     </div>
+  );
+
+  // Single Filter Section
+  const renderFilterSection = () => (
+    <Paper
+      shadow="xs"
+      p="md"
+      style={{ marginTop: "20px", margin: "1vw 0vw 0 1.5vw", width: "15vw" }}
+    >
+
+      <Text weight={700} mb={10}>
+        FILTER SEARCH
+      </Text>
+
+      <TextInput
+        label="Name contains:"
+        value={searchName}
+        onChange={(e) => setSearchName(e.target.value)}
+        placeholder="Search by Name"
+        mb={10}
+      />
+
+      <TextInput
+        label="Version"
+        value={searchVersion}
+        onChange={(e) => setSearchVersion(e.target.value)}
+        placeholder="Search by Version"
+        mb={10}
+      />
+
+      <Button onClick={handleSearch} variant="outline" fullWidth>
+        Search
+      </Button>
+    </Paper>
   );
 
   return (
@@ -566,13 +525,26 @@ function BDesAcadView() {
         </Grid.Col>
 
         <Grid.Col span={12}>
-          {activeTab === "info" && renderInfo()}
-          {activeTab === "working" && renderWorkingCurriculums()}
-          {activeTab === "obsolete" && renderObsoleteCurriculums()}
+          {/* Render Filter Section Conditionally */}
+          <div style={{display:'flex' }}>
+
+            <div>
+            {activeTab === "info" && renderInfo()}
+            {activeTab === "working" && renderWorkingCurriculums()}
+            {activeTab === "obsolete" && renderObsoleteCurriculums()}
+
+            </div>
+            <div>
+              {(activeTab === "working" || activeTab === "obsolete") &&
+                renderFilterSection()}
+
+            </div>
+          </div>
         </Grid.Col>
       </Grid>
+       
     </Container>
   );
 }
 
-export default BDesAcadView;
+export default BDesStudView;

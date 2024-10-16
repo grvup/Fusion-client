@@ -1,125 +1,115 @@
 import React from "react";
-import { Table, Anchor, ScrollArea, Container } from "@mantine/core";
-import { Link } from "react-router-dom";
-// import '../Faculty/Faculty_view_all_courses.css';
+import {
+  Table,
+  Anchor,
+  Container,
+  Flex,
+} from "@mantine/core";
+import { Link, useNavigate } from "react-router-dom";
+// import './Admin_view_all_courses.css';
 
-// Initial discipline data
+// Updated discipline data
 const disciplineData = [
   {
-    discipline: "Computer Science and Engineering",
+    discipline: "Computer Science and Engineering (CSE)",
     programs: [
-      {
-        label: "M.Tech CSE",
-        link: "/programme_curriculum/discipline/mtech-cse",
-      },
-      { label: "PhD in CSE", link: "/programme_curriculum/discipline/phd-cse" },
-      {
-        label: "B.Tech CSE",
-        link: "/programme_curriculum/discipline/btech-cse",
-      },
+      { label: "M.Tech CSE", link: "/acad_curriculum/discipline/mtech-cse" },
+      { label: "PhD in CSE", link: "/acad_curriculum/discipline/phd-cse" },
+      { label: "B.Tech CSE", link: "/acad_curriculum/discipline/btech-cse" },
     ],
   },
   {
-    discipline: "Mechanical Engineering",
+    discipline: "Mechanical Engineering (ME)",
     programs: [
-      { label: "M.Tech ME", link: "/programme_curriculum/discipline/mtech-me" },
-      { label: "PhD in ME", link: "/programme_curriculum/discipline/phd-me" },
-      { label: "B.Tech ME", link: "/programme_curriculum/discipline/btech-me" },
+      { label: "M.Tech ME", link: "/acad_curriculum/discipline/mtech-me" },
+      { label: "PhD in ME", link: "/acad_curriculum/discipline/phd-me" },
+      { label: "B.Tech ME", link: "/acad_curriculum/discipline/btech-me" },
     ],
   },
   {
-    discipline: "Electronics and Communication Engineering",
+    discipline: "Electronics and Communication Engineering (ECE)",
     programs: [
-      {
-        label: "M.Tech ECE",
-        link: "/programme_curriculum/discipline/mtech-ece",
-      },
-      { label: "PhD in ECE", link: "/programme_curriculum/discipline/phd-ece" },
-      {
-        label: "B.Tech ECE",
-        link: "/programme_curriculum/discipline/btech-ece",
-      },
+      { label: "M.Tech ECE", link: "/acad_curriculum/discipline/mtech-ece" },
+      { label: "PhD in ECE", link: "/acad_curriculum/discipline/phd-ece" },
+      { label: "B.Tech ECE", link: "/acad_curriculum/discipline/btech-ece" },
     ],
   },
   {
-    discipline: "Mechatronics",
+    discipline: "Mechatronics (MT)",
     programs: [
       {
         label: "M.Tech Mechatronics",
-        link: "/programme_curriculum/discipline/mtech-mechatronics",
+        link: "/acad_curriculum/discipline/mtech-mechatronics",
       },
     ],
   },
   {
-    discipline: "Design",
+    discipline: "Design (Des.)",
     programs: [
-      { label: "B.Design", link: "/programme_curriculum/discipline/bdesign" },
+      { label: "B.Design", link: "/acad_curriculum/discipline/bdesign" },
       {
         label: "PhD in Design",
-        link: "/programme_curriculum/discipline/phd-design",
+        link: "/acad_curriculum/discipline/phd-design",
       },
       {
         label: "M.Des Design",
-        link: "/programme_curriculum/discipline/mdes-design",
+        link: "/acad_curriculum/discipline/mdes-design",
       },
     ],
   },
   {
-    discipline: "Natural Sciences-Mathematics",
+    discipline: "Natural Sciences-Mathematics (Maths)",
     programs: [
-      {
-        label: "PhD in Maths",
-        link: "/programme_curriculum/discipline/phd-maths",
-      },
+      { label: "PhD in Maths", link: "/acad_curriculum/discipline/phd-maths" },
     ],
   },
   {
-    discipline: "Natural Sciences-Physics",
+    discipline: "Natural Sciences-Physics (Physics)",
     programs: [
       {
         label: "PhD in Physics",
-        link: "/programme_curriculum/discipline/phd-physics",
+        link: "/acad_curriculum/discipline/phd-physics",
       },
     ],
   },
   {
-    discipline: "Humanities - English",
+    discipline: "Humanities - English (English)",
     programs: [
       {
         label: "PhD in English",
-        link: "/programme_curriculum/discipline/phd-english",
+        link: "/acad_curriculum/discipline/phd-english",
       },
     ],
   },
   {
-    discipline: "Smart Manufacturing",
+    discipline: "Smart Manufacturing (SM)",
     programs: [
-      { label: "M.Tech SM", link: "/programme_curriculum/discipline/mtech-sm" },
-      { label: "B.Tech SM", link: "/programme_curriculum/discipline/btech-sm" },
+      { label: "M.Tech SM", link: "/acad_curriculum/discipline/mtech-sm" },
+      { label: "B.Tech SM", link: "/acad_curriculum/discipline/btech-sm" },
     ],
   },
 ];
 
-// Component starts here
-function Discipline() {
+function DisciplineStud() {
+  const navigate = useNavigate(); // Hook to navigate between routes
+
   return (
     <Container
       style={{
-        marginTop: "20px",
-        padding: "20px",
-        backgroundColor: "#f8f9fa",
+        // marginTop: "20px",
+        // padding: "20px",
+        // backgroundColor: "#f8f9fa",
         borderRadius: "8px",
         marginLeft: "0",
-        width: "100%",
+        width: "100vw",
       }}
     >
-      {" "}
-      {/* Full width and no left margin */}
       <nav className="breadcrumbs">
         <span>Program and Curriculum</span>
         <span>Curriculums</span>
         <span>CSE UG Curriculum</span>
       </nav>
+
       {/* Options Section */}
       <div className="program-options">
         <p>Programmes</p>
@@ -128,17 +118,27 @@ function Discipline() {
         <p className="active">disciplines</p>
         <p>batches</p>
       </div>
-      <h2 style={{ fontSize: "24px", textAlign: "left", marginBottom: "20px" }}>
-        {" "}
-        {/* Aligned to left */}
-        Discipline
-      </h2>
-      {/* Scrollable Table */}
-      <ScrollArea>
+
+      {/* Align Discipline Heading and Add Discipline Button in a single row */}
+      <Flex
+        justify="space-between"
+        align="center"
+        style={{ marginBottom: "20px" }}
+      >
+        {/* Discipline Heading */}
+        <h2 style={{ fontSize: "24px", textAlign: "left" }}>Discipline</h2>
+
+        {/* Add Discipline Button */}
+       
+      </Flex>
+
+      {/* Scrollable and Larger Table */}
+      <Flex  style={{width:'85vw' , display:'flex'}}>
         <Table
           highlightOnHover
           verticalSpacing="sm"
           style={{
+            width: "65vw", // Make the table larger by using full width
             border: "2px solid #1e90ff", // Added blue border
             borderRadius: "8px", // Optional: rounded corners for the table
           }}
@@ -147,6 +147,8 @@ function Discipline() {
             <tr style={{ backgroundColor: "#15ABFF54" }}>
               <th style={{ padding: "10px", textAlign: "left" }}>Discipline</th>
               <th style={{ padding: "10px", textAlign: "left" }}>Programmes</th>
+           
+              {/* Added for Edit Button */}
             </tr>
           </thead>
           <tbody>
@@ -165,12 +167,13 @@ function Discipline() {
                     index % 2 === 0 ? "#fff" : "#15ABFF1C";
                 }}
               >
-                <td style={{ padding: "10px" }}>{item.discipline}</td>
+                <td style={{ padding: "10px" ,borderRight:'1px solid black'}}>{item.discipline}</td>
                 <td
                   style={{
-                    padding: "10px",
+                    padding: "20px",
                     display: "flex",
                     alignItems: "center",
+                    // borderRight:'1px solid black'
                   }}
                 >
                   {item.programs.map((program, i, array) => (
@@ -192,13 +195,15 @@ function Discipline() {
                     </React.Fragment>
                   ))}
                 </td>
+               
               </tr>
             ))}
           </tbody>
         </Table>
-      </ScrollArea>
+       
+      </Flex>
     </Container>
   );
 }
 
-export default Discipline;
+export default DisciplineStud;

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { Copy } from "@phosphor-icons/react";
+
 import {
   Table,
   Anchor,
@@ -47,6 +49,16 @@ const CURRICULUM_DATA = {
     },
   ],
 };
+const semesterscnt = [
+  "Semester 1",
+  "Semester 2",
+  "Semester 3",
+  "Semester 4",
+  "Semester 5",
+  "Semester 6",
+  "Semester 7",
+  "Semester 8",
+];
 
 function BDesAcadView() {
   const [activeTab, setActiveTab] = useState("info");
@@ -59,7 +71,7 @@ function BDesAcadView() {
   const filteredWorkingCurriculums = CURRICULUM_DATA.workingCurriculums.filter(
     (curr) =>
       curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
+      curr.version.toLowerCase().includes(searchVersion.toLowerCase())
   );
 
   // Filter Logic for Obsolete Curriculums
@@ -67,7 +79,7 @@ function BDesAcadView() {
     CURRICULUM_DATA.obsoleteCurriculums.filter(
       (curr) =>
         curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
+        curr.version.toLowerCase().includes(searchVersion.toLowerCase())
     );
 
   const handleSearch = () => {
@@ -76,9 +88,12 @@ function BDesAcadView() {
       "Search initiated with Name:",
       searchName,
       "and Version:",
-      searchVersion,
+      searchVersion
     );
   };
+  const [isHovered, setIsHovered] = useState(false);
+  const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
+  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
 
   const renderInfo = () => (
     <div style={{ marginBottom: "20px", display: "flex" }}>
@@ -171,36 +186,6 @@ function BDesAcadView() {
           </tr>
         </tbody>
       </Table>
-      {/* Search Filter Section for Info Page */}
-      <Paper
-        shadow="xs"
-        p="md"
-        style={{ marginLeft: "20px", minWidth: "250px", marginTop: "20px" }}
-      >
-        <Text weight={700} mb={10}>
-          FILTER SEARCH
-        </Text>
-
-        <TextInput
-          label="Name contains:"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          placeholder="Search by Name"
-          mb={10}
-        />
-
-        <TextInput
-          label="Version"
-          value={searchVersion}
-          onChange={(e) => setSearchVersion(e.target.value)}
-          placeholder="Search by Version"
-          mb={10}
-        />
-
-        <Button onClick={handleSearch} variant="outline" fullWidth>
-          Search
-        </Button>
-      </Paper>
     </div>
   );
 
@@ -350,36 +335,6 @@ function BDesAcadView() {
           </tbody>
         </Table>
       </ScrollArea>
-      {/* Search Filter Section for Working Curriculums */}
-      <Paper
-        shadow="xs"
-        p="md"
-        style={{ marginLeft: "20px", minWidth: "250px" }}
-      >
-        <Text weight={700} mb={10}>
-          FILTER SEARCH
-        </Text>
-
-        <TextInput
-          label="Name contains:"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          placeholder="Search by Name"
-          mb={10}
-        />
-
-        <TextInput
-          label="Version"
-          value={searchVersion}
-          onChange={(e) => setSearchVersion(e.target.value)}
-          placeholder="Search by Version"
-          mb={10}
-        />
-
-        <Button onClick={handleSearch} variant="outline" fullWidth>
-          Search
-        </Button>
-      </Paper>
     </div>
   );
 
@@ -517,37 +472,99 @@ function BDesAcadView() {
           </tbody>
         </Table>
       </ScrollArea>
-      {/* Search Filter Section for Obsolete Curriculums */}
-      <Paper
-        shadow="xs"
-        p="md"
-        style={{ marginLeft: "20px", minWidth: "250px" }}
-      >
-        <Text weight={700} mb={10}>
-          FILTER SEARCH
-        </Text>
-
-        <TextInput
-          label="Name contains:"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          placeholder="Search by Name"
-          mb={10}
-        />
-
-        <TextInput
-          label="Version"
-          value={searchVersion}
-          onChange={(e) => setSearchVersion(e.target.value)}
-          placeholder="Search by Version"
-          mb={10}
-        />
-
-        <Button onClick={handleSearch} variant="outline" fullWidth>
-          Search
-        </Button>
-      </Paper>
     </div>
+  );
+
+  // Single Filter Section
+  const renderFilterSection = () => (
+    <Paper
+      shadow="xs"
+      p="md"
+      style={{ marginTop: "20px", margin: "1vw 0vw 0 1.5vw", width: "15vw" }}
+    >
+      <Button
+            variant={"filled" }
+            style={{ width:'100%',padding:'0.25vw', margin:'0 0 1vw 0'}}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+      >
+            OPTIONS
+      </Button>
+
+      {/* Options visible on hover */}
+      {isHovered && (
+        <div
+          className={`options-dropdowns ${isHovered ? "open" : ""}`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+         
+        >
+          <div  >
+            <h4 className="section-title">CURRICULUM</h4>
+            <button className="dropdown-btns green-btns">EDIT CURRICULUM</button>
+            <div
+              onMouseEnter={() => setIsAddCourseSlotHovered(true)}
+              onMouseLeave={() => setIsAddCourseSlotHovered(false)}
+            >
+              <button className="add-course-slot-button">
+                REPLICATE CURRICULUM
+              </button>
+
+              {/* Semester options visible on hover */}
+              {isAddCourseSlotHovered && (
+                <div className="semester-dropdowns">
+                  {CURRICULUM_DATA.workingCurriculums.map((curr, index) => (
+                    <div className="semester-options" key={index} >
+                      <div>
+                      <text>{curr.name}</text>
+                       &nbsp;v
+                      <text>{curr.version}</text>
+
+                      </div>
+                      <div>
+
+                      <Copy size={20} color="#000" weight="bold" />
+                      </div>
+
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div >
+            <h4 style={{margin:'0.5vh 0'}}>Programe</h4>
+            <button className="dropdown-btns blue-btns">EDIT PROGRAMME</button>
+          
+            {/* <button className="dropdown-btn black-btn">LINK BATCH</button> */}
+          </div>
+        </div>
+      )}
+
+      <Text weight={700} mb={10}>
+        FILTER SEARCH
+      </Text>
+
+      <TextInput
+        label="Name contains:"
+        value={searchName}
+        onChange={(e) => setSearchName(e.target.value)}
+        placeholder="Search by Name"
+        mb={10}
+      />
+
+      <TextInput
+        label="Version"
+        value={searchVersion}
+        onChange={(e) => setSearchVersion(e.target.value)}
+        placeholder="Search by Version"
+        mb={10}
+      />
+
+      <Button onClick={handleSearch} variant="outline" fullWidth>
+        Search
+      </Button>
+    </Paper>
   );
 
   return (
@@ -577,11 +594,109 @@ function BDesAcadView() {
         </Grid.Col>
 
         <Grid.Col span={12}>
-          {activeTab === "info" && renderInfo()}
-          {activeTab === "working" && renderWorkingCurriculums()}
-          {activeTab === "obsolete" && renderObsoleteCurriculums()}
+          {/* Render Filter Section Conditionally */}
+          <div style={{display:'flex' }}>
+
+            <div>
+            {activeTab === "info" && renderInfo()}
+            {activeTab === "working" && renderWorkingCurriculums()}
+            {activeTab === "obsolete" && renderObsoleteCurriculums()}
+
+            </div>
+            <div>
+              {(activeTab === "working" || activeTab === "obsolete") &&
+                renderFilterSection()}
+
+            </div>
+          </div>
         </Grid.Col>
       </Grid>
+        <style>
+          {
+            `
+            .options-dropdowns {
+              position: absolute;
+              top: 32vh;
+              right: 10vw;
+              background-color: white;
+              border: 1px solid #ddd;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              padding: 15px;
+              z-index: 1;
+              width: 13vw;
+              overflow-x: visible;
+              opacity: 0;
+              max-height: 0;
+              transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
+              border-radius: 5px;
+            }
+            
+            .options-dropdowns.open {
+              opacity: 1;
+              max-height: 24vw;
+              transition: max-height 0.4s ease-in, opacity 0.4s ease-in;
+            }
+
+            .semester-dropdowns {
+              position: absolute;
+              right: 12.2vw;
+              top: 13.2vh;
+              background-color: white;
+              border: 1px solid #ddd;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              padding: 10px;
+              z-index: 2;
+              min-width: 15vw;
+              /* max-height: 150px;  */
+              overflow-y: auto; /* Scroll if content overflows */
+              /* overflow-x: visible; */
+              transition: max-height 0.4s ease-out;
+              border-radius: 5px;
+            }
+            
+            .semester-options {
+              /* position: absolute; */
+              display: flex;
+              justify-content: space-between;
+              padding: 5px;
+              cursor: pointer;
+              border-bottom: 1px solid #ddd;
+              overflow-x: visible;
+              z-index: 2;
+            }
+            
+            .semester-options:hover {
+              background-color: #f1f1f1;
+            }
+            .dropdown-btns {
+              display: block;
+              width: 100%;
+              padding: 10px;
+              margin-bottom: 10px;
+              font-size: 14px;
+              border: none;
+              cursor: pointer;
+              border-radius: 4px;
+              color: black;
+              transition: background-color 0.3s ease;
+            }
+            
+            .green-btns {
+              background-color: #bee9e8;
+            }
+            
+            .blue-btns{
+              background-color: #62b6cb;
+            }
+            
+            .black-btns {
+              background-color: #6a95ad;
+            }
+            
+            
+            `
+          }
+        </style>
     </Container>
   );
 }

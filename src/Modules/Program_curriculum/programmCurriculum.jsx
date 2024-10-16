@@ -17,6 +17,7 @@ import ViewAllProgrammes from "./View_all_programmes";
 import BDesAcadView from "./Acad_admin/BDesAcadView";
 import BDesstudView from "./BDesStudView";
 import DisciplineAcad from "./Acad_admin/DisciplineAcad";
+import DisciplineStud from "./DisciplineStud";
 import FacultyCourseProposal from "./Faculty/Faculty_course_proposal";
 import VCourseProposalForm from "./Faculty/VCourseProposalForm";
 import CourseSlotDetails from "./CourseSlotDetails";
@@ -24,6 +25,7 @@ import SemesterInfo from "./SemesterInfo";
 import AdminViewAllProgrammes from "./Acad_admin/Admin_view_all_programmes";
 import AdminViewAllWorkingCurriculum from "./Acad_admin/Admin_view_all_working_curriculums";
 import ViewInwardFile from "./Faculty/ViewInwardFile";
+import ViewSemesterOfACurriculum from "./ViewSemesterOfACurriculum";
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -200,6 +202,22 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <ViewAllBatches />
+            </Layout>
+          }
+        />
+        <Route
+          path="/stud_discipline_view"
+          element={
+            <Layout>
+              <DisciplineStud />
+            </Layout>
+          }
+        />
+        <Route
+          path="/stud_curriculum_view"
+          element={
+            <Layout>
+              <ViewSemesterOfACurriculum />
             </Layout>
           }
         />
