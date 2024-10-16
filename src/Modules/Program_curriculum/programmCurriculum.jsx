@@ -23,6 +23,7 @@ import CourseSlotDetails from "./CourseSlotDetails";
 import SemesterInfo from "./SemesterInfo";
 import AdminViewAllProgrammes from "./Acad_admin/Admin_view_all_programmes";
 import AdminViewAllWorkingCurriculum from "./Acad_admin/Admin_view_all_working_curriculums";
+import ViewInwardFile from "./Faculty/ViewInwardFile";
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -159,6 +160,7 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
+
           path="/BDesstudView"
           element={
             <Layout>
@@ -166,6 +168,16 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
+
+          path="/view_inward_file"
+          element={
+            <Layout>
+              <ViewInwardFile />
+            </Layout>
+          }
+        />
+
+
         {/* Student Routes */}
         <Route
           path="/student_courses"
