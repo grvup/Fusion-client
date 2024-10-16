@@ -26,6 +26,8 @@ import AdminViewAllProgrammes from "./Acad_admin/Admin_view_all_programmes";
 import AdminViewAllWorkingCurriculum from "./Acad_admin/Admin_view_all_working_curriculums";
 import ViewInwardFile from "./Faculty/ViewInwardFile";
 import ViewSemesterOfACurriculum from "./ViewSemesterOfACurriculum";
+import InwardFile from "./Faculty/InwardFiles";
+import OutwardFile from "./Faculty/OutwardFiles";
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -45,6 +47,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <AdminViewAllCourses />
+              {/* <CourseProposalForm /> */}
             </Layout>
           }
         />
@@ -53,6 +56,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <AdminViewACourse />
+
             </Layout>
           }
         />
@@ -60,7 +64,13 @@ export default function ProgrammeCurriculumRoutes() {
           path="/admin_batches"
           element={
             <Layout>
+              {/* <AdminViewACourse /> */}
               <AdminViewAllBatches />
+
+
+              {/* <FacultyViewACourse/> */}
+              {/* <Inward /> */}
+              {/* <ViewACourse/> */}
             </Layout>
           }
         />
@@ -114,7 +124,7 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
-          path="/faculty_course/:id"
+          path="/faculty_course_view"
           element={
             <Layout>
               <FacultyViewACourse />
@@ -178,6 +188,22 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
+        <Route
+          path="/faculty_inward_files"
+          element={
+            <Layout>
+              <InwardFile />
+            </Layout>
+          }
+        />
+        <Route
+          path="/faculty_outward_files"
+          element={
+            <Layout>
+              <OutwardFile/>
+            </Layout>
+          }
+        />
 
 
         {/* Student Routes */}
@@ -186,11 +212,12 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <ViewAllCourses />
+
             </Layout>
           }
         />
         <Route
-          path="/student_course/:id"
+          path="/student_course"
           element={
             <Layout>
               <ViewACourse />

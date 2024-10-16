@@ -16,9 +16,7 @@ import ForgotPassword from "./pages/forgotPassword";
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
 
-// Programe and curriculum
 import ProgrammeCurriculumRoutes from "./Modules/Program_curriculum/programmCurriculum";
-
 
 export default function App() {
   const location = useLocation();

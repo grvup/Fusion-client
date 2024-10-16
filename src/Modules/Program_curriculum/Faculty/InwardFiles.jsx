@@ -2,148 +2,34 @@ import React, { useState } from "react";
 import { ScrollArea, Button, Select, TextInput } from "@mantine/core";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
-function Batches() {
-  const [activeTab, setActiveTab] = useState("Batches");
-  const [filter, setFilter] = useState({
-    name: "",
-    year: "",
-    curriculum: "",
-    runningBatch: "",
-    discipline: "",
-  });
+function InwardFile() {
+  const [activeTab, setActiveTab] = useState("InwardFiles");
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [filter, setFilter] = useState({
+    receivedAs: "",
+    sendBy: "",
+    fileId: 0,
+    remark: "",
+    date: "",
+  });
 
-  const batches = [
+  const InwardFiles = [
     {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
-
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
-
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
+      receivedAs: "vkjain - HOD (CSE)",
+      sendBy: "atul - Professor",
+      fileId: 1,
+      remark: "pls take a review",
+      date: "Oct 13, 2024, 10:58 p.m.",
     },
   ];
 
-  const finishedBatches = [
+  const ArchivedFiles = [
     {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
+      receivedAs: "vkjain - HOD (CSE)",
+      sendBy: "atul - Professor",
+      fileId: 1,
+      remark: "check it",
+      date: "Oct 13, 2024, 11:12 p.m.",
     },
   ];
 
@@ -168,15 +54,21 @@ function Batches() {
         <p className="active">Curriculums</p>
         <p>Courses</p>
         <p>disciplines</p>
-        <p>batches</p>
+        <p>InwardFiles</p>
 
         <div className="top-actions">
-          <Button variant="filled" color="blue">
+          {/* <Button variant="filled" color="blue">
             Add Batch
-          </Button>
+          </Button> */}
 
           {/* Toggle search icon and close icon based on search visibility */}
           {!isSearchVisible ? (
+            // <BiSearch
+            //   size={24}
+            //   onClick={() => setIsSearchVisible(true)}
+            //   style={{ cursor: "pointer", color: "#007bff" }}
+            // />
+
             <MagnifyingGlass
               size={24}
               onClick={() => setIsSearchVisible(true)}
@@ -192,16 +84,18 @@ function Batches() {
         >
           <div className="tabs">
             <Button
-              variant={activeTab === "Batches" ? "filled" : "outline"}
-              onClick={() => setActiveTab("Batches")}
+              variant={activeTab === "InwardFiles" ? "filled" : "outline"}
+              onClick={() => setActiveTab("InwardFiles")}
             >
-              Batches
+              InwardFiles
             </Button>
             <Button
-              variant={activeTab === "Finished Batches" ? "filled" : "outline"}
-              onClick={() => setActiveTab("Finished Batches")}
+              variant={
+                activeTab === "Finished InwardFiles" ? "filled" : "outline"
+              }
+              onClick={() => setActiveTab("Finished InwardFiles")}
             >
-              Finished Batches
+              Archived FIles
             </Button>
           </div>
 
@@ -210,33 +104,41 @@ function Batches() {
             type="hover"
             style={{ height: "300px" }}
           >
-            {activeTab === "Batches" && (
-              <div className="batches-table">
+            {activeTab === "InwardFiles" && (
+              <div className="InwardFiles-table">
                 <table className="courses-table">
                   <thead className="courses-table-header">
                     <tr>
-                      <th>Name</th>
-                      <th>Discipline</th>
-                      <th>Year</th>
-                      <th>Curriculum</th>
-                      <th>Edit</th>
+                      <th>Recieved as</th>
+                      <th>Send by</th>
+                      <th>File id</th>
+                      <th>remark</th>
+                      <th>date</th>
+                      <th>View File</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {batches.map((batch, index) => (
+                    {InwardFiles.map((inward, index) => (
                       <tr key={index} className="courses-table-row">
-                        <td>{batch.name}</td>
-                        <td>{batch.discipline}</td>
-                        <td>{batch.year}</td>
+                        <td>{inward.receivedAs}</td>
+                        <td>{inward.sendBy}</td>
+                        <td>{inward.fileId}</td>
+                        <td>{inward.remark}</td>
+                        <td>{inward.date}</td>
                         <td>
-                          <a href="/view" className="course-link">
-                            {batch.curriculum}
-                          </a>
-                        </td>
-                        <td>
-                          <Button variant="light" color="green">
-                            Edit
-                          </Button>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-around",
+                            }}
+                          >
+                            <Button variant="filled" color="blue">
+                              View
+                            </Button>
+                            <Button variant="filled" color="blue">
+                              Submit
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -245,33 +147,41 @@ function Batches() {
               </div>
             )}
 
-            {activeTab === "Finished Batches" && (
-              <div className="batches-table">
+            {activeTab === "Finished InwardFiles" && (
+              <div className="InwardFiles-table">
                 <table className="courses-table">
                   <thead className="courses-table-header">
                     <tr>
-                      <th>Name</th>
-                      <th>Discipline</th>
-                      <th>Year</th>
-                      <th>Curriculum</th>
-                      <th>Edit</th>
+                      <th>Received as</th>
+                      <th>Send by</th>
+                      <th>File id</th>
+                      <th>Remark</th>
+                      <th>Date</th>
+                      <th>View File</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {finishedBatches.map((batch, index) => (
+                    {ArchivedFiles.map((inward, index) => (
                       <tr key={index} className="courses-table-row">
-                        <td>{batch.name}</td>
-                        <td>{batch.discipline}</td>
-                        <td>{batch.year}</td>
+                        <td>{inward.receivedAs}</td>
+                        <td>{inward.sendBy}</td>
+                        <td>{inward.fileId}</td>
+                        <td>{inward.remark}</td>
+                        <td>{inward.date}</td>
                         <td>
-                          <a href="/view" className="course-link">
-                            {batch.curriculum}
-                          </a>
-                        </td>
-                        <td>
-                          <Button variant="light" color="green">
-                            Edit
-                          </Button>
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-around",
+                            }}
+                          >
+                            <Button variant="filled" color="blue">
+                              View
+                            </Button>
+                            <Button variant="filled" color="green">
+                              UnArchive
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -291,6 +201,19 @@ function Batches() {
             <div className="courses-search-card">
               <div className="filter-form">
                 {/* Close icon in the search section */}
+                {/*
+                <AiOutlineClose
+                  size={24}
+                  onClick={() => setIsSearchVisible(false)}
+                  style={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    cursor: "pointer",
+                    color: "#ff0000",
+                  }}
+                />
+                */}
                 <X
                   size={24}
                   onClick={() => setIsSearchVisible(false)}
@@ -410,7 +333,7 @@ function Batches() {
           margin-top: 20px;
         }
 
-        .batches-table {
+        .InwardFiles-table {
           margin-top: 20px;
         }
 
@@ -466,4 +389,4 @@ function Batches() {
   );
 }
 
-export default Batches;
+export default InwardFile;
