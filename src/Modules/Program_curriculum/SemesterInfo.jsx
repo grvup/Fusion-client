@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Button, Table, Flex, Text } from "@mantine/core";
+import { Container, Button, Table, Flex, Text ,Group} from "@mantine/core";
 import PropTypes from "prop-types";
 
 export default function SemesterInfo({ curriculum }) {
@@ -16,17 +16,75 @@ export default function SemesterInfo({ curriculum }) {
   const courseSlots = [
     {
       id: "NS1",
-      type: "Natural Science",
-      courseCode: "NS101",
-      courseName: "Mathematics-I",
-      credits: 4,
+      slotName: "NS1",
+      courseType: "Natural Science",
+      courses: [
+        {
+          courseCode: "NS101",
+          courseName: "Mathematics-I",
+          credits: 4,
+        },
+        {
+          courseCode: "NS102",
+          courseName: "Physics-I",
+          credits: 3,
+        },
+        {
+          courseCode: "NS102",
+          courseName: "Physics-I",
+          credits: 3,
+        },
+        {
+          courseCode: "NS102",
+          courseName: "Physics-I",
+          credits: 3,
+        },
+        {
+          courseCode: "NS102",
+          courseName: "Physics-I",
+          credits: 3,
+        },
+        // add more courses as needed
+      ],
     },
     {
       id: "NS2",
-      type: "Natural Science",
-      courseCode: "NS102",
-      courseName: "Engineering Mechanics",
-      credits: 4,
+      slotName: "NS2",
+      courseType: "Engineering",
+      courses: [
+        {
+          courseCode: "ENG101",
+          courseName: "Mechanics",
+          credits: 4,
+        },
+        // add more courses here as needed
+      ],
+    },
+    {
+      id: "NS2",
+      slotName: "NS2",
+      courseType: "Engineering",
+      courses: [
+        {
+          courseCode: "ENG101",
+          courseName: "Mechanics",
+          credits: 4,
+        },
+        // add more courses here as needed
+      ],
+    },
+    {
+      id: "NS2",
+      slotName: "NS2",
+      courseType: "Engineering",
+      courses: [
+        {
+          courseCode: "ENG101",
+          courseName: "Mechanics",
+          credits: 4,
+        },
+        // add more courses here as needed
+      ],
     },
   ];
 
@@ -46,66 +104,178 @@ export default function SemesterInfo({ curriculum }) {
     console.log(`Remove Slot: ${slotId}`);
   };
 
-  const renderTableRows = (data) =>
-    data.map((slot, index) => (
-      <tr key={slot.id}>
-        <td
-          style={{
-            padding: "15px 20px",
-            textAlign: "center",
-            color: "#3498db",
-            backgroundColor: index % 2 === 0 ? "#E6F7FF" : "#D5EAF8",
-            borderRight: "1px solid #d3d3d3",
-          }}
-        >
-          {slot.courseCode}
-        </td>
-        <td
-          style={{
-            padding: "15px 20px",
-            textAlign: "left",
-            backgroundColor: index % 2 === 0 ? "#ffffff" : "#E6F7FF",
-            borderRight: "1px solid #d3d3d3",
-          }}
-        >
-          {slot.courseName}
-        </td>
-        <td
-          style={{
-            padding: "15px 20px",
-            textAlign: "center",
-            backgroundColor: index % 2 === 0 ? "#E6F7FF" : "#D5EAF8",
-          }}
-        >
-          {slot.credits}
-        </td>
-        <td
-          style={{
-            padding: "15px 20px",
-            textAlign: "center",
-            backgroundColor: index % 2 === 0 ? "#ffffff" : "#E6F7FF",
-          }}
-        >
-          <Button
-            variant="outline"
-            color="blue"
-            onClick={() => handleEditSlot(slot.id)}
-            size="xs"
-            style={{ marginRight: "10px" }}
+  const renderCourseTables = (data) =>
+  data.map((slot, slotIndex) => (
+    <Table
+      key={slot.id}
+      style={{
+        backgroundColor: "white",
+        borderRadius: "10px",
+        border: "1px solid #d3d3d3",
+        marginBottom: "20px", // add spacing between table
+        width: "100%", // full width for the table
+      }}
+    >
+      <thead>
+        <tr>
+          <th
+            colSpan="4"
+            style={{
+              padding: "15px 20px",
+              backgroundColor: "#F9F9F9",
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "1.25rem",
+              borderBottom: "1px solid #d3d3d3",
+            }}
           >
-            Edit
-          </Button>
-          <Button
-            variant="outline"
-            color="red"
-            onClick={() => handleRemoveSlot(slot.id)}
-            size="xs"
+            {slot.slotName || "NS1"}
+          </th>
+        </tr>
+        <tr>
+          <th
+            colSpan="4"
+            style={{
+              padding: "15px 20px",
+              backgroundColor: "#F9F9F9",
+              textAlign: "center",
+              fontWeight: "bold",
+              borderBottom: "1px solid #d3d3d3",
+            }}
           >
-            Remove
-          </Button>
-        </td>
-      </tr>
-    ));
+            Type : {slot.courseType || "Natural Science"}
+          </th>
+        </tr>
+        <tr>
+          <th
+            style={{
+              padding: "12px 20px",
+              backgroundColor: "#C5E2F6",
+              color: "#3498db",
+              textAlign: "center",
+              width: "20%", // fixed width for Course Code
+            }}
+          >
+            Course Code
+          </th>
+          <th
+            style={{
+              padding: "12px 20px",
+              backgroundColor: "#C5E2F6",
+              color: "#3498db",
+              textAlign: "center",
+              width: "40%", // fixed width for Course Name
+            }}
+          >
+            Course Name
+          </th>
+          <th
+            style={{
+              padding: "12px 20px",
+              backgroundColor: "#C5E2F6",
+              color: "#3498db",
+              textAlign: "center",
+              width: "20%", // fixed width for Credits
+            }}
+          >
+            Credits
+          </th>
+          <th
+            style={{
+              padding: "12px 20px",
+              backgroundColor: "#C5E2F6",
+              color: "#3498db",
+              textAlign: "center",
+              width: "20%", // fixed width for Actions
+            }}
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {slot.courses.map((course, courseIndex) => (
+          <tr key={`${slot.id}-${course.courseCode}`}>
+            <td
+              style={{
+                padding: "15px 20px",
+                textAlign: "center",
+                color: "#3498db",
+                backgroundColor: "#ffffff",
+                borderRight: "1px solid #d3d3d3",
+                borderBottom: "1px solid #d3d3d3",
+              }}
+            >
+              {course.courseCode}
+            </td>
+            <td
+              style={{
+                padding: "15px 20px",
+                textAlign: "left",
+                backgroundColor: "#ffffff",
+                borderRight: "1px solid #d3d3d3",
+                borderBottom: "1px solid #d3d3d3",
+              }}
+            >
+              {course.courseName}
+            </td>
+            <td
+              style={{
+                padding: "15px 20px",
+                textAlign: "center",
+                backgroundColor:"#ffffff",
+                borderRight: "1px solid #d3d3d3",
+                borderBottom: "1px solid #d3d3d3",
+              }}
+            >
+              {course.credits}
+            </td>
+            <td
+              style={{
+                padding: "15px 20px",
+                textAlign: "center",
+                backgroundColor: "#ffffff",
+                borderRight: "1px solid #d3d3d3",
+                borderBottom: "1px solid #d3d3d3",
+              }}
+            >
+              <Button
+                variant="outline"
+                color="green"
+                onClick={() => handleEditSlot(slot.id)}
+                size="xs"
+                style={{ marginRight: "10px" }}
+              >
+                Edit
+              </Button>
+            </td>
+          </tr>
+        ))}
+        <tr>
+          <td colSpan="4" style={{ textAlign: "right", padding: "10px" }}>
+            <Button
+              variant="solid"
+              color="green"
+              onClick={() => handleEditSlot(slot.id)}
+              size="md"
+              style={{ marginRight: "10px" }}
+            >
+              Edit Slot
+            </Button>
+            <Button
+              variant="solid"
+              color="red"
+              onClick={() => handleRemoveSlot(slot.id)}
+              size="md"
+            >
+              Remove Slot
+            </Button>
+          </td>
+        </tr>
+      </tbody>
+    </Table>
+  ));
+
 
   return (
     <Container
@@ -137,201 +307,230 @@ export default function SemesterInfo({ curriculum }) {
 
       {/* Conditional Rendering for Semester Info Tab */}
       {activeTab === 0 && (
-        <div>
-          <Text size="lg" weight={600}>
-            Curriculum: {curriculum || "CSE UG Curriculum v1.0"}
-          </Text>
-          <Text size="md" weight={500}>
-            Semester: {sampleSemester.semester_no}
-          </Text>
+       <div style={{ display: "flex",justifyContent:'space-between', alignItems: "flex-start" }}>
+       {/* Left side: Semester Information Table */}
+       <div>
+       <Table
+        style={{
+          backgroundColor: "white",
+          borderRadius: "10px",
+          border: "1px solid #d3d3d3",
+          width: "65vw",
+        }}
+      >
+  <tbody>
+    {/* First row: Curriculum */}
+    <tr>
+      <td
+        colSpan="2"
+        style={{
+          padding: "15px 20px",
+          backgroundColor: "#ffffff",
+          textAlign: "center",
+          fontWeight: "bold",
+          borderBottom: "1px solid #d3d3d3",
+        }}
+      >
+        {curriculum || "CSE UG Curriculum v1.0"}
+      </td>
+    </tr>
 
-          <Table
-            style={{
-              backgroundColor: "white",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
-            }}
-          >
-            <tbody>
-              <tr>
-                <td
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    textAlign: "center",
-                    borderRight: "1px solid #d3d3d3",
-                  }}
-                >
-                  Instigate Semester
-                </td>
-                <td
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#E6F7FF",
-                    color: sampleSemester.is_instigated ? "green" : "red",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  {sampleSemester.is_instigated ? "Active" : "Not Yet"}
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    textAlign: "center",
-                  }}
-                >
-                  Start Semester Date
-                </td>
-                <td
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#ffffff",
-                    textAlign: "center",
-                  }}
-                >
-                  {sampleSemester.start_date || "None"}
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    textAlign: "center",
-                  }}
-                >
-                  End Semester Date
-                </td>
-                <td
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#E6F7FF",
-                    textAlign: "center",
-                  }}
-                >
-                  {sampleSemester.end_date || "None"}
-                </td>
-              </tr>
-              <tr>
-                <td
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    textAlign: "center",
-                  }}
-                >
-                  Semester Information
-                </td>
-                <td
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#ffffff",
-                    textAlign: "center",
-                  }}
-                >
-                  {sampleSemester.info || "None"}
-                </td>
-              </tr>
-            </tbody>
-          </Table>
+    {/* Second row: Semester */}
+    <tr>
+      <td
+        colSpan="2"
+        style={{
+          padding: "15px 20px",
+          backgroundColor: "#ffffff",
+          textAlign: "center",
+          fontWeight: "bold",
+          borderBottom: "1px solid #d3d3d3",
+        }}
+      >
+        Semester : {sampleSemester.semester_no}
+      </td>
+    </tr>
 
-          <Flex mt={20}>
-            <Button
-              variant="filled"
-              color="blue"
-              onClick={handleInstigateSemester}
-              style={{ marginRight: "10px" }}
-            >
-              Instigate Semester
-            </Button>
-            <Button
-              variant="filled"
-              color="green"
-              onClick={handleAddCourseSlot}
-            >
-              Add Course Slot
-            </Button>
-          </Flex>
+    {/* Third row: Instigate Semester */}
+    <tr>
+      <td
+        style={{
+          padding: "15px 20px",
+          backgroundColor:"#C5E2F6",
+          color: "#3498db",
+          fontWeight: "bold",
+          textAlign: "center",
+          borderRight: "1px solid #d3d3d3",
+        }}
+      >
+        Instigate Semester
+      </td>
+      <td
+        style={{
+          padding: "15px 20px",
+          backgroundColor:"#C5E2F6",
+          color: sampleSemester.is_instigated ? "green" : "red",
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
+      >
+        {sampleSemester.is_instigated ? "Active" : "Not Yet"}
+      </td>
+    </tr>
+
+    {/* Fourth row: Start Semester Date */}
+    <tr>
+      <td
+        style={{
+          padding: "15px 20px",
+          backgroundColor: "#ffffff",
+          color: "#3498db",
+          fontWeight: "bold",
+          textAlign: "center",
+          borderRight: "1px solid #d3d3d3",
+        }}
+      >
+        Start Semester Date
+      </td>
+      <td
+        style={{
+          padding: "15px 20px",
+          backgroundColor: "#ffffff",
+          textAlign: "center",
+        }}
+      >
+        {sampleSemester.start_date || "None"}
+      </td>
+    </tr>
+
+    {/* Fifth row: End Semester Date */}
+    <tr>
+      <td
+        style={{
+          padding: "15px 20px",
+          backgroundColor:"#C5E2F6",
+          color: "#3498db",
+          fontWeight: "bold",
+          textAlign: "center",
+          borderRight: "1px solid #d3d3d3",
+        }}
+      >
+        End Semester Date
+      </td>
+      <td
+        style={{
+          padding: "15px 20px",
+          backgroundColor:"#C5E2F6",
+          textAlign: "center",
+        }}
+      >
+        {sampleSemester.end_date || "None"}
+      </td>
+    </tr>
+
+    {/* Sixth row: Semester Information */}
+    <tr>
+      <td
+        style={{
+          padding: "15px 20px",
+          backgroundColor: "#ffffff",
+          color: "#3498db",
+          fontWeight: "bold",
+          textAlign: "center",
+          borderRight: "1px solid #d3d3d3",
+        }}
+      >
+        Semester Information
+      </td>
+      <td
+        style={{
+          padding: "15px 20px",
+          backgroundColor: "#ffffff",
+          textAlign: "center",
+        }}
+      >
+        {sampleSemester.info || "None"}
+      </td>
+    </tr>
+  </tbody>
+</Table>
+
+       </div>
+     
+       {/* Right side: Buttons */}
+       <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            margin:'0 1vw'
+
+          }}
+        >
+           <Group >
+              <Button
+                variant="filled"
+                color="blue"spacing="md" direction="column" style={{ width: "12vw" }}
+                onClick={handleInstigateSemester}
+                // style={{ marginBottom: "10px" }}
+              >
+                Instigate Semester
+              </Button>
+              <Button
+                variant="filled"
+                color="green"
+                onClick={handleAddCourseSlot}
+                style={{ width: "12vw" }}
+              >
+                Add Course Slot
+              </Button>
+          </Group>
         </div>
+       
+     
+     </div>
+     
+      
       )}
 
       {/* Conditional Rendering for Course Slots Tab */}
       {activeTab === 1 && (
-        <div>
-          <Text size="md" weight={500} mb={10}>
-            Course slots for Semester {sampleSemester.semester_no}
-          </Text>
-          <Table
+        <div style={{ display: "flex",justifyContent:'space-between', alignItems: "flex-start" }}>
+          <div style={{width:'65vw'}}>
+          {renderCourseTables(courseSlots)}
+
+          </div>
+
+          <div
             style={{
-              backgroundColor: "white",
-              borderRadius: "10px",
-              border: "1px solid #d3d3d3",
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              margin:'0 1vw'
+
             }}
           >
-            <thead>
-              <tr>
-                <th
-                  style={{
-                    padding: "12px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    textAlign: "center",
-                  }}
-                >
-                  Course Code
-                </th>
-                <th
-                  style={{
-                    padding: "12px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    textAlign: "center",
-                  }}
-                >
-                  Course Name
-                </th>
-                <th
-                  style={{
-                    padding: "12px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    textAlign: "center",
-                  }}
-                >
-                  Credits
-                </th>
-                <th
-                  style={{
-                    padding: "12px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    textAlign: "center",
-                  }}
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>{renderTableRows(courseSlots)}</tbody>
-          </Table>
-
-          <Flex mt={20}>
-            <Button
-              variant="filled"
-              color="green"
-              onClick={handleAddCourseSlot}
-            >
-              Add Course Slot
-            </Button>
-          </Flex>
+           <Group >
+              <Button
+                variant="filled"
+                color="blue"spacing="md" direction="column" style={{ width: "12vw" }}
+                onClick={handleInstigateSemester}
+                // style={{ marginBottom: "10px" }}
+              >
+                Instigate Semester
+              </Button>
+              <Button
+                variant="filled"
+                color="green"
+                onClick={handleAddCourseSlot}
+                style={{ width: "12vw" }}
+              >
+                Add Course Slot
+              </Button>
+           </Group>
+          </div>
         </div>
       )}
     </Container>

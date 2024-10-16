@@ -168,7 +168,7 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
-
+        <Route
           path="/view_inward_file"
           element={
             <Layout>

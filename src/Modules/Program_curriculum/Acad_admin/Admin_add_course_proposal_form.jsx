@@ -55,7 +55,7 @@ function Admin_add_course_proposal_form() {
       {item.title}
     </Anchor>
   ));
-
+  console.log(form);
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
@@ -257,7 +257,7 @@ function Admin_add_course_proposal_form() {
                 </Table>
 
                 {/* Contact Hours */}
-                <Group
+              <Group
                   grow
                   style={{
                     borderBottom: "2px solid lightblue",
@@ -360,7 +360,6 @@ function Admin_add_course_proposal_form() {
                     step={1}
                   />
                 </Group>
-
                 {/* Discipline and Others */}
                 <Select
                   label="From Discipline"
@@ -410,6 +409,147 @@ function Admin_add_course_proposal_form() {
                   }
                   required
                 />
+                 <Group
+                  grow
+                  style={{
+                    borderBottom: "2px solid lightblue",
+                    paddingBottom: "10px",
+                  }}
+                >
+                  <NumberInput
+                    label="Quiz 1"
+                    placeholder="3"
+                    value={form.values.quiz1}
+                    onChange={(value) =>
+                      form.setFieldValue("quiz1", value)
+                    }
+                    required
+                    styles={{
+                      input: {
+                        borderRadius: "8px",
+                        height: "40px",
+                        fontSize: "16px",
+                      },
+                      control: { width: "15px" },
+                      label: { fontSize: "14px", fontWeight: 600 },
+                    }}
+                    step={1}
+                  />
+                  <NumberInput
+                    label="Midsem"
+                    placeholder="1"
+                    value={form.values.midsem}
+                    onChange={(value) =>
+                      form.setFieldValue("midsem", value)
+                    }
+                    required
+                    styles={{
+                      input: {
+                        borderRadius: "8px",
+                        height: "40px",
+                        fontSize: "16px",
+                      },
+                      control: { width: "15px" },
+                      label: { fontSize: "14px", fontWeight: 600 },
+                    }}
+                    step={1}
+                  />
+                  <NumberInput
+                    label="Quiz 2"
+                    placeholder="2"
+                    value={form.values.quiz2}
+                    onChange={(value) =>
+                      form.setFieldValue("quiz2", value)
+                    }
+                    required
+                    styles={{
+                      input: {
+                        borderRadius: "8px",
+                        height: "40px",
+                        fontSize: "16px",
+                      },
+                      control: { width: "15px" },
+                      label: { fontSize: "14px", fontWeight: 600 },
+                    }}
+                    step={1}
+                  />
+                  <NumberInput
+                    label="Endsem"
+                    placeholder="0"
+                    value={form.values.endsem}
+                    onChange={(value) =>
+                      form.setFieldValue("endsem", value)
+                    }
+                    required
+                    styles={{
+                      input: {
+                        borderRadius: "8px",
+                        height: "40px",
+                        fontSize: "16px",
+                      },
+                      control: { width: "15px" },
+                      label: { fontSize: "14px", fontWeight: 600 },
+                    }}
+                    step={1}
+                  />
+                  <NumberInput
+                    label="Project"
+                    placeholder="0"
+                    value={form.values.project}
+                    onChange={(value) =>
+                      form.setFieldValue("project", value)
+                    }
+                    required
+                    styles={{
+                      input: {
+                        borderRadius: "8px",
+                        height: "40px",
+                        fontSize: "16px",
+                      },
+                      control: { width: "15px" },
+                      label: { fontSize: "14px", fontWeight: 600 },
+                    }}
+                    step={1}
+                  />
+                  <NumberInput
+                    label="Lab"
+                    placeholder="0"
+                    value={form.values.labEvaluation}
+                    onChange={(value) =>
+                      form.setFieldValue("labEvaluation", value)
+                    }
+                    required
+                    styles={{
+                      input: {
+                        borderRadius: "8px",
+                        height: "40px",
+                        fontSize: "16px",
+                      },
+                      control: { width: "15px" },
+                      label: { fontSize: "14px", fontWeight: 600 },
+                    }}
+                    step={1}
+                  />
+                  <NumberInput
+                    label="Attendance"
+                    placeholder="0"
+                    value={form.values.attendance}
+                    onChange={(value) =>
+                      form.setFieldValue("attendance", value)
+                    }
+                    required
+                    styles={{
+                      input: {
+                        borderRadius: "8px",
+                        height: "40px",
+                        fontSize: "16px",
+                      },
+                      control: { width: "15px" },
+                      label: { fontSize: "14px", fontWeight: 600 },
+                    }}
+                    step={1}
+                  />
+                </Group>
 
                 <Button type="submit" mt="md">
                   Submit

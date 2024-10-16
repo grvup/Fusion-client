@@ -37,7 +37,10 @@ function CourseSlotDetails() {
   return (
     <div className="flex-container">
       {/* Course Slot Details */}
+      <div style={{display:'flex'}}>
       <div className="course-slot-container">
+
+        
         <div className="course-slot-content">
           <div className="slot-description">
             <table className="course-info-table">
@@ -132,7 +135,7 @@ function CourseSlotDetails() {
           Add Course Slot
         </Link>
       </div>
-
+      </div>
       {/* Modal */}
       {showModal && (
         <div className="modal">

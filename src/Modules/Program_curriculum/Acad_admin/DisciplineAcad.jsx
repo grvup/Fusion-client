@@ -2,7 +2,6 @@ import React from "react";
 import {
   Table,
   Anchor,
-  ScrollArea,
   Container,
   Button,
   Flex,
@@ -98,12 +97,12 @@ function DisciplineAcad() {
   return (
     <Container
       style={{
-        marginTop: "20px",
-        padding: "20px",
-        backgroundColor: "#f8f9fa",
+        // marginTop: "20px",
+        // padding: "20px",
+        // backgroundColor: "#f8f9fa",
         borderRadius: "8px",
         marginLeft: "0",
-        width: "100%",
+        width: "100vw",
       }}
     >
       <nav className="breadcrumbs">
@@ -131,24 +130,16 @@ function DisciplineAcad() {
         <h2 style={{ fontSize: "24px", textAlign: "left" }}>Discipline</h2>
 
         {/* Add Discipline Button */}
-        <Button
-          style={{
-            backgroundColor: "#007bff",
-            color: "white",
-          }}
-          onClick={() => navigate("/programme_curriculum/discipline_form")} // Navigate to Discipline Form Page
-        >
-          ADD DISCIPLINE
-        </Button>
+       
       </Flex>
 
       {/* Scrollable and Larger Table */}
-      <ScrollArea>
+      <Flex  style={{width:'85vw' , display:'flex'}}>
         <Table
           highlightOnHover
           verticalSpacing="sm"
           style={{
-            width: "100%", // Make the table larger by using full width
+            width: "65vw", // Make the table larger by using full width
             border: "2px solid #1e90ff", // Added blue border
             borderRadius: "8px", // Optional: rounded corners for the table
           }}
@@ -179,12 +170,13 @@ function DisciplineAcad() {
                     index % 2 === 0 ? "#fff" : "#15ABFF1C";
                 }}
               >
-                <td style={{ padding: "10px" }}>{item.discipline}</td>
+                <td style={{ padding: "10px" ,borderRight:'1px solid black'}}>{item.discipline}</td>
                 <td
                   style={{
-                    padding: "10px",
+                    padding: "20px",
                     display: "flex",
                     alignItems: "center",
+                    borderRight:'1px solid black'
                   }}
                 >
                   {item.programs.map((program, i, array) => (
@@ -222,7 +214,18 @@ function DisciplineAcad() {
             ))}
           </tbody>
         </Table>
-      </ScrollArea>
+        <Button
+          style={{
+            backgroundColor: "#007bff",
+            color: "white",
+            width:'15vw',
+            marginLeft:'1.5vw'
+          }}
+          onClick={() => navigate("/programme_curriculum/discipline_form")} 
+        >
+          ADD DISCIPLINE
+        </Button>
+      </Flex>
     </Container>
   );
 }

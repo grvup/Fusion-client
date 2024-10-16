@@ -1,10 +1,12 @@
 /* CourseSlotDetails.css */
 
 .course-slot-container {
+    
     margin: 20px;
     padding: 20px;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     border-radius: 8px;
+    width: 65vw;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -166,11 +168,15 @@
 
 .button-container {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    flex-direction: column;
     gap: 10px;
     padding: 15px;
-    background-color: #f9f9f9;
+    /* background-color: #f9f9f9; */
     border-radius: 8px;
+    text-align: center;
+    width: 15vw;
+    margin: 0.5vh 0;
 }
 
 .edit-course-slot-btn,
