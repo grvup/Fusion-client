@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Table,
-  Anchor,
-  Container,
-  Button,
-  Flex,
-} from "@mantine/core";
+import { Table, Anchor, Container, Button, Flex } from "@mantine/core";
 import { Link, useNavigate } from "react-router-dom";
 // import './Admin_view_all_courses.css';
 
@@ -130,11 +124,10 @@ function DisciplineAcad() {
         <h2 style={{ fontSize: "24px", textAlign: "left" }}>Discipline</h2>
 
         {/* Add Discipline Button */}
-       
       </Flex>
 
       {/* Scrollable and Larger Table */}
-      <Flex  style={{width:'85vw' , display:'flex'}}>
+      <Flex style={{ width: "85vw", display: "flex" }}>
         <Table
           highlightOnHover
           verticalSpacing="sm"
@@ -170,20 +163,22 @@ function DisciplineAcad() {
                     index % 2 === 0 ? "#fff" : "#15ABFF1C";
                 }}
               >
-                <td style={{ padding: "10px" ,borderRight:'1px solid black'}}>{item.discipline}</td>
+                <td style={{ padding: "10px", borderRight: "1px solid black" }}>
+                  {item.discipline}
+                </td>
                 <td
                   style={{
                     padding: "20px",
                     display: "flex",
                     alignItems: "center",
-                    borderRight:'1px solid black'
+                    borderRight: "1px solid black",
                   }}
                 >
                   {item.programs.map((program, i, array) => (
                     <React.Fragment key={i}>
                       <Anchor
                         component={Link}
-                        to={program.link}
+                        to={`/programme_curriculum/acad_view?programme=${program.label}`}
                         style={{
                           marginRight: "10px",
                           color: "#1e90ff",
@@ -199,16 +194,23 @@ function DisciplineAcad() {
                   ))}
                 </td>
                 {/* Edit Button */}
+
                 <td style={{ padding: "10px", textAlign: "center" }}>
-                  <Button
-                    style={{
-                      backgroundColor: "#28a745",
-                      color: "white",
-                      padding: "5px 10px",
-                    }}
+                  <a
+                    href={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${
+                      item.discipline
+                    }`}
                   >
-                    EDIT
-                  </Button>
+                    <Button
+                      style={{
+                        backgroundColor: "#28a745",
+                        color: "white",
+                        padding: "5px 10px",
+                      }}
+                    >
+                      EDIT
+                    </Button>
+                  </a>
                 </td>
               </tr>
             ))}
@@ -218,10 +220,12 @@ function DisciplineAcad() {
           style={{
             backgroundColor: "#007bff",
             color: "white",
-            width:'15vw',
-            marginLeft:'1.5vw'
+            width: "15vw",
+            marginLeft: "1.5vw",
           }}
-          onClick={() => navigate("/programme_curriculum/discipline_form")} 
+          onClick={() =>
+            navigate("/programme_curriculum/acad_admin_add_discipline_form")
+          }
         >
           ADD DISCIPLINE
         </Button>

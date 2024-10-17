@@ -37,104 +37,107 @@ function CourseSlotDetails() {
   return (
     <div className="flex-container">
       {/* Course Slot Details */}
-      <div style={{display:'flex'}}>
-      <div className="course-slot-container">
-
-        
-        <div className="course-slot-content">
-          <div className="slot-description">
-            <table className="course-info-table">
-              <tbody>
-                <tr>
-                  <td colSpan="4">
-                    <h2>Course Slot: {courseSlot.name}</h2>
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan="4">
-                    <h3>Semester: {courseSlot.semester}</h3>
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan="4">
-                    <h4>Type: {courseSlot.type}</h4>
-                  </td>
-                </tr>
-                <tr className="course-slot-row">
-                  <td>Info</td>
-                  <td colSpan="3">{courseSlot.course_slot_info}</td>
-                </tr>
-                <tr className="course-slot-row">
-                  <td>Duration</td>
-                  <td colSpan="3">{courseSlot.duration} Semesters</td>
-                </tr>
-                <tr className="course-slot-row">
-                  <td>Min Registration Limit</td>
-                  <td>{courseSlot.min_registration_limit}</td>
-                  <td>Max Registration Limit</td>
-                  <td>{courseSlot.max_registration_limit}</td>
-                </tr>
-              </tbody>
-            </table>
-
-            {courseSlot.courses.length > 0 ? (
-              <table className="course-list-table">
-                <thead>
-                  <tr className="table-header">
-                    <td>Course Code</td>
-                    <td>Course Name</td>
-                    <td>Credits</td>
-                    <td />
-                  </tr>
-                </thead>
+      <div style={{ display: "flex" }}>
+        <div className="course-slot-container">
+          <div className="course-slot-content">
+            <div className="slot-description">
+              <table className="course-info-table">
                 <tbody>
-                  {courseSlot.courses.map((course) => (
-                    <tr key={course.id}>
-                      <td>
-                        <Link to={`/courses/${course.id}`}>{course.code}</Link>
-                      </td>
-                      <td>{course.name}</td>
-                      <td>{course.credit}</td>
-                      <td>
-                        <Link
-                          to={`/edit-course/${course.id}`}
-                          className="edit-btn"
-                        >
-                          Edit
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                  <tr>
+                    <td colSpan="4">
+                      <h2>Course Slot: {courseSlot.name}</h2>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="4">
+                      <h3>Semester: {courseSlot.semester}</h3>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="4">
+                      <h4>Type: {courseSlot.type}</h4>
+                    </td>
+                  </tr>
+                  <tr className="course-slot-row">
+                    <td>Info</td>
+                    <td colSpan="3">{courseSlot.course_slot_info}</td>
+                  </tr>
+                  <tr className="course-slot-row">
+                    <td>Duration</td>
+                    <td colSpan="3">{courseSlot.duration} Semesters</td>
+                  </tr>
+                  <tr className="course-slot-row">
+                    <td>Min Registration Limit</td>
+                    <td>{courseSlot.min_registration_limit}</td>
+                    <td>Max Registration Limit</td>
+                    <td>{courseSlot.max_registration_limit}</td>
+                  </tr>
                 </tbody>
               </table>
-            ) : (
-              <div className="no-courses">No Courses Available</div>
-            )}
+
+              {courseSlot.courses.length > 0 ? (
+                <table className="course-list-table">
+                  <thead>
+                    <tr className="table-header">
+                      <td>Course Code</td>
+                      <td>Course Name</td>
+                      <td>Credits</td>
+                      <td />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {courseSlot.courses.map((course) => (
+                      <tr key={course.id}>
+                        <td>
+                          <Link
+                            to={`/programme_curriculum/admin_course/${course.id}`}
+                            style={{ textDecoration: "none" }}
+                          >
+                            {course.code}
+                          </Link>
+                        </td>
+                        <td>{course.name}</td>
+                        <td>{course.credit}</td>
+                        <td>
+                          <Link
+                            to={`/edit-course/${course.id}`}
+                            className="edit-btn"
+                          >
+                            Edit
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="no-courses">No Courses Available</div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="button-container">
-        <Link
-          to={`/edit-course-slot/${courseSlot.id}`}
-          className="edit-course-slot-btn"
-        >
-          Edit Course Slot
-        </Link>
-        <button
-          className="remove-course-slot-btn"
-          onClick={() => setShowModal(true)}
-        >
-          Remove Course Slot
-        </button>
-        <Link
-          to={`/add-course-slot?semester_id=${courseSlot.semester}`}
-          className="add-course-slot-btn"
-        >
-          Add Course Slot
-        </Link>
-      </div>
+        {/* Action Buttons */}
+        <div className="button-container">
+          <Link
+            to={`/programme_curriculum/admin_edit_course_slot_form?course_slot_id=${courseSlot.id}`}
+            className="edit-course-slot-btn"
+          >
+            Edit Course Slot
+          </Link>
+          <button
+            className="remove-course-slot-btn"
+            onClick={() => setShowModal(true)}
+          >
+            Remove Course Slot
+          </button>
+          <Link
+            to={`/programme_curriculum/acad_admin_add_courseslot_form?semester_id=${courseSlot.semester}`}
+            className="add-course-slot-btn"
+          >
+            Add Course Slot
+          </Link>
+        </div>
       </div>
       {/* Modal */}
       {showModal && (

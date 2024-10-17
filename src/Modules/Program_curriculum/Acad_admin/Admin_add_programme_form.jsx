@@ -135,8 +135,12 @@ function Admin_add_programme_form() {
             }}
           >
             <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <Button className="right-btn-programme">Add Curriculum</Button>
-              <Button className="right-btn-programme">Add Discipline</Button>
+              <a href="/programme_curriculum/acad_admin_add_curriculum_form">
+                <Button className="right-btn-programme">Add Curriculum</Button>
+              </a>
+              <a href="/programme_curriculum/acad_admin_add_discipline_form">
+                <Button className="right-btn-programme">Add Discipline</Button>
+              </a>
             </Group>
           </div>
         </div>

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // import { FaSearch, FaTimes } from "react-icons/fa";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
-function Admin_view_a_courses() {
+function Admin_view_all_courses() {
   // const [selectedOption, setSelectedOption] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
 
@@ -145,7 +145,12 @@ function Admin_view_a_courses() {
         <p>batches</p>
 
         <div className="top-actions">
-          <Button className="add-course-btn">ADD COURSE</Button>
+          <a
+            href="/programme_curriculum/acad_admin_add_course_proposal_form"
+            style={{ textDecoration: "none" }}
+          >
+            <Button className="add-course-btn">ADD COURSE</Button>
+          </a>
           {/* <Button className="search-btn" onClick={() => setShowSearch(!showSearch)}>
           {showSearch ? 'Hide Search' : 'Search Courses'}
         </Button> */}
@@ -185,8 +190,9 @@ function Admin_view_a_courses() {
                     <tr key={index} className="courses-table-row">
                       <td>
                         <a
-                          href={`/course-detail/${course.code}`}
+                          href={`/programme_curriculum/admin_course/${course.code}`}
                           className="course-link"
+                          style={{ textDecoration: "none" }}
                         >
                           {course.code}
                         </a>
@@ -195,12 +201,11 @@ function Admin_view_a_courses() {
                       <td>{course.version}</td>
                       <td>{course.credits}</td>
                       <td>
-                        <Button
-                          href={`/edit-course/${course.code}`}
-                          className="courses-edit-button"
+                        <a
+                          href={`/programme_curriculum/acad_admin_edit_course_form/${course.code}`}
                         >
-                          Edit
-                        </Button>
+                          <Button className="courses-edit-button">Edit</Button>
+                        </a>
                       </td>
                     </tr>
                   ))}
@@ -500,7 +505,7 @@ function Admin_view_a_courses() {
   );
 }
 
-export default Admin_view_a_courses;
+export default Admin_view_all_courses;
 
 // return (
 //   <div className="courses-container"> {/* Main flex container */}

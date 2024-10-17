@@ -14,22 +14,35 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-function Admin_add_course_slot_form() {
+function Admin_edit_course_slot_form({ existingData = {} }) {
+  // Dummy data to be used if existingData is not provided
+  const dummyData = {
+    semester: "CSE UG Curriculum v1.0, sem - 1",
+    courseSlotName: "Dummy Slot",
+    type: "Lecture",
+    information: "This is a dummy information for the course slot.",
+    courses: "CS101, CS102",
+    duration: 2,
+    minLimit: 5,
+    maxLimit: 100,
+  };
+
   const form = useForm({
     initialValues: {
-      semester: "CSE UG Curriculum v1.0, sem - 1",
-      courseSlotName: "",
-      type: "",
-      information: "",
-      courses: "",
-      duration: 1,
-      minLimit: 0,
-      maxLimit: 1000,
+      semester: existingData.semester || dummyData.semester,
+      courseSlotName: existingData.courseSlotName || dummyData.courseSlotName,
+      type: existingData.type || dummyData.type,
+      information: existingData.information || dummyData.information,
+      courses: existingData.courses || dummyData.courses,
+      duration: existingData.duration || dummyData.duration,
+      minLimit: existingData.minLimit || dummyData.minLimit,
+      maxLimit: existingData.maxLimit || dummyData.maxLimit,
     },
   });
 
   const handleSubmit = (values) => {
-    console.log(values);
+    console.log("Updated Course Slot Data:", values);
+    // Logic to update the course slot in the backend can be implemented here.
   };
 
   const breadcrumbItems = [
@@ -90,7 +103,7 @@ function Admin_add_course_slot_form() {
             >
               <Stack spacing="lg">
                 <Text size="xl" weight={700} align="center">
-                  Course Slot Form
+                  Edit Course Slot Form
                 </Text>
 
                 <Select
@@ -175,7 +188,7 @@ function Admin_add_course_slot_form() {
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn">
-                  Submit
+                  Update
                 </Button>
               </Group>
             </form>
@@ -210,4 +223,17 @@ function Admin_add_course_slot_form() {
   );
 }
 
-export default Admin_add_course_slot_form;
+Admin_edit_course_slot_form.propTypes = {
+  existingData: {
+    semester: "CSE UG Curriculum v1.0, sem - 1",
+    courseSlotName: "Dummy Slot",
+    type: "Lecture",
+    information: "This is a dummy information for the course slot.",
+    courses: "CS101, CS102",
+    duration: 2,
+    minLimit: 5,
+    maxLimit: 100,
+  },
+};
+
+export default Admin_edit_course_slot_form;

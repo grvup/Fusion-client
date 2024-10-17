@@ -165,7 +165,8 @@ function Admin_view_semesters_of_a_curriculum() {
   // State to manage hover effect and option visibility
   const [isHovered, setIsHovered] = useState(false);
   const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
-  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
+  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] =
+    useState(false);
   return (
     <div style={{ position: "relative" }}>
       <nav className="breadcrumbs">
@@ -201,7 +202,16 @@ function Admin_view_semesters_of_a_curriculum() {
         >
           <div className="dropdown-section">
             <h4 className="section-title">CURRICULUM</h4>
-            <button className="dropdown-btn green-btn">EDIT CURRICULUM</button>
+            <a
+              href={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${
+                curriculum.id
+              }`}
+              style={{ textDecoration: "none" }}
+            >
+              <button className="dropdown-btn green-btn">
+                EDIT CURRICULUM
+              </button>
+            </a>
             <div
               className="instigate-semester"
               onMouseEnter={() => setIsInstigateSemesterHovered(true)}
@@ -215,12 +225,19 @@ function Admin_view_semesters_of_a_curriculum() {
               {isInstigateSemesterHovered && (
                 <div className="instigate-semester-dropdown">
                   {semesterscnt.map((semester, index) => (
-                    <div key={index} className="instigate-semester-option">
-                      <text>{semester}</text>
-                      <ActionIcon variant="light">
-                        <Bell size={20} />
-                      </ActionIcon>
-                    </div>
+                    <a
+                      href={`programme_curriculum/acad_admin_instigate_form?semester=${
+                        semester
+                      }`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <div key={index} className="instigate-semester-option">
+                        <text>{semester}</text>
+                        <ActionIcon variant="light">
+                          <Bell size={20} />
+                        </ActionIcon>
+                      </div>
+                    </a>
                   ))}
                 </div>
               )}
@@ -239,10 +256,17 @@ function Admin_view_semesters_of_a_curriculum() {
               {isAddCourseSlotHovered && (
                 <div className="semester-dropdown">
                   {semesterscnt.map((semester, index) => (
-                    <div key={index} className="semester-option">
-                      <text>{semester}</text>
-                      <text>+</text>
-                    </div>
+                    <a
+                      href={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${
+                        semester
+                      }`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <div key={index} className="semester-option">
+                        <text>{semester}</text>
+                        <text>+</text>
+                      </div>
+                    </a>
                   ))}
                 </div>
               )}
@@ -251,8 +275,19 @@ function Admin_view_semesters_of_a_curriculum() {
 
           <div className="dropdown-section">
             <h4 className="section-title">BATCHES</h4>
-            <button className="dropdown-btn blue-btn">NEW BATCH</button>
-            <button className="dropdown-btn green-btn">EDIT BATCH</button>
+            <a
+              href="/programme_curriculum/acad_admin_add_batch_form"
+              style={{ textDecoration: "none" }}
+            >
+              <button className="dropdown-btn blue-btn">NEW BATCH</button>
+            </a>
+            <a
+              href="/programme_curriculum/admin_edit_batch_form"
+              style={{ textDecoration: "none" }}
+            >
+              <button className="dropdown-btn blue-btn">EDIT BATCH</button>
+            </a>
+
             {/* <button className="dropdown-btn black-btn">LINK BATCH</button> */}
           </div>
         </div>
@@ -298,9 +333,13 @@ function Admin_view_semesters_of_a_curriculum() {
             <td style={{ border: "1px solid black" }} />
             {semesters.map((semester, index) => (
               <td key={index} style={{ border: "1px solid black" }}>
-                <strong style={{ color: "blue", fontSize: "0.85vw" }}>
-                  Semester {semester.semester_no}
-                </strong>
+                <a
+                  href={`/programme_curriculum/semester_info?semester_no=${semester.semester_no}`}
+                >
+                  <strong style={{ color: "blue", fontSize: "0.85vw" }}>
+                    Semester {semester.semester_no}
+                  </strong>
+                </a>
               </td>
             ))}
           </tr>
@@ -316,14 +355,16 @@ function Admin_view_semesters_of_a_curriculum() {
                   slotRow[index].courses.length ? (
                     <div>
                       {slotRow[index].courses.map((course, courseIndex) => (
-                        <p key={courseIndex}>
-                          <strong style={{ fontSize: "0.65vw" }}>
-                            {course.name}
-                          </strong>{" "}
-                          <br />
-                          (L: {course.lecture_hours}, T: {course.tutorial_hours}
-                          , C: {course.credit})
-                        </p>
+                        <a href="/programme_curriculum/course_slot_details">
+                          <p key={courseIndex}>
+                            <strong style={{ fontSize: "0.65vw" }}>
+                              {course.name}
+                            </strong>{" "}
+                            <br />
+                            (L: {course.lecture_hours}, T:{" "}
+                            {course.tutorial_hours}, C: {course.credit})
+                          </p>
+                        </a>
                       ))}
                     </div>
                   ) : (

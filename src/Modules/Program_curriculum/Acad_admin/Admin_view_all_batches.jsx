@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ScrollArea, Button, Select, TextInput } from "@mantine/core";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
-function Batches() {
+function AdminViewAllBatches() {
   const [activeTab, setActiveTab] = useState("Batches");
   const [filter, setFilter] = useState({
     name: "",
@@ -171,9 +171,14 @@ function Batches() {
         <p>batches</p>
 
         <div className="top-actions">
-          <Button variant="filled" color="blue">
-            Add Batch
-          </Button>
+          <a
+            href="/programme_curriculum/acad_admin_add_batch_form"
+            style={{ textDecoration: "none" }}
+          >
+            <Button variant="filled" color="blue">
+              Add Batch
+            </Button>
+          </a>
 
           {/* Toggle search icon and close icon based on search visibility */}
           {!isSearchVisible ? (
@@ -229,14 +234,28 @@ function Batches() {
                         <td>{batch.discipline}</td>
                         <td>{batch.year}</td>
                         <td>
-                          <a href="/view" className="course-link">
+                          <a
+                            href={`/programme_curriculum/view_curriculum?curriculum=${
+                              batch.curriculum
+                            }`}
+                            className="course-link"
+                            style={{ textDecoration: "none" }}
+                          >
                             {batch.curriculum}
                           </a>
                         </td>
                         <td>
-                          <Button variant="light" color="green">
-                            Edit
-                          </Button>
+                          <a
+                            href={`/programme_curriculum/admin_edit_batch_form?batch=${
+                              batch.name
+                            }`}
+                            className="course-link"
+                            style={{ textDecoration: "none" }}
+                          >
+                            <Button variant="light" color="green">
+                              Edit
+                            </Button>
+                          </a>
                         </td>
                       </tr>
                     ))}
@@ -264,14 +283,28 @@ function Batches() {
                         <td>{batch.discipline}</td>
                         <td>{batch.year}</td>
                         <td>
-                          <a href="/view" className="course-link">
+                          <a
+                            href={`/programme_curriculum/view_curriculum?curriculum=${
+                              batch.curriculum
+                            }`}
+                            className="course-link"
+                            style={{ textDecoration: "none" }}
+                          >
                             {batch.curriculum}
                           </a>
                         </td>
                         <td>
-                          <Button variant="light" color="green">
-                            Edit
-                          </Button>
+                          <a
+                            href={`/programme_curriculum/admin_edit_batch_form?batch=${
+                              batch.name
+                            }`}
+                            className="course-link"
+                            style={{ textDecoration: "none" }}
+                          >
+                            <Button variant="light" color="green">
+                              Edit
+                            </Button>
+                          </a>
                         </td>
                       </tr>
                     ))}
@@ -466,4 +499,4 @@ function Batches() {
   );
 }
 
-export default Batches;
+export default AdminViewAllBatches;

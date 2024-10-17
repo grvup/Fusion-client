@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Breadcrumbs,
   Anchor,
   TextInput,
   Select,
-  Checkbox,
   NumberInput,
   Button,
   Group,
@@ -14,31 +14,38 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-function Admin_add_curriculum_form() {
+function Acad_replicate_curriculum_form({ existingData }) {
   const form = useForm({
     initialValues: {
-      curriculumName: "",
-      programme: "",
-      workingCurriculum: false,
-      versionNo: 1.0,
-      numSemesters: 1,
-      numCredits: 0,
+      curriculumName: existingData.curriculumName || "",
+      programme: existingData.programme || "",
+      replicateFrom: existingData.replicateFrom || "",
+      replicateTo: existingData.replicateTo || "",
+      versionNo: existingData.versionNo || 1.0,
+      numSemesters: existingData.numSemesters || 1,
+      numCredits: existingData.numCredits || 0,
     },
   });
 
   const handleSubmit = (values) => {
     console.log(values);
+    // Add your logic to handle the replicated curriculum submission here
   };
 
   const breadcrumbItems = [
     { title: "Program and Curriculum", href: "#" },
     { title: "Curriculums", href: "#" },
-    { title: "Add Curriculum Form", href: "#" },
+    { title: "Replicate Curriculum Form", href: "#" },
   ].map((item, index) => (
     <Anchor href={item.href} key={index}>
       {item.title}
     </Anchor>
   ));
+
+  useEffect(() => {
+    // If there's a need to update the form values dynamically when existingData changes
+    form.setValues(existingData);
+  }, [existingData]);
 
   return (
     <div
@@ -88,12 +95,12 @@ function Admin_add_curriculum_form() {
             >
               <Stack spacing="lg">
                 <Text size="xl" weight={700} align="center">
-                  Curriculum Form
+                  Replicate Curriculum Form
                 </Text>
 
                 <TextInput
-                  label="Curriculum Name"
-                  placeholder="Enter new curriculum name"
+                  label="New Curriculum Name"
+                  placeholder="Enter curriculum name"
                   value={form.values.curriculumName}
                   onChange={(event) =>
                     form.setFieldValue(
@@ -105,7 +112,7 @@ function Admin_add_curriculum_form() {
                 />
 
                 <Select
-                  label="Select for which Programme"
+                  label="Select Programme"
                   placeholder="-- Select Programme --"
                   data={[
                     "UG-Btech-CSE",
@@ -119,15 +126,27 @@ function Admin_add_curriculum_form() {
                   required
                 />
 
-                <Checkbox
-                  label="Working Curriculum"
-                  checked={form.values.workingCurriculum}
+                <TextInput
+                  label="Replicate From Curriculum"
+                  placeholder="Enter the curriculum name to replicate from"
+                  value={form.values.replicateFrom}
                   onChange={(event) =>
                     form.setFieldValue(
-                      "workingCurriculum",
-                      event.currentTarget.checked,
+                      "replicateFrom",
+                      event.currentTarget.value,
                     )
                   }
+                  required
+                />
+
+                <TextInput
+                  label="Replicate To Curriculum"
+                  placeholder="Enter the curriculum name to replicate to"
+                  value={form.values.replicateTo}
+                  onChange={(event) =>
+                    form.setFieldValue("replicateTo", event.currentTarget.value)
+                  }
+                  required
                 />
 
                 <NumberInput
@@ -159,7 +178,7 @@ function Admin_add_curriculum_form() {
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn">
-                  Submit
+                  Replicate Curriculum
                 </Button>
               </Group>
             </form>
@@ -175,15 +194,11 @@ function Admin_add_curriculum_form() {
             }}
           >
             <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a href="/programme_curriculum/acad_admin_add_programme_form">
-                <Button className="right-btn-curriculum">Add Programme</Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_batch_form">
-                <Button className="right-btn-curriculum">Add Batch</Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_discipline_form">
-                <Button className="right-btn-curriculum">Add Discipline</Button>
-              </a>
+              <Button className="right-btn-curriculum">Add Curriculum</Button>
+              <Button className="right-btn-curriculum">
+                Add Another Batch
+              </Button>
+              <Button className="right-btn-curriculum">Add Discipline</Button>
             </Group>
           </div>
         </div>
@@ -191,8 +206,8 @@ function Admin_add_curriculum_form() {
 
       <style>
         {`
-            .right-btn-curriculum{
-            width:15vw
+            .right-btn-curriculum {
+              width: 15vw;
             }
           `}
       </style>
@@ -200,4 +215,29 @@ function Admin_add_curriculum_form() {
   );
 }
 
-export default Admin_add_curriculum_form;
+Acad_replicate_curriculum_form.defaultProps = {
+  existingData: {
+    curriculumName: "UG-Btech-CSE",
+    programme: "UG-Btech-CSE",
+    replicateFrom: "UG-Btech-CSE",
+    replicateTo: "UG-Btech-ECE",
+    versionNo: 1.0,
+    numSemesters: 8,
+    numCredits: 160,
+  },
+};
+
+// Define PropTypes for props validation
+Acad_replicate_curriculum_form.propTypes = {
+  existingData: PropTypes.shape({
+    curriculumName: PropTypes.string,
+    programme: PropTypes.string,
+    replicateFrom: PropTypes.string,
+    replicateTo: PropTypes.string,
+    versionNo: PropTypes.number,
+    numSemesters: PropTypes.number,
+    numCredits: PropTypes.number,
+  }),
+};
+
+export default Acad_replicate_curriculum_form;

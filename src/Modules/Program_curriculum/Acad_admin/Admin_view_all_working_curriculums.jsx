@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   MantineProvider,
   Table,
@@ -11,7 +12,7 @@ import {
   Paper,
 } from "@mantine/core";
 
-// Sample data for curriculum
+// Sample data for curriculum (retained)
 const data = [
   {
     name: "CSE UG Curriculum",
@@ -181,7 +182,13 @@ function Admin_view_all_working_curriculums() {
           borderRight: "1px solid #d3d3d3",
         }}
       >
-        {element.name}
+        {/* Curriculum name as a link */}
+        <Link
+          to="/programme_curriculum/view_curriculum" // Or any route you want
+          style={{ color: "#3498db", textDecoration: "underline" }}
+        >
+          {element.name}
+        </Link>
       </td>
       <td
         style={{
@@ -217,9 +224,12 @@ function Admin_view_all_working_curriculums() {
           textAlign: "center",
         }}
       >
-        <Button variant="filled" color="green" radius="md">
-          EDIT
-        </Button>
+        {/* Edit button as a link */}
+        <Link to="/programme_curriculum/admin_edit_curriculum_form">
+          <Button variant="filled" color="green" radius="md">
+            EDIT
+          </Button>
+        </Link>
       </td>
     </tr>
   ));
@@ -344,25 +354,28 @@ function Admin_view_all_working_curriculums() {
           {/* Search Filter Section */}
           <Grid.Col span={3}>
             <Paper shadow="xs" p="md">
-              <Button
-                variant="filled"
-                color="blue"
-                radius="md"
-                size="md"
-                style={{
-                  width: "100%",
-                  fontSize: "14px",
-                  backgroundColor: "#3498db",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  border: "1px solid #3498db",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                  marginBottom: "20px",
-                }}
-              >
-                ADD CURRICULUM
-              </Button>
+              {/* ADD CURRICULUM button as a link */}
+              <Link to="/programme_curriculum/acad_admin_add_curriculum_form">
+                <Button
+                  variant="filled"
+                  color="blue"
+                  radius="md"
+                  size="md"
+                  style={{
+                    width: "100%",
+                    fontSize: "14px",
+                    backgroundColor: "#3498db",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid #3498db",
+                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                    marginBottom: "20px",
+                  }}
+                >
+                  ADD CURRICULUM
+                </Button>
+              </Link>
 
               {/* Filter Search Inputs */}
               <Text weight={700} mb={10}>

@@ -7,8 +7,9 @@ import {
   Text,
   Button,
 } from "@mantine/core";
+import { Link } from "react-router-dom";
 
-// Sample data for all programmes and disciplines
+// Data for all programmes and disciplines
 const ugData = [
   { programme: "B.Tech ME", discipline: "Mechanical Engineering" },
   { programme: "B.Design", discipline: "Design" },
@@ -39,63 +40,75 @@ const phdData = [
     discipline: "Electronics and Communication Engineering",
   },
   { programme: "PhD in ME", discipline: "Mechanical Engineering" },
-  { programme: "PhD in Physics", discipline: "Natural Sciences-Physics" },
-  { programme: "PhD in Maths", discipline: "Natural Sciences-Mathematics" },
+  { programme: "PhD in Physics", discipline: "Natural Sciences - Physics" },
+  { programme: "PhD in Maths", discipline: "Natural Sciences - Mathematics" },
   { programme: "PhD in English", discipline: "Humanities - English" },
   { programme: "PhD in Design", discipline: "Design" },
 ];
 
-function renderTable(data) {
-  return data.map((element, index) => (
-    <tr
-      key={element.programme}
-      style={{ backgroundColor: index % 2 === 0 ? "#E6F7FF" : "#ffffff" }}
-    >
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          color: "#3498db",
-          borderRight: "1px solid #d3d3d3",
-          width: "25%", // Set width for 1st column
-        }}
-      >
-        {element.programme}
-      </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "left",
-          borderRight: "1px solid #d3d3d3",
-          width: "50%", // Set width for 2nd column
-        }}
-      >
-        {element.discipline}
-      </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          width: "25%", // Set width for 3rd column
-        }}
-      >
-        <Button variant="filled" color="green" radius="md">
-          EDIT
-        </Button>
-      </td>
-    </tr>
-  ));
-}
-
 function AdminViewProgrammes() {
-  const [activeSection, setActiveSection] = useState("ug"); // Default to UG
+  const [activeSection, setActiveSection] = useState("ug"); // Default section
+
+  // Function to render the table
+  const renderTable = (data) => {
+    return data.map((element, index) => (
+      <tr
+        key={element.programme}
+        style={{
+          backgroundColor: index % 2 === 0 ? "#E6F7FF" : "#ffffff",
+        }}
+      >
+        <td
+          style={{
+            padding: "15px 20px",
+            textAlign: "center",
+            color: "#3498db",
+            borderRight: "1px solid #d3d3d3",
+            width: "25%",
+          }}
+        >
+          <Link
+            to={`/programme_curriculum/acad_view?programme=${encodeURIComponent(
+              element.programme,
+            )}`}
+            style={{ color: "#3498db", textDecoration: "none" }}
+          >
+            {element.programme}
+          </Link>
+        </td>
+        <td
+          style={{
+            padding: "15px 20px",
+            textAlign: "left",
+            borderRight: "1px solid #d3d3d3",
+            width: "50%",
+          }}
+        >
+          {element.discipline}
+        </td>
+        <td
+          style={{
+            padding: "15px 20px",
+            textAlign: "center",
+            width: "25%",
+          }}
+        >
+          <Link
+            to={`/programme_curriculum/admin_edit_programme_form?programme=${encodeURIComponent(
+              element.programme,
+            )}`}
+          >
+            <Button variant="filled" color="green" radius="md">
+              EDIT
+            </Button>
+          </Link>
+        </td>
+      </tr>
+    ));
+  };
 
   return (
-    <MantineProvider
-      theme={{ colorScheme: "light" }}
-      withGlobalStyles
-      withNormalizeCSS
-    >
+    <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles>
       <Container
         style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
       >
@@ -280,25 +293,17 @@ function AdminViewProgrammes() {
             )}
           </div>
 
-          {/* Add Programme button aligned to the right of the table */}
-          <Button
-            variant="filled"
-            color="blue"
-            size="md"
-            style={{
-              width: "15vw",
-              fontSize: "16px",
-              backgroundColor: "#3498db",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "1px solid #3498db",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              marginLeft: "20px",
-            }}
-          >
-            ADD PROGRAMME
-          </Button>
+          {/* Add Programme Button */}
+          <Link to="/programme_curriculum/acad_admin_add_programme_form">
+            <Button
+              variant="filled"
+              color="blue"
+              radius="md"
+              style={{ marginLeft: "20px", height: "45px" }}
+            >
+              ADD PROGRAMME
+            </Button>
+          </Link>
         </Flex>
       </Container>
     </MantineProvider>
