@@ -1,34 +1,46 @@
-import React from "react";
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Breadcrumbs,
   Anchor,
   Select,
+  NumberInput,
   Button,
   Group,
   Text,
   Container,
   Stack,
-  TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-function Admin_add_discipline_form() {
+function Admin_edit_programme_form({ initialProgrammeData }) {
   const form = useForm({
     initialValues: {
-      disciplineName: "",
-      acronym: "",
-      linkedProgramme: "",
+      category: initialProgrammeData?.category || "",
+      programmeName: initialProgrammeData?.programmeName || "",
+      year: initialProgrammeData?.year || 2024,
     },
   });
 
+  useEffect(() => {
+    if (initialProgrammeData) {
+      form.setValues({
+        category: initialProgrammeData.category,
+        programmeName: initialProgrammeData.programmeName,
+        year: initialProgrammeData.year,
+      });
+    }
+  }, [initialProgrammeData]);
+
   const handleSubmit = (values) => {
-    console.log("Discipline Data Submitted:", values);
+    console.log("Edited Programme Data Submitted:", values);
+    // Add API call or logic for submitting the updated programme data
   };
 
   const breadcrumbItems = [
     { title: "Program and Curriculum", href: "#" },
     { title: "Curriculums", href: "#" },
-    { title: "Discipline Form", href: "#" },
+    { title: "Edit Curriculum Form", href: "#" },
   ].map((item, index) => (
     <Anchor href={item.href} key={index}>
       {item.title}
@@ -43,7 +55,7 @@ function Admin_add_discipline_form() {
 
       {/* Options Section */}
       <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
+        <Text>Programs</Text>
         <Text className="active">Curriculums</Text>
         <Text>Courses</Text>
         <Text>Disciplines</Text>
@@ -83,40 +95,33 @@ function Admin_add_discipline_form() {
             >
               <Stack spacing="lg">
                 <Text size="xl" weight={700} align="center">
-                  Discipline Form
+                  Edit Programme Form
                 </Text>
 
-                <TextInput
-                  label="Discipline Name"
-                  placeholder="Enter new discipline name"
-                  value={form.values.disciplineName}
-                  onChange={(event) =>
-                    form.setFieldValue(
-                      "disciplineName",
-                      event.currentTarget.value,
-                    )
-                  }
-                  required
-                />
-
-                <TextInput
-                  label="Enter Acronym"
-                  placeholder="Enter acronym"
-                  value={form.values.acronym}
-                  onChange={(event) =>
-                    form.setFieldValue("acronym", event.currentTarget.value)
-                  }
+                <Select
+                  label="Programme Category"
+                  placeholder="-- Select Category --"
+                  data={["UG", "PG", "PhD"]}
+                  value={form.values.category}
+                  onChange={(value) => form.setFieldValue("category", value)}
                   required
                 />
 
                 <Select
-                  label="Link Programmes to this Discipline"
-                  placeholder="-- Select Programme --"
-                  data={["Undergraduate", "Postgraduate", "Doctorate"]}
-                  value={form.values.linkedProgramme}
+                  label="Programme Name"
+                  placeholder="Enter Programme Name"
+                  data={[]} // Provide options here if needed
+                  value={form.values.programmeName}
                   onChange={(value) =>
-                    form.setFieldValue("linkedProgramme", value)
+                    form.setFieldValue("programmeName", value)
                   }
+                  required
+                />
+
+                <NumberInput
+                  label="Programme Begin Year"
+                  value={form.values.year}
+                  onChange={(value) => form.setFieldValue("year", value)}
                   required
                 />
               </Stack>
@@ -126,7 +131,7 @@ function Admin_add_discipline_form() {
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn">
-                  Submit
+                  Update
                 </Button>
               </Group>
             </form>
@@ -141,19 +146,20 @@ function Admin_add_discipline_form() {
               justifyContent: "flex-start",
             }}
           >
-            {/* <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <Button className="right-btn-discipline">Add Discipline</Button>
-              <Button className="right-btn-discipline">
-                Add Another Batch
-              </Button>
-              <Button className="right-btn-discipline">Add Course</Button>
-            </Group> */}
+            <Group spacing="md" direction="column" style={{ width: "100%" }}>
+              <a href="/programme_curriculum/acad_admin_add_curriculum_form">
+                <Button className="right-btn-programme">Add Curriculum</Button>
+              </a>
+              <a href="/programme_curriculum/acad_admin_add_discipline_form">
+                <Button className="right-btn-programme">Add Discipline</Button>
+              </a>
+            </Group>
           </div>
         </div>
       </Container>
 
       <style>{`
-        .right-btn-discipline {
+        .right-btn-programme {
           width: 15vw;
         }
       `}</style>
@@ -161,4 +167,12 @@ function Admin_add_discipline_form() {
   );
 }
 
-export default Admin_add_discipline_form;
+Admin_edit_programme_form.propTypes = {
+  initialProgrammeData: PropTypes.shape({
+    category: PropTypes.string,
+    programmeName: PropTypes.string,
+    year: PropTypes.number,
+  }),
+};
+
+export default Admin_edit_programme_form;

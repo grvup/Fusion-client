@@ -36,6 +36,9 @@ import AdminAddCurriculumForm from "./Acad_admin/Admin_add_curriculum_form";
 import AdminAddDisciplineForm from "./Acad_admin/Admin_add_discipline_form";
 import AdminAddProgrammeForm from "./Acad_admin/Admin_add_programme_form";
 import InstigateForm from "./Acad_admin/Instigate_form";
+import AdminEditProgrammeForm from "./Acad_admin/Admin_edit_programme_form";
+import AdminEditCurriculumForm from "./Acad_admin/Admin_edit_curriculum_form";
+import AdminEditCourseSlotForm from "./Acad_admin/Admin_edit_course_slot_form";
 
 export default function ProgrammeCurriculumRoutes() {
   return (
@@ -56,7 +59,6 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <AdminViewACourse />
-
             </Layout>
           }
         />
@@ -66,7 +68,6 @@ export default function ProgrammeCurriculumRoutes() {
             <Layout>
               {/* <AdminViewACourse /> */}
               <AdminViewAllBatches />
-
 
               {/* <FacultyViewACourse/> */}
               {/* <Inward /> */}
@@ -172,7 +173,6 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
-
           path="/BDesstudView"
           element={
             <Layout>
@@ -200,11 +200,10 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_outward_files"
           element={
             <Layout>
-              <OutwardFile/>
+              <OutwardFile />
             </Layout>
           }
         />
-
 
         {/* Student Routes */}
         <Route
@@ -212,7 +211,6 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <ViewAllCourses />
-
             </Layout>
           }
         />
@@ -318,6 +316,70 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <SemesterInfo />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin_edit_programme_form"
+          element={
+            <Layout>
+              <AdminEditProgrammeForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin_edit_curriculum_form"
+          element={
+            <Layout>
+              <AdminEditCurriculumForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin_edit_course_slot_form"
+          element={
+            <Layout>
+              <AdminEditCourseSlotForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/acad_admin_replicate_curriculum"
+          element={
+            <Layout>
+              <AdminAddCurriculumForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin_edit_discipline_form"
+          element={
+            <Layout>
+              <AdminAddDisciplineForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/acad_admin_edit_discipline_form"
+          element={
+            <Layout>
+              <AdminAddDisciplineForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin_edit_batch_form"
+          element={
+            <Layout>
+              <AdminAddBatchForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/acad_admin_edit_course_form/:id"
+          element={
+            <Layout>
+              <AdminAddCourseProposalForm />
             </Layout>
           }
         />

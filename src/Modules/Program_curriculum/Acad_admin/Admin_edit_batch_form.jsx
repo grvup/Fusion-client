@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Breadcrumbs,
   Anchor,
@@ -12,8 +12,9 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import PropTypes from "prop-types";
 
-function Admin_add_batch_form() {
+function Admin_edit_batch_form({ batchData }) {
   const form = useForm({
     initialValues: {
       batchName: "",
@@ -24,8 +25,22 @@ function Admin_add_batch_form() {
     },
   });
 
+  // Prepopulate the form with existing batch data when editing
+  useEffect(() => {
+    if (batchData) {
+      form.setValues({
+        batchName: batchData.batchName || "",
+        discipline: batchData.discipline || "",
+        batchYear: batchData.batchYear || 2024,
+        disciplineBatch: batchData.disciplineBatch || "",
+        runningBatch: batchData.runningBatch || false,
+      });
+    }
+  }, [batchData]);
+
   const handleSubmit = (values) => {
-    console.log(values);
+    // Handle the update logic here
+    console.log("Updated Batch Details:", values);
   };
 
   const breadcrumbItems = [
@@ -44,7 +59,6 @@ function Admin_add_batch_form() {
     >
       <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
 
-      {/* Options Section */}
       <Group spacing="xs" className="program-options" position="center" mt="md">
         <Text>Programmes</Text>
         <Text className="active">Curriculums</Text>
@@ -86,7 +100,7 @@ function Admin_add_batch_form() {
             >
               <Stack spacing="lg">
                 <Text size="xl" weight={700} align="center">
-                  Batch Form
+                  Edit Batch Form
                 </Text>
 
                 <Select
@@ -159,7 +173,7 @@ function Admin_add_batch_form() {
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn">
-                  Submit
+                  Update
                 </Button>
               </Group>
             </form>
@@ -207,4 +221,14 @@ function Admin_add_batch_form() {
   );
 }
 
-export default Admin_add_batch_form;
+Admin_edit_batch_form.propTypes = {
+  batchData: PropTypes.shape({
+    batchName: PropTypes.string,
+    discipline: PropTypes.string,
+    batchYear: PropTypes.number,
+    disciplineBatch: PropTypes.string,
+    runningBatch: PropTypes.bool,
+  }),
+};
+
+export default Admin_edit_batch_form;

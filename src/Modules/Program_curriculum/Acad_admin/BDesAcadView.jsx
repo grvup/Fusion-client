@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { Copy } from "@phosphor-icons/react";
 
 import {
   Table,
-  Anchor,
   ScrollArea,
   Container,
   Button,
@@ -49,16 +47,6 @@ const CURRICULUM_DATA = {
     },
   ],
 };
-const semesterscnt = [
-  "Semester 1",
-  "Semester 2",
-  "Semester 3",
-  "Semester 4",
-  "Semester 5",
-  "Semester 6",
-  "Semester 7",
-  "Semester 8",
-];
 
 function BDesAcadView() {
   const [activeTab, setActiveTab] = useState("info");
@@ -71,7 +59,7 @@ function BDesAcadView() {
   const filteredWorkingCurriculums = CURRICULUM_DATA.workingCurriculums.filter(
     (curr) =>
       curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      curr.version.toLowerCase().includes(searchVersion.toLowerCase())
+      curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
   );
 
   // Filter Logic for Obsolete Curriculums
@@ -79,7 +67,7 @@ function BDesAcadView() {
     CURRICULUM_DATA.obsoleteCurriculums.filter(
       (curr) =>
         curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        curr.version.toLowerCase().includes(searchVersion.toLowerCase())
+        curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
     );
 
   const handleSearch = () => {
@@ -88,12 +76,11 @@ function BDesAcadView() {
       "Search initiated with Name:",
       searchName,
       "and Version:",
-      searchVersion
+      searchVersion,
     );
   };
   const [isHovered, setIsHovered] = useState(false);
   const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
-  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
 
   const renderInfo = () => (
     <div style={{ marginBottom: "20px", display: "flex" }}>
@@ -264,7 +251,12 @@ function BDesAcadView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                    {curr.name}
+                    <a
+                      href={`/programme_curriculum/view_curriculum?curriculum=
+                        ${curr.name}`}
+                    >
+                      {curr.name}
+                    </a>
                   </td>
                   <td
                     style={{
@@ -284,17 +276,13 @@ function BDesAcadView() {
                   >
                     {curr.batch.map((b, i) => (
                       <React.Fragment key={i}>
-                        <Anchor
-                          component={Link}
-                          to="#"
+                        <span
                           style={{
                             marginRight: "10px",
-                            color: "#1e90ff",
-                            textDecoration: "underline",
                           }}
                         >
                           {b}
-                        </Anchor>
+                        </span>
                         {i < curr.batch.length - 1 && (
                           <span style={{ margin: "0 10px" }}>|</span>
                         )}
@@ -310,15 +298,20 @@ function BDesAcadView() {
                     {curr.semesters}
                   </td>
                   <td style={{ padding: "10px", textAlign: "center" }}>
-                    <Button
-                      style={{
-                        backgroundColor: "#28a745",
-                        color: "white",
-                        padding: "5px 10px",
-                      }}
+                    <a
+                      href={`/programme_curriculum/admin_edit_curriculum_form?curriculum=
+                        ${curr.name}`}
                     >
-                      EDIT
-                    </Button>
+                      <Button
+                        style={{
+                          backgroundColor: "#28a745",
+                          color: "white",
+                          padding: "5px 10px",
+                        }}
+                      >
+                        EDIT
+                      </Button>
+                    </a>
                   </td>
                 </tr>
               ))
@@ -432,17 +425,15 @@ function BDesAcadView() {
                   >
                     {curr.batch.map((b, i) => (
                       <React.Fragment key={i}>
-                        <Anchor
-                          component={Link}
-                          to="#"
+                        <span
                           style={{
                             marginRight: "10px",
-                            color: "#1e90ff",
-                            textDecoration: "underline",
+                            color: "black", // Set the text color to black or any color of your choice
+                            textDecoration: "none", // Remove the underline
                           }}
                         >
                           {b}
-                        </Anchor>
+                        </span>
                         {i < curr.batch.length - 1 && (
                           <span style={{ margin: "0 10px" }}>|</span>
                         )}
@@ -480,15 +471,15 @@ function BDesAcadView() {
     <Paper
       shadow="xs"
       p="md"
-      style={{ marginTop: "20px", margin: "1vw 0vw 0 1.5vw", width: "15vw" }}
+      style={{ marginTop: "20px", margin: "1vw 0vw 0 1.5vw", width: "20vw" }}
     >
       <Button
-            variant={"filled" }
-            style={{ width:'100%',padding:'0.25vw', margin:'0 0 1vw 0'}}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+        variant="filled"
+        style={{ width: "100%", padding: "0.25vw", margin: "0 0 1vw 0" }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-            OPTIONS
+        OPTIONS
       </Button>
 
       {/* Options visible on hover */}
@@ -497,11 +488,17 @@ function BDesAcadView() {
           className={`options-dropdowns ${isHovered ? "open" : ""}`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-         
         >
-          <div  >
+          <div>
             <h4 className="section-title">CURRICULUM</h4>
-            <button className="dropdown-btns green-btns">EDIT CURRICULUM</button>
+            <a
+              href="/programme_curriculum/acad_admin_add_curriculum_form"
+              style={{ textDecoration: "none" }}
+            >
+              <button className="dropdown-btns green-btns">
+                ADD CURRICULUM
+              </button>
+            </a>
             <div
               onMouseEnter={() => setIsAddCourseSlotHovered(true)}
               onMouseLeave={() => setIsAddCourseSlotHovered(false)}
@@ -514,28 +511,38 @@ function BDesAcadView() {
               {isAddCourseSlotHovered && (
                 <div className="semester-dropdowns">
                   {CURRICULUM_DATA.workingCurriculums.map((curr, index) => (
-                    <div className="semester-options" key={index} >
-                      <div>
-                      <text>{curr.name}</text>
-                       &nbsp;v
-                      <text>{curr.version}</text>
-
+                    <a
+                      href={`/programme_curriculum/acad_admin_replicate_curriculum?curriculum=
+                        ${curr.name}`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <div className="semester-options" key={index}>
+                        <div>
+                          <text>{curr.name}</text>
+                          &nbsp;v
+                          <text>{curr.version}</text>
+                        </div>
+                        <div>
+                          <Copy size={20} color="#000" weight="bold" />
+                        </div>
                       </div>
-                      <div>
-
-                      <Copy size={20} color="#000" weight="bold" />
-                      </div>
-
-                    </div>
+                    </a>
                   ))}
                 </div>
               )}
             </div>
           </div>
-          <div >
-            <h4 style={{margin:'0.5vh 0'}}>Programe</h4>
-            <button className="dropdown-btns blue-btns">EDIT PROGRAMME</button>
-          
+          <div>
+            <h4 style={{ margin: "0.5vh 0" }}>Programe</h4>
+            <a
+              href="/programme_curriculum/admin_edit_programme_form"
+              style={{ textDecoration: "none" }}
+            >
+              <button className="dropdown-btns blue-btns">
+                EDIT PROGRAMME
+              </button>
+            </a>
+
             {/* <button className="dropdown-btn black-btn">LINK BATCH</button> */}
           </div>
         </div>
@@ -595,35 +602,31 @@ function BDesAcadView() {
 
         <Grid.Col span={12}>
           {/* Render Filter Section Conditionally */}
-          <div style={{display:'flex' }}>
-
+          <div style={{ display: "flex" }}>
             <div>
-            {activeTab === "info" && renderInfo()}
-            {activeTab === "working" && renderWorkingCurriculums()}
-            {activeTab === "obsolete" && renderObsoleteCurriculums()}
-
+              {activeTab === "info" && renderInfo()}
+              {activeTab === "working" && renderWorkingCurriculums()}
+              {activeTab === "obsolete" && renderObsoleteCurriculums()}
             </div>
             <div>
               {(activeTab === "working" || activeTab === "obsolete") &&
                 renderFilterSection()}
-
             </div>
           </div>
         </Grid.Col>
       </Grid>
-        <style>
-          {
-            `
+      <style>
+        {`
             .options-dropdowns {
               position: absolute;
-              top: 32vh;
-              right: 10vw;
+              top: 38.5vh;
+              right: 2.5vw;
               background-color: white;
               border: 1px solid #ddd;
               box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
               padding: 15px;
               z-index: 1;
-              width: 13vw;
+              width: 18vw;
               overflow-x: visible;
               opacity: 0;
               max-height: 0;
@@ -639,14 +642,14 @@ function BDesAcadView() {
 
             .semester-dropdowns {
               position: absolute;
-              right: 12.2vw;
-              top: 13.2vh;
+              right: 16.5vw;
+              top: 17vh;
               background-color: white;
               border: 1px solid #ddd;
               box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
               padding: 10px;
               z-index: 2;
-              min-width: 15vw;
+              width: 18vw;
               /* max-height: 150px;  */
               overflow-y: auto; /* Scroll if content overflows */
               /* overflow-x: visible; */
@@ -694,9 +697,8 @@ function BDesAcadView() {
             }
             
             
-            `
-          }
-        </style>
+            `}
+      </style>
     </Container>
   );
 }

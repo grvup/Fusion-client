@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Breadcrumbs,
   Anchor,
@@ -14,31 +15,37 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
-function Admin_add_curriculum_form() {
+function Admin_edit_curriculum_form({ existingData }) {
   const form = useForm({
     initialValues: {
-      curriculumName: "",
-      programme: "",
-      workingCurriculum: false,
-      versionNo: 1.0,
-      numSemesters: 1,
-      numCredits: 0,
+      curriculumName: existingData.curriculumName || "",
+      programme: existingData.programme || "",
+      workingCurriculum: existingData.workingCurriculum || false,
+      versionNo: existingData.versionNo || 1.0,
+      numSemesters: existingData.numSemesters || 1,
+      numCredits: existingData.numCredits || 0,
     },
   });
 
   const handleSubmit = (values) => {
     console.log(values);
+    // Add your logic to handle the edited data submission here
   };
 
   const breadcrumbItems = [
     { title: "Program and Curriculum", href: "#" },
     { title: "Curriculums", href: "#" },
-    { title: "Add Curriculum Form", href: "#" },
+    { title: "Edit Curriculum Form", href: "#" },
   ].map((item, index) => (
     <Anchor href={item.href} key={index}>
       {item.title}
     </Anchor>
   ));
+
+  useEffect(() => {
+    // If there's a need to update the form values dynamically when existingData changes
+    form.setValues(existingData);
+  }, [existingData]);
 
   return (
     <div
@@ -88,12 +95,12 @@ function Admin_add_curriculum_form() {
             >
               <Stack spacing="lg">
                 <Text size="xl" weight={700} align="center">
-                  Curriculum Form
+                  Edit Curriculum Form
                 </Text>
 
                 <TextInput
                   label="Curriculum Name"
-                  placeholder="Enter new curriculum name"
+                  placeholder="Enter curriculum name"
                   value={form.values.curriculumName}
                   onChange={(event) =>
                     form.setFieldValue(
@@ -159,7 +166,7 @@ function Admin_add_curriculum_form() {
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn">
-                  Submit
+                  Save Changes
                 </Button>
               </Group>
             </form>
@@ -178,6 +185,7 @@ function Admin_add_curriculum_form() {
               <a href="/programme_curriculum/acad_admin_add_programme_form">
                 <Button className="right-btn-curriculum">Add Programme</Button>
               </a>
+
               <a href="/programme_curriculum/acad_admin_add_batch_form">
                 <Button className="right-btn-curriculum">Add Batch</Button>
               </a>
@@ -191,8 +199,8 @@ function Admin_add_curriculum_form() {
 
       <style>
         {`
-            .right-btn-curriculum{
-            width:15vw
+            .right-btn-curriculum {
+              width: 15vw;
             }
           `}
       </style>
@@ -200,4 +208,26 @@ function Admin_add_curriculum_form() {
   );
 }
 
-export default Admin_add_curriculum_form;
+Admin_edit_curriculum_form.propTypes = {
+  existingData: PropTypes.shape({
+    curriculumName: PropTypes.string,
+    programme: PropTypes.string,
+    workingCurriculum: PropTypes.bool,
+    versionNo: PropTypes.number,
+    numSemesters: PropTypes.number,
+    numCredits: PropTypes.number,
+  }),
+};
+// Adding default props for dummy data
+Admin_edit_curriculum_form.defaultProps = {
+  existingData: {
+    curriculumName: "UG-Btech-CSE",
+    programme: "UG-Btech-CSE",
+    workingCurriculum: true,
+    versionNo: 2.0,
+    numSemesters: 8,
+    numCredits: 160,
+  },
+};
+
+export default Admin_edit_curriculum_form;
