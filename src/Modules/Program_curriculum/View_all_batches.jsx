@@ -159,18 +159,18 @@ function Batches() {
 
   return (
     <div>
-      <nav className="breadcrumbs">
+      {/* <nav className="breadcrumbs">
         <span>Program and Curriculum</span>
         <span>Curriculums</span>
         <span>CSE UG Curriculum</span>
-      </nav>
+      </nav> */}
 
       <div className="program-options">
-        <p>Programmes</p>
+        {/* <p>Programmes</p>
         <p className="active">Curriculums</p>
         <p>Courses</p>
         <p>disciplines</p>
-        <p>batches</p>
+        <p>batches</p> */}
 
         <div className="top-actions">
           {/* <Button variant="filled" color="blue">Add Batch</Button> */}
@@ -229,7 +229,7 @@ function Batches() {
                         <td>{batch.discipline}</td>
                         <td>{batch.year}</td>
                         <td>
-                          <a href="/dashboard" className="course-link">
+                          <a href={`/programme_curriculum/stud_curriculum_view?semester=${ batch.curriculum}`} style={{textDecoration:"none"}} className="course-link">
                             {batch.curriculum}
                           </a>
                         </td>
@@ -252,7 +252,7 @@ function Batches() {
                       <th>Discipline</th>
                       <th>Year</th>
                       <th>Curriculum</th>
-                      <th>Edit</th>
+                     
                     </tr>
                   </thead>
                   <tbody>
@@ -262,15 +262,11 @@ function Batches() {
                         <td>{batch.discipline}</td>
                         <td>{batch.year}</td>
                         <td>
-                          <a href="/dashboard" className="course-link">
+                          <a href={`/programme_curriculum/stud_curriculum_view?batch=${ batch.curriculum}`} className="course-link" style={{textDecoration:"none"}}>
                             {batch.curriculum}
                           </a>
                         </td>
-                        <td>
-                          <Button variant="light" color="green">
-                            Edit
-                          </Button>
-                        </td>
+                      
                       </tr>
                     ))}
                   </tbody>

@@ -45,6 +45,7 @@ export default function App() {
           path="/programme_curriculum/*"
           element={
             <Layout>
+              {/* <BreadcrumbTabs/> */}
               <ProgrammeCurriculumRoutes />
             </Layout>
           }

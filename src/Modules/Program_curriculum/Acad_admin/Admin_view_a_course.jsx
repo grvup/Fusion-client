@@ -1,4 +1,4 @@
-import React from "react";
+import React ,{useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -9,62 +9,51 @@ import {
   Anchor,
   Group,
 } from "@mantine/core";
+import { useParams } from 'react-router-dom';
+import axios from "axios";
 
 function CourseDetail() {
-  const courseDetails = {
-    code: "CS101",
-    name: "Introduction to Computer Science",
-    version: "1.0",
-    contactHours: {
-      lecture: "3hrs",
-      tutorial: "1hr",
-      lab: "2hrs",
-      discussion: "1hr",
-      project: "1hr",
-    },
-    credits: "3",
-    // prerequisites: 'None',
-    prerequisites: { Info: "none", Courses: "none" },
-    syllabus: `Introduction to Computer Science, Programming Fundamentals, Data Structures, Algorithms, Basic OOP Concepts.`,
-    evaluationSchema: {
-      quiz1: "5%",
-      midSem: "25%",
-      quiz2: "5%",
-      endSem: "40%",
-      project: "10%",
-      labEvaluation: "10%",
-      attendance: "5%",
-    },
-    references: [
-      "Introduction to Computer Science by John Doe",
-      "Data Structures and Algorithms by Jane Smith",
-      "Object-Oriented Programming in Java by Alan Turing",
-    ],
-  };
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  const { id } = useParams(); // Extract the course ID from the URL
+  const [courseDetails, setCourseDetails] = useState(null); // State to hold the course data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
+  // Fetch course data from the backend
+  useEffect(() => {
+    const fetchCourseData = async () => {
+
+      try {
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get(`http://localhost:8000/programme_curriculum/admin_course/${id}/`,
+        {
+          headers: {
+            Authorization: `Token ${token}`,  // Add the Authorization header
+          },
+        } );
+        console.log(response.data)
+        setCourseDetails(response.data); // Set the course data in state
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load course details.");
+        setLoading(false);
+      }
+    };
+
+    fetchCourseData(); // Call the fetch function on component mount
+  }, [id]);
+
+  console.log(courseDetails)
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
+  // If no course details are found, return a message
+  if (!courseDetails) return <div>No course found!</div>;
   return (
     <div
       className="course-detail-container"
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
-
-      <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group>
+     
 
       {/* Course Details Card */}
       <div style={{ display: "flex" }}>
@@ -169,27 +158,27 @@ function CourseDetail() {
 
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.contactHours.lecture}
+                    {courseDetails.lecture_hours}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.contactHours.tutorial}
+                    {courseDetails.tutorial_hours}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.contactHours.lab}
+                    {courseDetails.pratical_hours}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.contactHours.discussion}
+                    {courseDetails.discussion_hours}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.contactHours.project}
+                    {courseDetails.project_hours}
                   </td>
                 </tr>
               </tr>
@@ -236,12 +225,12 @@ function CourseDetail() {
 
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.prerequisites.Info}
+                    {courseDetails.pre_requisits}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.prerequisites.Courses}
+                    {courseDetails.prerequisites_courses}
                   </td>
                 </tr>
               </tr>
@@ -344,37 +333,37 @@ function CourseDetail() {
 
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.evaluationSchema.quiz1}
+                    {courseDetails.percent_quiz_1}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.evaluationSchema.midSem}
+                    {courseDetails.percent_midsem}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.evaluationSchema.quiz2}
+                    {courseDetails.percent_quiz_2}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.evaluationSchema.endSem}
+                    {courseDetails.percent_endsem}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.evaluationSchema.project}
+                    {courseDetails.percent_project}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.evaluationSchema.labEvaluation}
+                    {courseDetails.percent_lab_evaluation}
                   </td>
                 </tr>
                 <tr>
                   <td style={{ width: "3%", backgroundColor: "white" }}>
-                    {courseDetails.evaluationSchema.attendance}
+                    {courseDetails.percent_course_attendance}
                   </td>
                 </tr>
               </tr>
@@ -384,9 +373,7 @@ function CourseDetail() {
                   References & Books
                 </td>
                 <td>
-                  {courseDetails.references.map((reference, index) => (
-                    <div key={index}>{reference}</div>
-                  ))}
+                  {courseDetails.ref_books}
                 </td>
               </tr>
             </tbody>

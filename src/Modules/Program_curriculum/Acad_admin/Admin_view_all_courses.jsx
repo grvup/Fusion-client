@@ -1,172 +1,74 @@
-import { Button, Card, ScrollArea, Table } from "@mantine/core";
-import React, { useState } from "react";
-// import { FaSearch, FaTimes } from "react-icons/fa";
+import { Button, Card, ScrollArea, Table, Loader } from "@mantine/core";
+import React, { useState, useEffect } from "react";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
-
+import axios from "axios";
 function Admin_view_all_courses() {
-  // const [selectedOption, setSelectedOption] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true); // Show loader until data is fetched
+  const [error, setError] = useState(null); // Handle errors
   const [showSearch, setShowSearch] = useState(false);
 
-  // Uncomment for actual DB API call
-  // const [courses, setCourses] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+  
+        const response = await axios.get(
+          "http://127.0.0.1:8000/programme_curriculum/admin_courses/",
+          {
+            headers: {
+              Authorization: `Token ${token}`,  // Add the Authorization header
+            },
+          }
+        ); // Replace with actual endpoint
+        setCourses(response.data.courses);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching batch data:", error);
+        setError(error.message); // Store error message
+        setLoading(false);
+      }
+    };
 
-  // useEffect(() => {
-  //   // Fetch data from Django backend API
-  //   fetch('http://127.0.0.1:8000/api/courses/') // Replace with your actual Django API URL
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setCourses(data); // Assuming the data is an array of courses
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching course data:", error);
-  //       setLoading(false);
-  //     });
-  // }, []);
+    fetchCourses();
+  }, []);
+  
+    
+  if (loading) {
+    return <Loader size="lg" variant="dots" />; // Show loader while loading
+  }
 
-  // Temporary mock data for testing
-  const courses = [
-    {
-      code: "NS205c",
-      name: "Discrete Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205i",
-      name: "Culture and Science - comparison",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "EC2002",
-      name: "Digital Electronics and Microprocessor Interfacing",
-      version: "1.0",
-      credits: 4,
-    },
-    { code: "Mathematics", name: "Mechatronics", version: "1.0", credits: 4 },
-    { code: "Design", name: "Design", version: "1.0", credits: 4 },
-    {
-      code: "Natural Sciences",
-      name: "Natural Science-Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "Humanities - English",
-      name: "Humanities - English",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205c",
-      name: "Discrete Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205i",
-      name: "Culture and Science - comparison",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "EC2002",
-      name: "Digital Electronics and Microprocessor Interfacing",
-      version: "1.0",
-      credits: 4,
-    },
-    { code: "Mathematics", name: "Mechatronics", version: "1.0", credits: 4 },
-    { code: "Design", name: "Design", version: "1.0", credits: 4 },
-    {
-      code: "Natural Sciences",
-      name: "Natural Science-Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "Humanities - English",
-      name: "Humanities - English",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205c",
-      name: "Discrete Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205i",
-      name: "Culture and Science - comparison",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "EC2002",
-      name: "Digital Electronics and Microprocessor Interfacing",
-      version: "1.0",
-      credits: 4,
-    },
-    { code: "Mathematics", name: "Mechatronics", version: "1.0", credits: 4 },
-    { code: "Design", name: "Design", version: "1.0", credits: 4 },
-    {
-      code: "Natural Sciences",
-      name: "Natural Science-Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "Humanities - English",
-      name: "Humanities - English",
-      version: "1.0",
-      credits: 4,
-    },
-  ];
-
-  // if (loading) {
-  //   return <Loader />; // Show loader while loading
-  // }
+  if (error) {
+    return <div>Error: {error}</div>; // Show error message if there's an issue
+  }
 
   return (
     <div>
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Courses</span>
-      </nav>
-
-      {/* Options Section */}
-      <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>disciplines</p>
-        <p>batches</p>
-
-        <div className="top-actions">
-          <a
-            href="/programme_curriculum/acad_admin_add_course_proposal_form"
-            style={{ textDecoration: "none" }}
-          >
-            <Button className="add-course-btn">ADD COURSE</Button>
-          </a>
-          {/* <Button className="search-btn" onClick={() => setShowSearch(!showSearch)}>
-          {showSearch ? 'Hide Search' : 'Search Courses'}
-        </Button> */}
-          <MagnifyingGlass
-            className="search-icon"
-            onClick={() => setShowSearch(!showSearch)} // Toggle search form
-            size={24} // Set the size of the icon
-            color="#007bff" // Set the color of the icon
-            style={{ cursor: "pointer", marginLeft: "10px" }} // Add pointer cursor and margin
-          />
-        </div>
-      </div>
-
-      <h4>Courses</h4>
       <div className={`courses-container ${showSearch ? "search-active" : ""}`}>
         <div className="courses-table-section">
+          <div style={{ display: 'flex', margin: '0 0 20px 0px' }}>
+            <div>
+              <Button variant={"filled"}>
+                Courses
+              </Button>
+            </div>
+            <div className="top-actions">
+              <a
+                href="/programme_curriculum/acad_admin_add_course_proposal_form"
+                style={{ textDecoration: "none" }}
+              >
+                <Button className="add-course-btn">ADD COURSE</Button>
+              </a>
+              <MagnifyingGlass
+                className="search-icon"
+                onClick={() => setShowSearch(!showSearch)} // Toggle search form
+                size={24} // Set the size of the icon
+                color="#007bff" // Set the color of the icon
+                style={{ cursor: "pointer", marginLeft: "10px" }} // Add pointer cursor and margin
+              />
+            </div>
+          </div>
+
           <ScrollArea className="courses-scroll-area">
             <Card
               shadow="sm"
@@ -190,7 +92,7 @@ function Admin_view_all_courses() {
                     <tr key={index} className="courses-table-row">
                       <td>
                         <a
-                          href={`/programme_curriculum/admin_course/${course.code}`}
+                          href={`/programme_curriculum/admin_course/${course.id}`}
                           className="course-link"
                           style={{ textDecoration: "none" }}
                         >
@@ -202,7 +104,7 @@ function Admin_view_all_courses() {
                       <td>{course.credits}</td>
                       <td>
                         <a
-                          href={`/programme_curriculum/acad_admin_edit_course_form/${course.code}`}
+                          href={`/programme_curriculum/acad_admin_edit_course_form/${course.id}`}
                         >
                           <Button className="courses-edit-button">Edit</Button>
                         </a>
@@ -224,18 +126,6 @@ function Admin_view_all_courses() {
               withBorder
               className="courses-search-card"
             >
-              {/* <FaTimes
-                className="close-search-icon"
-                onClick={() => setShowSearch(false)} // Close search when clicked
-                size={20}
-                color="red"
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  cursor: "pointer",
-                }}
-              /> */}
               <X
                 className="close-search-icon"
                 onClick={() => setShowSearch(false)} // Close search when clicked
@@ -309,6 +199,7 @@ function Admin_view_all_courses() {
           width: 100%;
           height: 100vh;
           transition: all 0.3s ease-in-out;
+          margin:20px 0 0 20px
         }
 
         .courses-container.search-active  {
@@ -316,7 +207,9 @@ function Admin_view_all_courses() {
         }
 
         .courses-table-section{
-          flex: 3;
+          flex: 1;
+          display:flex;
+          flex-direction: column;
         }
 
         .courses-table-section {
@@ -362,6 +255,7 @@ function Admin_view_all_courses() {
         }
 
         .courses-table {
+        
           width: 100%;
           border-collapse: collapse;
           table-layout: fixed;
@@ -421,7 +315,7 @@ function Admin_view_all_courses() {
 
         .courses-scroll-area {
           flex-grow: 1;
-          height: calc(100vh - 60px); /* Full height minus the space for the top actions (adjust accordingly) */
+          height: 100vh
           overflow-y: auto;
         }
 
@@ -506,69 +400,3 @@ function Admin_view_all_courses() {
 }
 
 export default Admin_view_all_courses;
-
-// return (
-//   <div className="courses-container"> {/* Main flex container */}
-//     <div className="table-section"> {/* Left side: Table */}
-//       <Card shadow="sm" padding="lg" radius="md" withBorder className="card-container">
-//         <Table highlightOnHover striped className="table">
-//           <thead className="table-header">
-//             <tr>
-//               <th>Course Code</th>
-//               <th>Course Name</th>
-//               <th>Version</th>
-//               <th>Credits</th>
-//               <th>Edit</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {courses.map((course, index) => (
-//               <tr key={index} className="table-row">
-//                 <td><a href='#'>{course.code}</a></td>
-//                 <td>{course.name}</td>
-//                 <td>{course.version}</td>
-//                 <td>{course.credits}</td>
-//                 <td>
-//                   <Button
-//                     component="b"
-//                     href={`/edit-course/${course.code}`}
-//                     className="edit-button"
-//                   >
-//                     Edit
-//                   </Button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </Table>
-//       </Card>
-//     </div>
-
-//     <div className="form-section"> {/* Right side: Form */}
-//         <Button component='b' className='edit-button' style={{padding: '10px'}}>ADD COURSE</Button>
-
-//       <Card shadow="sm" padding="lg" radius="md" withBorder className="search-card">
-//         <h4 className="form-title">FILTER SEARCH</h4>
-
-//         <ScrollArea  className="scroll-area">
-//           <label>Code contains</label>
-//           <TextInput placeholder="Code contains:" className="input-field" />
-//           <label>Name contains</label>
-//           <TextInput placeholder="Name contains:" className="input-field" />
-//           <label>Version</label>
-//           <TextInput placeholder="Version:" className="input-field" />
-
-//           <Select
-//             label="Working course:"
-//             placeholder="Unknown"
-//             data={['Unknown', 'Yes', 'No']}
-//             value={selectedOption}
-//             onChange={setSelectedOption}
-//             className="select-field"
-//           />
-//         </ScrollArea>
-//         <Button component='b' fullWidth className="edit-button">Search</Button>
-//       </Card>
-//     </div>
-//   </div>
-// );

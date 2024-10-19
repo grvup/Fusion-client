@@ -3,7 +3,7 @@ import { Container, Button, Table, Flex, Text, Group } from "@mantine/core";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
-export default function SemesterInfo({ curriculum }) {
+export default function StudSemesterInfo({ curriculum }) {
   const [activeTab, setActiveTab] = useState(0);
 
   const sampleSemester = {
@@ -165,17 +165,7 @@ export default function SemesterInfo({ curriculum }) {
             >
               Credits
             </th>
-            <th
-              style={{
-                padding: "12px 20px",
-                backgroundColor: "#C5E2F6",
-                color: "#3498db",
-                textAlign: "center",
-                width: "20%", // fixed width for Actions
-              }}
-            >
-              Actions
-            </th>
+           
           </tr>
         </thead>
         <tbody>
@@ -192,7 +182,7 @@ export default function SemesterInfo({ curriculum }) {
                 }}
               >
                 <a
-                  href={`/programme_curriculum/admin_course/${course.courseCode}`}
+                  href={`/programme_curriculum/student_course/?course?=${course.courseCode}`}
                   style={{ textDecoration: "none" }}
                 >
                   {course.courseCode}
@@ -220,48 +210,10 @@ export default function SemesterInfo({ curriculum }) {
               >
                 {course.credits}
               </td>
-              <td
-                style={{
-                  padding: "15px 20px",
-                  textAlign: "center",
-                  backgroundColor: "#ffffff",
-                  borderRight: "1px solid #d3d3d3",
-                  borderBottom: "1px solid #d3d3d3",
-                }}
-              >
-                <a href={`/programme_curriculum/acad_admin_edit_course_form/${slot.id}`}>
-                <Button
-                  variant="outline"
-                  color="green"
-                  size="xs"
-                  style={{ marginRight: "10px" }}
-                >
-                  Edit
-                </Button>
-                </a>
-              </td>
+            
             </tr>
           ))}
-          <tr>
-            <td colSpan="4" style={{ textAlign: "right", padding: "10px" }}>
-              <a
-                href={`/programme_curriculum/admin_edit_course_slot_form?courseslot=
-                  ${courseSlots.id}`}
-              >
-                <Button
-                  variant="solid"
-                  color="green"
-                  size="md"
-                  style={{ marginRight: "10px" }}
-                >
-                  Edit Slot
-                </Button>
-              </a>
-              <Button variant="solid" color="red" size="md">
-                Remove Slot
-              </Button>
-            </td>
-          </tr>
+        
         </tbody>
       </Table>
     ));
@@ -452,44 +404,7 @@ export default function SemesterInfo({ curriculum }) {
           </div>
 
           {/* Right side: Buttons */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              margin: "0 1vw",
-            }}
-          >
-            <Group>
-              <a
-                href={`/programme_curriculum/acad_admin_instigate_form?semester=
-                  ${sampleSemester.semester_no}`}
-              >
-                <Button
-                  variant="filled"
-                  color="blue"
-                  spacing="md"
-                  direction="column"
-                  style={{ width: "12vw" }}
-                  // onClick={handleInstigateSemester}
-                  // style={{ marginBottom: "10px" }}
-                >
-                  Instigate Semester
-                </Button>
-              </a>
-              {/* <Link to="/programme_curriculum/acad_admin_add_courseslot_form"> */}
-              <Link to="/programme_curriculum/acad_admin_add_courseslot_form">
-                <Button
-                  variant="filled"
-                  color="green"
-                  style={{ width: "12vw" }}
-                >
-                  Add Course Slot
-                </Button>
-              </Link>
-            </Group>
-          </div>
+         
         </div>
       )}
 
@@ -504,50 +419,13 @@ export default function SemesterInfo({ curriculum }) {
         >
           <div style={{ width: "65vw" }}>{renderCourseTables(courseSlots)}</div>
 
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              margin: "0 1vw",
-            }}
-          >
-            <Group>
-              <a
-                href={`/programme_curriculum/acad_admin_instigate_form?semester=
-                  ${sampleSemester.semester_no}`}
-              >
-                <Button
-                  variant="filled"
-                  color="blue"
-                  spacing="md"
-                  direction="column"
-                  style={{ width: "12vw" }}
-                  // onClick={handleInstigateSemester}
-                  // style={{ marginBottom: "10px" }}
-                >
-                  Instigate Semester
-                </Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_courseslot_form">
-                <Button
-                  variant="filled"
-                  color="green"
-                  // onClick={handleAddCourseSlot}
-                  style={{ width: "12vw" }}
-                >
-                  Add Course Slot
-                </Button>
-              </a>
-            </Group>
-          </div>
+          
         </div>
       )}
     </Container>
   );
 }
 
-SemesterInfo.propTypes = {
+StudSemesterInfo.propTypes = {
   curriculum: PropTypes.string,
 };

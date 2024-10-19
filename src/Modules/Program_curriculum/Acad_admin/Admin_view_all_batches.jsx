@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollArea, Button, Select, TextInput } from "@mantine/core";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import axios from "axios"; // Assuming axios is used for API calls
 
 function AdminViewAllBatches() {
   const [activeTab, setActiveTab] = useState("Batches");
@@ -12,141 +13,36 @@ function AdminViewAllBatches() {
     discipline: "",
   });
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [batches, setBatches] = useState([]);
+  const [finishedBatches, setFinishedBatches] = useState([]);
+  const [filteredBatches, setFilteredBatches] = useState([]);
 
-  const batches = [
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
+  // Fetch data from the backend
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+  
+        const response = await axios.get(
+          "http://127.0.0.1:8000/programme_curriculum/admin_batches/",
+          {
+            headers: {
+              Authorization: `Token ${token}`,  // Add the Authorization header
+            },
+          }
+        ); // Replace with actual endpoint
+        setBatches(response.data.batches); // Assuming API returns {runningBatches, finishedBatches}
+        setFinishedBatches(response.data.finished_batches);
+        setFilteredBatches(response.data.filter);
+      } catch (error) {
+        console.error("Error fetching batch data:", error);
+      }
+    };
 
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
-
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
-  ];
-
-  const finishedBatches = [
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-  ];
-
+    fetchBatches();
+  }, []);
+  // console.log(batches)
+  // Handle search input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFilter({
@@ -155,46 +51,25 @@ function AdminViewAllBatches() {
     });
   };
 
+  // Filter logic (can be adjusted based on API response structure)
+  const handleSearch = () => {
+    const filtered = batches.filter((batch) => {
+      return (
+        (filter.name === "" || batch.name.includes(filter.name)) &&
+        (filter.year === "" || String(batch.year).includes(filter.year)) &&
+        (filter.curriculum === "" || batch.curriculum === filter.curriculum) &&
+        (filter.runningBatch === "" || batch.status === filter.runningBatch) &&
+        (filter.discipline === "" || batch.discipline === filter.discipline)
+      );
+    });
+    setFilteredBatches(filtered);
+  };
+  // console.log(filteredBatches)
+  // console.log(finishedBatches)
   return (
     <div>
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Curriculums</span>
-        <span>CSE UG Curriculum</span>
-      </nav>
-
-      <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>disciplines</p>
-        <p>batches</p>
-
-        <div className="top-actions">
-          <a
-            href="/programme_curriculum/acad_admin_add_batch_form"
-            style={{ textDecoration: "none" }}
-          >
-            <Button variant="filled" color="blue">
-              Add Batch
-            </Button>
-          </a>
-
-          {/* Toggle search icon and close icon based on search visibility */}
-          {!isSearchVisible ? (
-            <MagnifyingGlass
-              size={24}
-              onClick={() => setIsSearchVisible(true)}
-              style={{ cursor: "pointer", color: "#007bff" }}
-            />
-          ) : null}
-        </div>
-      </div>
-
       <div className="courses-container">
-        <div
-          className={`courses-table-section ${isSearchVisible ? "" : "full-width"}`}
-        >
+        <div className={`courses-table-section ${isSearchVisible ? "" : "full-width"}`}>
           <div className="tabs">
             <Button
               variant={activeTab === "Batches" ? "filled" : "outline"}
@@ -209,16 +84,25 @@ function AdminViewAllBatches() {
               Finished Batches
             </Button>
           </div>
-
-          <ScrollArea
-            className="courses-scroll-area"
-            type="hover"
-            style={{ height: "300px" }}
-          >
+          <div className="top-actions">
+            <a href="/programme_curriculum/acad_admin_add_batch_form" style={{ textDecoration: "none" }}>
+              <Button variant="filled" color="blue">
+                Add Batch
+              </Button>
+            </a>
+            {!isSearchVisible ? (
+              <MagnifyingGlass
+                size={24}
+                onClick={() => setIsSearchVisible(true)}
+                style={{ cursor: "pointer", color: "#007bff" }}
+              />
+            ) : null}
+          </div>
+          <ScrollArea className="courses-scroll-area" type="hover" style={{ height: "100vh" ,backgroundColor:'white',padding:'0px 20px',boxShadow:'0px 0px 1px 1px rgba(0, 0, 0, 0.2)',borderRadius:'5px', margin:'20px 0 0 0'}}>
             {activeTab === "Batches" && (
               <div className="batches-table">
                 <table className="courses-table">
-                  <thead className="courses-table-header">
+                  <thead className="courses-table-header" style={{ backgroundColor: "#b0e0ff" }}>
                     <tr>
                       <th>Name</th>
                       <th>Discipline</th>
@@ -228,38 +112,45 @@ function AdminViewAllBatches() {
                     </tr>
                   </thead>
                   <tbody>
-                    {batches.map((batch, index) => (
-                      <tr key={index} className="courses-table-row">
-                        <td>{batch.name}</td>
-                        <td>{batch.discipline}</td>
-                        <td>{batch.year}</td>
-                        <td>
-                          <a
-                            href={`/programme_curriculum/view_curriculum?curriculum=${
-                              batch.curriculum
-                            }`}
-                            className="course-link"
-                            style={{ textDecoration: "none" }}
-                          >
-                            {batch.curriculum}
-                          </a>
-                        </td>
-                        <td>
-                          <a
-                            href={`/programme_curriculum/admin_edit_batch_form?batch=${
-                              batch.name
-                            }`}
-                            className="course-link"
-                            style={{ textDecoration: "none" }}
-                          >
-                            <Button variant="light" color="green">
-                              Edit
-                            </Button>
-                          </a>
-                        </td>
+                    {Array.isArray(batches) && batches.length > 0 ? (
+                      batches.map((batch, index) => (
+                        <tr
+                          key={index}
+                          className="courses-table-row"
+                          style={{ backgroundColor: index % 2 === 0 ? "#fff" : "#15ABFF1C" }}
+                        >
+                          <td>{batch.name}</td>
+                          <td>{batch.discipline}</td>
+                          <td>{batch.year}</td>
+                          <td>
+                            <a
+                              href={`/programme_curriculum/view_curriculum?curriculum=${batch.curriculum}`}
+                              className="course-link"
+                              style={{ textDecoration: "none" }}
+                            >
+                              {batch.curriculum} &nbsp;v{batch.curriculumVersion}
+                            </a>
+                          </td>
+                          <td>
+                            <a
+                              href={`/programme_curriculum/admin_edit_batch_form?batch=${batch.name}`}
+                              className="course-link"
+                              style={{ textDecoration: "none" }}
+                            >
+                              <Button variant="filled" color="green">
+                                Edit
+                              </Button>
+                            </a>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="5">No batches found</td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
+
                 </table>
               </div>
             )}
@@ -267,7 +158,7 @@ function AdminViewAllBatches() {
             {activeTab === "Finished Batches" && (
               <div className="batches-table">
                 <table className="courses-table">
-                  <thead className="courses-table-header">
+                  <thead className="courses-table-header" style={{ backgroundColor: "#b0e0ff" }}>
                     <tr>
                       <th>Name</th>
                       <th>Discipline</th>
@@ -278,30 +169,26 @@ function AdminViewAllBatches() {
                   </thead>
                   <tbody>
                     {finishedBatches.map((batch, index) => (
-                      <tr key={index} className="courses-table-row">
+                      <tr key={index} className="courses-table-row" style={{ backgroundColor: index % 2 === 0 ? "#fff" : "#15ABFF1C" }}>
                         <td>{batch.name}</td>
                         <td>{batch.discipline}</td>
                         <td>{batch.year}</td>
                         <td>
                           <a
-                            href={`/programme_curriculum/view_curriculum?curriculum=${
-                              batch.curriculum
-                            }`}
+                            href={`/programme_curriculum/view_curriculum?curriculum=${batch.curriculum}`}
                             className="course-link"
                             style={{ textDecoration: "none" }}
                           >
-                            {batch.curriculum}
+                            {batch.curriculum} &nbsp;v{batch.curriculumVersion}
                           </a>
                         </td>
                         <td>
                           <a
-                            href={`/programme_curriculum/admin_edit_batch_form?batch=${
-                              batch.name
-                            }`}
+                            href={`/programme_curriculum/admin_edit_batch_form?batch=${batch.name}`}
                             className="course-link"
                             style={{ textDecoration: "none" }}
                           >
-                            <Button variant="light" color="green">
+                            <Button variant="filled" color="green">
                               Edit
                             </Button>
                           </a>
@@ -316,11 +203,7 @@ function AdminViewAllBatches() {
         </div>
 
         {isSearchVisible && (
-          <ScrollArea
-            className="courses-search-section"
-            type="hover"
-            style={{ height: "500px" }}
-          >
+          <ScrollArea className="courses-search-section" type="hover" style={{ height: "500px" }}>
             <div className="courses-search-card">
               <div className="filter-form">
                 {/* Close icon in the search section */}
@@ -353,27 +236,17 @@ function AdminViewAllBatches() {
                   label="Curriculum"
                   placeholder="Select curriculum"
                   value={filter.curriculum}
-                  onChange={(value) =>
-                    setFilter({ ...filter, curriculum: value })
-                  }
+                  onChange={(value) => setFilter({ ...filter, curriculum: value })}
                   data={[
-                    {
-                      value: "CSE PhD Curriculum v1.0",
-                      label: "CSE PhD Curriculum v1.0",
-                    },
-                    {
-                      value: "ME PhD Curriculum v1.0",
-                      label: "ME PhD Curriculum v1.0",
-                    },
+                    { value: "CSE PhD Curriculum v1.0", label: "CSE PhD Curriculum v1.0" },
+                    { value: "ME PhD Curriculum v1.0", label: "ME PhD Curriculum v1.0" },
                   ]}
                 />
                 <Select
                   label="Running batch"
                   placeholder="Select batch status"
                   value={filter.runningBatch}
-                  onChange={(value) =>
-                    setFilter({ ...filter, runningBatch: value })
-                  }
+                  onChange={(value) => setFilter({ ...filter, runningBatch: value })}
                   data={[
                     { value: "Unknown", label: "Unknown" },
                     { value: "Running", label: "Running" },
@@ -383,21 +256,13 @@ function AdminViewAllBatches() {
                   label="Discipline"
                   placeholder="Select discipline"
                   value={filter.discipline}
-                  onChange={(value) =>
-                    setFilter({ ...filter, discipline: value })
-                  }
+                  onChange={(value) => setFilter({ ...filter, discipline: value })}
                   data={[
-                    {
-                      value: "Mechanical Engineering ME",
-                      label: "Mechanical Engineering ME",
-                    },
-                    {
-                      value: "Computer Science and Engineering CSE",
-                      label: "Computer Science and Engineering CSE",
-                    },
+                    { value: "Mechanical Engineering ME", label: "Mechanical Engineering ME" },
+                    { value: "Computer Science and Engineering CSE", label: "Computer Science and Engineering CSE" },
                   ]}
                 />
-                <Button variant="filled" color="blue">
+                <Button variant="filled" color="blue" onClick={handleSearch}>
                   Search
                 </Button>
               </div>
@@ -411,8 +276,8 @@ function AdminViewAllBatches() {
           display: flex;
           gap: 20px;
           width: 100%;
-          height: 100vh;
           transition: all 0.3s ease-in-out;
+          margin:20px 0 0 20px;
         }
 
         .courses-table-section {
@@ -431,16 +296,16 @@ function AdminViewAllBatches() {
           gap: 10px;
           margin-left: auto;
           align-items: center;
+          margin-top:-5vh
         }
 
         .tabs {
           display: flex;
           gap: 20px;
-          margin-top: 10px;
         }
 
         .courses-scroll-area {
-          margin-top: 20px;
+          height:150vh
         }
 
         .batches-table {
@@ -457,6 +322,7 @@ function AdminViewAllBatches() {
           padding: 10px;
           text-align: left;
           border: 1px solid #007bff;
+
         }
 
         .courses-search-section {

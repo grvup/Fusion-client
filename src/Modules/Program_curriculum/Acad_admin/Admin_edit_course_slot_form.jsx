@@ -59,16 +59,16 @@ function Admin_edit_course_slot_form({ existingData = {} }) {
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
+      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs> */}
 
       {/* Options Section */}
-      <Group spacing="xs" className="program-options" position="center" mt="md">
+      {/* <Group spacing="xs" className="program-options" position="center" mt="md">
         <Text>Programmes</Text>
         <Text className="active">Curriculums</Text>
         <Text>Courses</Text>
         <Text>Disciplines</Text>
         <Text>Batches</Text>
-      </Group>
+      </Group> */}
 
       <Container
         fluid

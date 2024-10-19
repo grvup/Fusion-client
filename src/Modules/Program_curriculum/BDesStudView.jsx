@@ -263,7 +263,14 @@ function BDesStudView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                    {curr.name}
+                    <a
+                      href={`/programme_curriculum/stud_curriculum_view?curriculum=
+                        ${curr.name}`}
+                        style={{textDecoration:'none'}}
+                    >
+                      {curr.name}
+                    </a>
+                  
                   </td>
                   <td
                     style={{
@@ -271,6 +278,7 @@ function BDesStudView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
+
                     {curr.version}
                   </td>
                   <td
@@ -281,19 +289,15 @@ function BDesStudView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                    {curr.batch.map((b, i) => (
+                     {curr.batch.map((b, i) => (
                       <React.Fragment key={i}>
-                        <Anchor
-                          component={Link}
-                          to="#"
+                        <span
                           style={{
                             marginRight: "10px",
-                            color: "#1e90ff",
-                            textDecoration: "underline",
                           }}
                         >
                           {b}
-                        </Anchor>
+                        </span>
                         {i < curr.batch.length - 1 && (
                           <span style={{ margin: "0 10px" }}>|</span>
                         )}
@@ -419,19 +423,17 @@ function BDesStudView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                    {curr.batch.map((b, i) => (
+                     {curr.batch.map((b, i) => (
                       <React.Fragment key={i}>
-                        <Anchor
-                          component={Link}
-                          to="#"
+                        <span
                           style={{
                             marginRight: "10px",
-                            color: "#1e90ff",
-                            textDecoration: "underline",
+                            color: "black", // Set the text color to black or any color of your choice
+                            textDecoration: "none", // Remove the underline
                           }}
                         >
                           {b}
-                        </Anchor>
+                        </span>
                         {i < curr.batch.length - 1 && (
                           <span style={{ margin: "0 10px" }}>|</span>
                         )}
@@ -500,7 +502,7 @@ function BDesStudView() {
 
   return (
     <Container fluid>
-      <Grid gutter="lg">
+      <Grid gutter="lg" style={{margin:'20px 0'}}>
         <Grid.Col span={12}>
           <Button
             onClick={() => setActiveTab("info")}

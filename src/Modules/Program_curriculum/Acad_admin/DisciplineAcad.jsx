@@ -1,129 +1,50 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Anchor, Container, Button, Flex } from "@mantine/core";
 import { Link, useNavigate } from "react-router-dom";
-// import './Admin_view_all_courses.css';
-
-// Updated discipline data
-const disciplineData = [
-  {
-    discipline: "Computer Science and Engineering (CSE)",
-    programs: [
-      { label: "M.Tech CSE", link: "/acad_curriculum/discipline/mtech-cse" },
-      { label: "PhD in CSE", link: "/acad_curriculum/discipline/phd-cse" },
-      { label: "B.Tech CSE", link: "/acad_curriculum/discipline/btech-cse" },
-    ],
-  },
-  {
-    discipline: "Mechanical Engineering (ME)",
-    programs: [
-      { label: "M.Tech ME", link: "/acad_curriculum/discipline/mtech-me" },
-      { label: "PhD in ME", link: "/acad_curriculum/discipline/phd-me" },
-      { label: "B.Tech ME", link: "/acad_curriculum/discipline/btech-me" },
-    ],
-  },
-  {
-    discipline: "Electronics and Communication Engineering (ECE)",
-    programs: [
-      { label: "M.Tech ECE", link: "/acad_curriculum/discipline/mtech-ece" },
-      { label: "PhD in ECE", link: "/acad_curriculum/discipline/phd-ece" },
-      { label: "B.Tech ECE", link: "/acad_curriculum/discipline/btech-ece" },
-    ],
-  },
-  {
-    discipline: "Mechatronics (MT)",
-    programs: [
-      {
-        label: "M.Tech Mechatronics",
-        link: "/acad_curriculum/discipline/mtech-mechatronics",
-      },
-    ],
-  },
-  {
-    discipline: "Design (Des.)",
-    programs: [
-      { label: "B.Design", link: "/acad_curriculum/discipline/bdesign" },
-      {
-        label: "PhD in Design",
-        link: "/acad_curriculum/discipline/phd-design",
-      },
-      {
-        label: "M.Des Design",
-        link: "/acad_curriculum/discipline/mdes-design",
-      },
-    ],
-  },
-  {
-    discipline: "Natural Sciences-Mathematics (Maths)",
-    programs: [
-      { label: "PhD in Maths", link: "/acad_curriculum/discipline/phd-maths" },
-    ],
-  },
-  {
-    discipline: "Natural Sciences-Physics (Physics)",
-    programs: [
-      {
-        label: "PhD in Physics",
-        link: "/acad_curriculum/discipline/phd-physics",
-      },
-    ],
-  },
-  {
-    discipline: "Humanities - English (English)",
-    programs: [
-      {
-        label: "PhD in English",
-        link: "/acad_curriculum/discipline/phd-english",
-      },
-    ],
-  },
-  {
-    discipline: "Smart Manufacturing (SM)",
-    programs: [
-      { label: "M.Tech SM", link: "/acad_curriculum/discipline/mtech-sm" },
-      { label: "B.Tech SM", link: "/acad_curriculum/discipline/btech-sm" },
-    ],
-  },
-];
+import axios from "axios"; // For making API requests
 
 function DisciplineAcad() {
+  const [disciplines, setDisciplines] = useState([]); // State to hold discipline data
+  const [loading, setLoading] = useState(true); // Loading state for the API call
   const navigate = useNavigate(); // Hook to navigate between routes
+
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchDisciplines = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+        const response = await axios.get(
+          "http://127.0.0.1:8000/programme_curriculum/admin_disciplines/",
+          {
+            headers: {
+              Authorization: `Token ${token}`,  // Add the Authorization header
+            },
+          }
+        );
+        setDisciplines(response.data.disciplines); // Set the data into state
+        setLoading(false); // Set loading to false when data is fetched
+      } catch (error) {
+        console.error("Error fetching disciplines: ", error);
+        setLoading(false); // Set loading to false if there is an error
+      }
+    };
+
+    fetchDisciplines(); // Trigger data fetch
+  }, []);
 
   return (
     <Container
       style={{
-        // marginTop: "20px",
-        // padding: "20px",
-        // backgroundColor: "#f8f9fa",
         borderRadius: "8px",
         marginLeft: "0",
         width: "100vw",
       }}
     >
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Curriculums</span>
-        <span>CSE UG Curriculum</span>
-      </nav>
-
-      {/* Options Section */}
-      <div className="program-options">
-        <p>Programmes</p>
-        <p>Curriculums</p>
-        <p>Courses</p>
-        <p className="active">disciplines</p>
-        <p>batches</p>
-      </div>
-
-      {/* Align Discipline Heading and Add Discipline Button in a single row */}
-      <Flex
-        justify="space-between"
-        align="center"
-        style={{ marginBottom: "20px" }}
-      >
-        {/* Discipline Heading */}
-        <h2 style={{ fontSize: "24px", textAlign: "left" }}>Discipline</h2>
-
-        {/* Add Discipline Button */}
+      {/* Header and Button */}
+      <Flex justify="space-between" align="center" style={{ marginTop: "20px" }} mb={20}>
+        <Button variant="filled" style={{ marginRight: "10px" }}>
+          Disciplines
+        </Button>
       </Flex>
 
       {/* Scrollable and Larger Table */}
@@ -141,81 +62,91 @@ function DisciplineAcad() {
             <tr style={{ backgroundColor: "#15ABFF54" }}>
               <th style={{ padding: "10px", textAlign: "left" }}>Discipline</th>
               <th style={{ padding: "10px", textAlign: "left" }}>Programmes</th>
-              <th style={{ padding: "10px", textAlign: "center" }}>
-                Action
-              </th>{" "}
-              {/* Added for Edit Button */}
+              <th style={{ padding: "10px", textAlign: "center" }}>Action</th>
             </tr>
           </thead>
           <tbody>
-            {disciplineData.map((item, index) => (
-              <tr
-                key={item.discipline}
-                style={{
-                  backgroundColor: index % 2 === 0 ? "#fff" : "#15ABFF1C",
-                  transition: "background-color 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#15ABFF1C";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor =
-                    index % 2 === 0 ? "#fff" : "#15ABFF1C";
-                }}
-              >
-                <td style={{ padding: "10px", borderRight: "1px solid black" }}>
-                  {item.discipline}
-                </td>
-                <td
-                  style={{
-                    padding: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                    borderRight: "1px solid black",
-                  }}
-                >
-                  {item.programs.map((program, i, array) => (
-                    <React.Fragment key={i}>
-                      <Anchor
-                        component={Link}
-                        to={`/programme_curriculum/acad_view?programme=${program.label}`}
-                        style={{
-                          marginRight: "10px",
-                          color: "#1e90ff",
-                          textDecoration: "underline",
-                        }}
-                      >
-                        {program.label}
-                      </Anchor>
-                      {i < array.length - 1 && (
-                        <span style={{ margin: "0 10px" }}>|</span>
-                      )}
-                    </React.Fragment>
-                  ))}
-                </td>
-                {/* Edit Button */}
-
-                <td style={{ padding: "10px", textAlign: "center" }}>
-                  <a
-                    href={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${
-                      item.discipline
-                    }`}
-                  >
-                    <Button
-                      style={{
-                        backgroundColor: "#28a745",
-                        color: "white",
-                        padding: "5px 10px",
-                      }}
-                    >
-                      EDIT
-                    </Button>
-                  </a>
+            {loading ? (
+              <tr>
+                <td colSpan="3" style={{ textAlign: "center" }}>
+                  Loading...
                 </td>
               </tr>
-            ))}
+            ) : disciplines.length > 0 ? (
+              disciplines.map((item, index) => (
+                <tr
+                  key={item.name}
+                  style={{
+                    backgroundColor: index % 2 === 0 ? "#fff" : "#15ABFF1C",
+                    transition: "background-color 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = "#15ABFF1C";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor =
+                      index % 2 === 0 ? "#fff" : "#15ABFF1C";
+                  }}
+                >
+                  <td style={{ padding: "10px", borderRight: "1px solid black" }}>
+                    {item.name} ({item.acronym})
+                  </td>
+                  <td
+                    style={{
+                      padding: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      borderRight: "1px solid black",
+                    }}
+                  >
+                    {item.programmes.map((program, i, array) => (
+                      <React.Fragment key={i}>
+                        <Anchor
+                          component={Link}
+                          to={`/programme_curriculum/acad_view?programme=${program.name}`}
+                          style={{
+                            marginRight: "10px",
+                            color: "#1e90ff",
+                            textDecoration: "underline",
+                          }}
+                        >
+                          {program.name}
+                        </Anchor>
+                        {i < array.length - 1 && (
+                          <span style={{ margin: "0 10px" }}>|</span>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </td>
+
+                  {/* Edit Button */}
+                  <td style={{ padding: "10px", textAlign: "center" }}>
+                    <a
+                      href={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${item.name}`}
+                    >
+                      <Button
+                        style={{
+                          backgroundColor: "#28a745",
+                          color: "white",
+                          padding: "5px 10px",
+                        }}
+                      >
+                        EDIT
+                      </Button>
+                    </a>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3" style={{ textAlign: "center" }}>
+                  No disciplines found
+                </td>
+              </tr>
+            )}
           </tbody>
         </Table>
+
         <Button
           style={{
             backgroundColor: "#007bff",

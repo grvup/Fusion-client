@@ -575,7 +575,7 @@ function BDesAcadView() {
   );
 
   return (
-    <Container fluid>
+    <Container fluid style={{margin:'2vh 0 0 0'}}>
       <Grid gutter="lg">
         <Grid.Col span={12}>
           <Button

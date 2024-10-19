@@ -60,7 +60,14 @@ function renderTable(data) {
           borderRight: "1px solid #d3d3d3",
         }}
       >
-        {element.programme}
+        <a
+            href={`/programme_curriculum/curriculums?programme=${encodeURIComponent(
+              element.programme,
+            )}`}
+            style={{ color: "#3498db", textDecoration: "none" }}
+          >
+            {element.programme}
+          </a>
       </td>
       <td
         style={{
@@ -88,12 +95,7 @@ function View_all_programmes() {
       <Container
         style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
       >
-        {/* Breadcrumb Section */}
-        <Flex justify="flex-start" align="center" mb={20}>
-          <Text size="md" weight={500} style={{ color: "#2C3E50" }}>
-            Program and Curriculum &gt; Programmes
-          </Text>
-        </Flex>
+       
 
         {/* Buttons for Section Selection */}
         <Flex mb={20}>

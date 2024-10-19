@@ -167,20 +167,20 @@ function ViewSemesterOfACurriculum() {
   const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
   return (
     <div style={{ position: "relative" }}>
-      <nav className="breadcrumbs">
+      {/* <nav className="breadcrumbs">
         <span>Program and Curriculum</span>
         <span>Curriculums</span>
         <span>CSE UG Curriculum</span>
-      </nav>
+      </nav> */}
 
       {/* Options Section */}
-      <div className="program-options">
+      {/* <div className="program-options">
         <p>Programmes</p>
         <p className="active">Curriculums</p>
         <p>Courses</p>
         <p>disciplines</p>
         <p>batches</p>
-      </div>
+      </div> */}
       <h2>{curriculum.name} Table</h2>
 
       <Table
@@ -223,9 +223,12 @@ function ViewSemesterOfACurriculum() {
             <td style={{ border: "1px solid black" }} />
             {semesters.map((semester, index) => (
               <td key={index} style={{ border: "1px solid black" }}>
+                <a href={`/programme_curriculum/stud_semester_info/?semester=${ semester.semester_no}`}  style={{textDecoration:'none'}}>
+
                 <strong style={{ color: "blue", fontSize: "0.85vw" }}>
                   Semester {semester.semester_no}
                 </strong>
+                </a>
               </td>
             ))}
           </tr>
@@ -241,6 +244,8 @@ function ViewSemesterOfACurriculum() {
                   slotRow[index].courses.length ? (
                     <div>
                       {slotRow[index].courses.map((course, courseIndex) => (
+                        <a href={`/programme_curriculum/stud_course_slot_details/?courseslot=${ course.name}`} style={{textDecoration:'none'}}>
+
                         <p key={courseIndex}>
                           <strong style={{ fontSize: "0.65vw" }}>
                             {course.name}
@@ -249,6 +254,7 @@ function ViewSemesterOfACurriculum() {
                           (L: {course.lecture_hours}, T: {course.tutorial_hours}
                           , C: {course.credit})
                         </p>
+                        </a>
                       ))}
                     </div>
                   ) : (

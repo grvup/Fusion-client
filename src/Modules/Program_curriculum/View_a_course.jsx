@@ -48,7 +48,7 @@ function CourseDetail() {
       className="course-detail-container"
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
+      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
 
       <Group spacing="xs" className="program-options" position="center" mt="md">
         <Text>Programmes</Text>
@@ -56,7 +56,7 @@ function CourseDetail() {
         <Text>Courses</Text>
         <Text>Disciplines</Text>
         <Text>Batches</Text>
-      </Group>
+      </Group> */}
 
       {/* Course Details Card */}
       <Card shadow="sm" padding="lg" className="course-card">

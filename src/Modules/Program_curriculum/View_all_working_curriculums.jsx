@@ -8,6 +8,7 @@ import {
   TextInput,
   Grid,
   Paper,
+  Button,
 } from "@mantine/core";
 
 // Sample data for curriculum
@@ -180,7 +181,14 @@ function View_all_working_curriculums() {
           borderRight: "1px solid #d3d3d3",
         }}
       >
-        {element.name}
+        <a
+          href={`/programme_curriculum/stud_curriculum_view?curriculum=${
+            element.name
+          }`} 
+          style={{ color: "#3498db", textDecoration: "underline" }}
+        >
+          {element.name}
+        </a>
       </td>
       <td
         style={{
@@ -190,6 +198,7 @@ function View_all_working_curriculums() {
         }}
       >
         {element.version}
+        
       </td>
       <td
         style={{
@@ -222,15 +231,10 @@ function View_all_working_curriculums() {
         style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
       >
         {/* Breadcrumb Section */}
-        <Flex justify="flex-start" align="center" mb={20}>
-          <Text size="md" weight={500} style={{ color: "#2C3E50" }}>
-            Program and Curriculum &gt; Curriculums
-          </Text>
-        </Flex>
-
+       
         {/* Title Section */}
         <Flex justify="flex-start" align="center" mb={20}>
-          <Text
+          {/* <Text
             size="md"
             weight={700}
             style={{
@@ -240,7 +244,13 @@ function View_all_working_curriculums() {
             }}
           >
             Curriculums
-          </Text>
+          </Text> */}
+          <Button
+            variant= "filled" 
+            style={{ marginRight: "10px" }}
+          >
+            Curriculums
+          </Button>
         </Flex>
 
         <Grid>

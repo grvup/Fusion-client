@@ -131,18 +131,14 @@ function Admin_view_a_courses() {
 
   return (
     <div>
-      <nav className="breadcrumbs">
+      {/* <nav className="breadcrumbs">
         <span>Program and Curriculum</span>
         <span>Courses</span>
-      </nav>
+      </nav> */}
 
       {/* Options Section */}
       <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>disciplines</p>
-        <p>batches</p>
+        
 
         <div className="top-actions">
           {/* <Button className="add-course-btn">ADD COURSE</Button> */}
@@ -161,7 +157,7 @@ function Admin_view_a_courses() {
 
       {/* <h4>Courses</h4> */}
       <Button variant="filled" style={{ margin: "10px" }}>
-        Batches
+        Courses
       </Button>
 
       <div className={`courses-container ${showSearch ? "search-active" : ""}`}>
@@ -189,7 +185,8 @@ function Admin_view_a_courses() {
                     <tr key={index} className="courses-table-row">
                       <td>
                         <a
-                          href={`/course-detail/${course.code}`}
+                          href={`/programme_curriculum/student_course?course=${ course.code}`}
+                          style={{textDecoration:'none'}}
                           className="course-link"
                         >
                           {course.code}

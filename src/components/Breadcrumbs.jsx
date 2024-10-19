@@ -7,7 +7,7 @@ function CustomBreadcrumbs() {
   const currentModule = useSelector((state) => state.module.current_module);
   const items = [{ title: currentModule }].map((item, index) => (
     <Text key={index} className={classes.fusionText} fw={600}>
-      {item.title}
+      {item.title} 
     </Text>
   ));
 
@@ -19,7 +19,7 @@ function CustomBreadcrumbs() {
       mt="xs"
       ml={{ md: "lg" }}
     >
-      {items}
+      {items} 
     </Breadcrumbs>
   );
 }

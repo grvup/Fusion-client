@@ -169,20 +169,20 @@ function Admin_view_semesters_of_a_curriculum() {
     useState(false);
   return (
     <div style={{ position: "relative" }}>
-      <nav className="breadcrumbs">
+      {/* <nav className="breadcrumbs">
         <span>Program and Curriculum</span>
         <span>Curriculums</span>
         <span>CSE UG Curriculum</span>
-      </nav>
+      </nav> */}
 
       {/* Options Section */}
-      <div className="program-options">
+      {/* <div className="program-options">
         <p>Programmes</p>
         <p className="active">Curriculums</p>
         <p>Courses</p>
         <p>disciplines</p>
         <p>batches</p>
-      </div>
+      </div> */}
       <h2>{curriculum.name} Table</h2>
 
       <button
@@ -226,7 +226,7 @@ function Admin_view_semesters_of_a_curriculum() {
                 <div className="instigate-semester-dropdown">
                   {semesterscnt.map((semester, index) => (
                     <a
-                      href={`programme_curriculum/acad_admin_instigate_form?semester=${
+                      href={`/programme_curriculum/acad_admin_instigate_form?semester=${
                         semester
                       }`}
                       style={{ textDecoration: "none" }}
@@ -335,6 +335,7 @@ function Admin_view_semesters_of_a_curriculum() {
               <td key={index} style={{ border: "1px solid black" }}>
                 <a
                   href={`/programme_curriculum/semester_info?semester_no=${semester.semester_no}`}
+                  style={{textDecoration:'none'}}
                 >
                   <strong style={{ color: "blue", fontSize: "0.85vw" }}>
                     Semester {semester.semester_no}
@@ -355,7 +356,7 @@ function Admin_view_semesters_of_a_curriculum() {
                   slotRow[index].courses.length ? (
                     <div>
                       {slotRow[index].courses.map((course, courseIndex) => (
-                        <a href="/programme_curriculum/course_slot_details">
+                        <a href={`/programme_curriculum/course_slot_details?course=${course.name}`} style={{textDecoration:'none'}}>
                           <p key={courseIndex}>
                             <strong style={{ fontSize: "0.65vw" }}>
                               {course.name}

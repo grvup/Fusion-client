@@ -60,7 +60,7 @@ function Admin_add_course_proposal_form() {
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
+      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
 
       <Group spacing="xs" className="program-options" position="center" mt="md">
         <Text>Programmes</Text>
@@ -68,7 +68,7 @@ function Admin_add_course_proposal_form() {
         <Text>Courses</Text>
         <Text>Disciplines</Text>
         <Text>Batches</Text>
-      </Group>
+      </Group> */}
 
       <Container
         fluid

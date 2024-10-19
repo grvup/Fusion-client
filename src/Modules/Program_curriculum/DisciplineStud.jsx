@@ -4,6 +4,7 @@ import {
   Anchor,
   Container,
   Flex,
+  Button,
 } from "@mantine/core";
 import { Link, useNavigate } from "react-router-dom";
 // import './Admin_view_all_courses.css';
@@ -104,20 +105,20 @@ function DisciplineStud() {
         width: "100vw",
       }}
     >
-      <nav className="breadcrumbs">
+      {/* <nav className="breadcrumbs">
         <span>Program and Curriculum</span>
         <span>Curriculums</span>
         <span>CSE UG Curriculum</span>
-      </nav>
+      </nav> */}
 
       {/* Options Section */}
-      <div className="program-options">
+      {/* <div className="program-options">
         <p>Programmes</p>
         <p>Curriculums</p>
         <p>Courses</p>
         <p className="active">disciplines</p>
         <p>batches</p>
-      </div>
+      </div> */}
 
       {/* Align Discipline Heading and Add Discipline Button in a single row */}
       <Flex
@@ -126,7 +127,9 @@ function DisciplineStud() {
         style={{ marginBottom: "20px" }}
       >
         {/* Discipline Heading */}
-        <h2 style={{ fontSize: "24px", textAlign: "left" }}>Discipline</h2>
+        <Button variant="filled" style={{ marginTop: "20px" }}>
+        Discipline
+      </Button>
 
         {/* Add Discipline Button */}
        
@@ -180,11 +183,12 @@ function DisciplineStud() {
                     <React.Fragment key={i}>
                       <Anchor
                         component={Link}
-                        to={program.link}
+                        to={`/programme_curriculum/curriculums?semester=${
+                          program.label
+                        }`} 
                         style={{
                           marginRight: "10px",
                           color: "#1e90ff",
-                          textDecoration: "underline",
                         }}
                       >
                         {program.label}

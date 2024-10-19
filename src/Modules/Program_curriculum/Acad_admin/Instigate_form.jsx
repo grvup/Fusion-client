@@ -29,7 +29,7 @@ function InstigateSemesterForm() {
 
   return (
     <div style={containerStyle}>
-      <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
+      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
 
       <Group spacing="xs" className="program-options" mt="md">
         <Text>Programmes</Text>
@@ -37,7 +37,7 @@ function InstigateSemesterForm() {
         <Text>Courses</Text>
         <Text>Disciplines</Text>
         <Text>Batches</Text>
-      </Group>
+      </Group> */}
 
       <div style={formContainerStyle}>
         {/* Heading for Instigate Form */}

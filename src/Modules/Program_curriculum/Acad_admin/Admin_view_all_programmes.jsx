@@ -1,53 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MantineProvider,
   Table,
   Flex,
   Container,
-  Text,
   Button,
+  Text,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
-
-// Data for all programmes and disciplines
-const ugData = [
-  { programme: "B.Tech ME", discipline: "Mechanical Engineering" },
-  { programme: "B.Design", discipline: "Design" },
-  { programme: "B.Tech CSE", discipline: "Computer Science and Engineering" },
-  {
-    programme: "B.Tech ECE",
-    discipline: "Electronics and Communication Engineering",
-  },
-  { programme: "B.Tech SM", discipline: "Smart Manufacturing" },
-];
-
-const pgData = [
-  { programme: "M.Tech CSE", discipline: "Computer Science and Engineering" },
-  {
-    programme: "M.Tech ECE",
-    discipline: "Electronics and Communication Engineering",
-  },
-  { programme: "M.Tech ME", discipline: "Mechanical Engineering" },
-  { programme: "M.Tech Mechatronics", discipline: "Mechatronics" },
-  { programme: "M.Des Design", discipline: "Design" },
-  { programme: "M.Tech SM", discipline: "Smart Manufacturing" },
-];
-
-const phdData = [
-  { programme: "PhD in CSE", discipline: "Computer Science and Engineering" },
-  {
-    programme: "PhD in ECE",
-    discipline: "Electronics and Communication Engineering",
-  },
-  { programme: "PhD in ME", discipline: "Mechanical Engineering" },
-  { programme: "PhD in Physics", discipline: "Natural Sciences - Physics" },
-  { programme: "PhD in Maths", discipline: "Natural Sciences - Mathematics" },
-  { programme: "PhD in English", discipline: "Humanities - English" },
-  { programme: "PhD in Design", discipline: "Design" },
-];
+import axios from "axios";
 
 function AdminViewProgrammes() {
   const [activeSection, setActiveSection] = useState("ug"); // Default section
+  const [ugData, setUgData] = useState([]); // State to store UG programs
+  const [pgData, setPgData] = useState([]); // State to store PG programs
+  const [phdData, setPhdData] = useState([]); // State to store PhD programs
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Assuming you have stored the token in localStorage or state
+        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+  
+        const response = await axios.get(
+          "http://127.0.0.1:8000/programme_curriculum/admin_programmes/",
+          {
+            headers: {
+              Authorization: `Token ${token}`,  // Add the Authorization header
+            },
+          }
+        );
+  
+        setUgData(response.data.ug_programmes);
+        setPgData(response.data.pg_programmes);
+        setPhdData(response.data.phd_programmes);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        setError("Failed to load data");
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+  console.log(ugData)
+  
 
   // Function to render the table
   const renderTable = (data) => {
@@ -73,7 +75,7 @@ function AdminViewProgrammes() {
             )}`}
             style={{ color: "#3498db", textDecoration: "none" }}
           >
-            {element.programme}
+            {element.name}
           </Link>
         </td>
         <td
@@ -84,7 +86,7 @@ function AdminViewProgrammes() {
             width: "50%",
           }}
         >
-          {element.discipline}
+          {element.discipline__name}
         </td>
         <td
           style={{
@@ -107,19 +109,25 @@ function AdminViewProgrammes() {
     ));
   };
 
+  if (loading) {
+    return (
+      <Container>
+        <Text>Loading programmes...</Text>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Text color="red">{error}</Text>
+      </Container>
+    );
+  }
+
   return (
     <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles>
-      <Container
-        style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
-      >
-        {/* Breadcrumb Section */}
-        <Flex justify="flex-start" align="center" mb={20}>
-          <Text size="md" weight={500} style={{ color: "#2C3E50" }}>
-            Program and Curriculum &gt; Programmes
-          </Text>
-        </Flex>
-
-        {/* Buttons for Section Selection */}
+      <Container style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}>
         <Flex mb={20}>
           <Button
             variant={activeSection === "ug" ? "filled" : "outline"}
