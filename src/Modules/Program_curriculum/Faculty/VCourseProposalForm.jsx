@@ -135,7 +135,10 @@ function VCourseProposalForm() {
                 placeholder="Uploader Designation"
                 value={form.values.uploaderDesignation}
                 onChange={(event) =>
-                  form.setFieldValue("uploaderDesignation", event.currentTarget.value)
+                  form.setFieldValue(
+                    "uploaderDesignation",
+                    event.currentTarget.value,
+                  )
                 }
                 required
               />
@@ -144,12 +147,12 @@ function VCourseProposalForm() {
                 label="Receiver ID"
                 placeholder="---------------"
                 data={[
-                  { value: '1', label: 'User 1' },
-                  { value: '2', label: 'User 2' },
-                  { value: '3', label: 'User 3' },
+                  { value: "1", label: "User 1" },
+                  { value: "2", label: "User 2" },
+                  { value: "3", label: "User 3" },
                 ]}
                 value={form.values.receiverId}
-                onChange={(value) => form.setFieldValue('receiverId', value)}
+                onChange={(value) => form.setFieldValue("receiverId", value)}
                 required
               />
 
@@ -157,12 +160,14 @@ function VCourseProposalForm() {
                 label="Receiver Designation"
                 placeholder="--------------"
                 data={[
-                  { value: 'professor', label: 'Professor' },
-                  { value: 'hod', label: 'HOD' },
-                  { value: 'dean', label: 'Dean' },
+                  { value: "professor", label: "Professor" },
+                  { value: "hod", label: "HOD" },
+                  { value: "dean", label: "Dean" },
                 ]}
                 value={form.values.receiverDesignation}
-                onChange={(value) => form.setFieldValue('receiverDesignation', value)}
+                onChange={(value) =>
+                  form.setFieldValue("receiverDesignation", value)
+                }
                 required
               />
 

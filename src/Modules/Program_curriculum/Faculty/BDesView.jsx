@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Table, Anchor, ScrollArea, Container, Button } from "@mantine/core";
+import { useNavigate } from "react-router-dom";
+import { Table, ScrollArea, Container, Button } from "@mantine/core";
 import "./Faculty_view_all_courses.css";
 
 const CURRICULUM_DATA = {
@@ -113,7 +113,14 @@ function BDesView() {
                     idx % 2 === 0 ? "#fff" : "#15ABFF1C";
                 }}
               >
-                <td style={{ padding: "10px" }}>{curr.name}</td>
+                <td style={{ padding: "10px" }}>
+                  <a
+                    href={`/programme_curriculum/view_curriculum?curriculum=${curr.id}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    {curr.name}
+                  </a>
+                </td>
                 <td style={{ padding: "10px" }}>{curr.version}</td>
                 <td
                   style={{
@@ -124,17 +131,14 @@ function BDesView() {
                 >
                   {curr.batch.map((b, i) => (
                     <React.Fragment key={i}>
-                      <Anchor
-                        component={Link}
-                        to="#"
+                      <span
                         style={{
                           marginRight: "10px",
-                          color: "#1e90ff",
-                          textDecoration: "underline",
+                          textDecoration: "none",
                         }}
                       >
                         {b}
-                      </Anchor>
+                      </span>
                       {i < curr.batch.length - 1 && (
                         <span style={{ margin: "0 10px" }}>|</span>
                       )}

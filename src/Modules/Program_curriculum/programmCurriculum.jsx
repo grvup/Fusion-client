@@ -28,6 +28,8 @@ import ViewInwardFile from "./Faculty/ViewInwardFile";
 import ViewSemesterOfACurriculum from "./ViewSemesterOfACurriculum";
 import InwardFile from "./Faculty/InwardFiles";
 import OutwardFile from "./Faculty/OutwardFiles";
+import BDesView from "./Faculty/BDesView";
+import Discipline from "./Faculty/Discipline";
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -201,6 +203,22 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <OutwardFile />
+            </Layout>
+          }
+        />
+        <Route
+          path="/faculty_view"
+          element={
+            <Layout>
+              <BDesView />
+            </Layout>
+          }
+        />
+        <Route
+          path="/faculty_discipline"
+          element={
+            <Layout>
+              <Discipline />
             </Layout>
           }
         />
