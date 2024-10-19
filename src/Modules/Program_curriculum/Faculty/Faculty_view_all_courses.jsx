@@ -166,7 +166,7 @@ function Admin_view_a_courses() {
                     <tr key={index} className="courses-table-row">
                       <td>
                         <a
-                          href={`/course-detail/${course.code}`}
+                          href={`/programme_curriculum/faculty_course_view?course=${course.code}`}
                           className="course-link"
                         >
                           {course.code}
@@ -176,12 +176,11 @@ function Admin_view_a_courses() {
                       <td>{course.version}</td>
                       <td>{course.credits}</td>
                       <td>
-                        <Button
-                          href={`/edit-course/${course.code}`}
-                          className="courses-edit-button"
+                        <a
+                          href={`/programme_curriculum/faculty_forward_form?course=${course.code}`}
                         >
-                          Edit
-                        </Button>
+                          <Button className="courses-edit-button">Edit</Button>
+                        </a>
                       </td>
                     </tr>
                   ))}
