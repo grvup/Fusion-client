@@ -24,7 +24,7 @@ function AdminViewAllBatches() {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
   
         const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/admin_batches/",
+          "http://127.0.0.1:8000/programme_curriculum/api/admin_batches/",
           {
             headers: {
               Authorization: `Token ${token}`,  // Add the Authorization header
@@ -124,7 +124,7 @@ function AdminViewAllBatches() {
                           <td>{batch.year}</td>
                           <td>
                             <a
-                              href={`/programme_curriculum/view_curriculum?curriculum=${batch.curriculum}`}
+                              href={`/programme_curriculum/view_curriculum?curriculum=${batch.id}`}
                               className="course-link"
                               style={{ textDecoration: "none" }}
                             >
@@ -140,7 +140,7 @@ function AdminViewAllBatches() {
                               <Button variant="filled" color="green">
                                 Edit
                               </Button>
-                            </a>
+                            </a>/
                           </td>
                         </tr>
                       ))
@@ -175,7 +175,7 @@ function AdminViewAllBatches() {
                         <td>{batch.year}</td>
                         <td>
                           <a
-                            href={`/programme_curriculum/view_curriculum?curriculum=${batch.curriculum}`}
+                            href={`/programme_curriculum/view_curriculum?curriculum=${batch.id}`}
                             className="course-link"
                             style={{ textDecoration: "none" }}
                           >

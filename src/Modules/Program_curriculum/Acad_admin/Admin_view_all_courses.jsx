@@ -14,7 +14,7 @@ function Admin_view_all_courses() {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
   
         const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/admin_courses/",
+          "http://127.0.0.1:8000/programme_curriculum/api/admin_courses/",
           {
             headers: {
               Authorization: `Token ${token}`,  // Add the Authorization header

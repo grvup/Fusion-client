@@ -24,7 +24,7 @@ function CourseDetail() {
 
       try {
         const token = localStorage.getItem("authToken");
-        const response = await axios.get(`http://localhost:8000/programme_curriculum/admin_course/${id}/`,
+        const response = await axios.get(`http://localhost:8000/programme_curriculum/api/admin_course/${id}/`,
         {
           headers: {
             Authorization: `Token ${token}`,  // Add the Authorization header

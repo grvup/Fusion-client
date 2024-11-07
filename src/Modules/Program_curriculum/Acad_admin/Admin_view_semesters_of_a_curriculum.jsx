@@ -1,8 +1,9 @@
 import { ActionIcon, Table } from "@mantine/core";
 import { Bell } from "@phosphor-icons/react";
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
+import { useSearchParams } from 'react-router-dom';
 import "./Admin_view_semesters_of_a_curriculum.css";
-
+import axios from "axios";
 function Admin_view_semesters_of_a_curriculum() {
   // Demo data (matches the example layout)
   const curriculum = {
@@ -11,179 +12,61 @@ function Admin_view_semesters_of_a_curriculum() {
     batches: ["2020", "2021"],
   };
 
-  const semesters = [
-    {
-      semester_no: 1,
-      start_semester: "2023-08-01",
-      end_semester: "2023-12-15",
-      instigate_semester: true,
-    },
-    {
-      semester_no: 2,
-      start_semester: "2024-01-10",
-      end_semester: "2024-05-15",
-      instigate_semester: false,
-    },
-    {
-      semester_no: 3,
-      start_semester: null,
-      end_semester: null,
-      instigate_semester: false,
-    },
-    {
-      semester_no: 4,
-      start_semester: null,
-      end_semester: null,
-      instigate_semester: false,
-    },
-    {
-      semester_no: 5,
-      start_semester: "2023-08-01",
-      end_semester: "2023-12-15",
-      instigate_semester: true,
-    },
-    {
-      semester_no: 6,
-      start_semester: "2024-01-10",
-      end_semester: "2024-05-15",
-      instigate_semester: false,
-    },
-    {
-      semester_no: 7,
-      start_semester: null,
-      end_semester: null,
-      instigate_semester: false,
-    },
-    {
-      semester_no: 8,
-      start_semester: null,
-      end_semester: null,
-      instigate_semester: false,
-    },
-  ];
 
-  const semester_slots = [
-    [
-      {
-        name: "Slot A",
-        courses: [
-          {
-            name: "Mathematics",
-            lecture_hours: 3,
-            tutorial_hours: 1,
-            credit: 4,
-          },
-        ],
-      },
-      {
-        name: "Slot B",
-        courses: [
-          { name: "Physics", lecture_hours: 3, tutorial_hours: 1, credit: 4 },
-        ],
-      },
-      {
-        name: "Slot A",
-        courses: [
-          { name: "Chemistry", lecture_hours: 3, tutorial_hours: 1, credit: 4 },
-        ],
-      },
-      { name: "", courses: [] }, // Empty slot example
-    ],
-    [
-      {
-        name: "Slot A",
-        courses: [
-          { name: "Chemistry", lecture_hours: 3, tutorial_hours: 1, credit: 4 },
-        ],
-      },
-      {
-        name: "Slot B",
-        courses: [
-          { name: "Chemistry", lecture_hours: 3, tutorial_hours: 1, credit: 4 },
-        ],
-      },
-      {
-        name: "Slot A",
-        courses: [
-          { name: "Chemistry", lecture_hours: 3, tutorial_hours: 1, credit: 4 },
-        ],
-      },
-      {
-        name: "Slot C",
-        courses: [
-          {
-            name: "Electronics",
-            lecture_hours: 3,
-            tutorial_hours: 1,
-            credit: 4,
-          },
-        ],
-      },
-      { name: "", courses: [] },
-      { name: "", courses: [] },
-    ],
-    [
-      {
-        name: "Slot A",
-        courses: [
-          { name: "Chemistry", lecture_hours: 3, tutorial_hours: 1, credit: 4 },
-        ],
-      },
-    ],
-    [
-      {
-        name: "Slot A",
-        courses: [
-          { name: "Chemistry", lecture_hours: 3, tutorial_hours: 1, credit: 4 },
-        ],
-      },
-    ],
-    [
-      {
-        name: "Slot A",
-        courses: [
-          { name: "Chemistry", lecture_hours: 3, tutorial_hours: 1, credit: 4 },
-        ],
-      },
-    ],
-
-    // Add more slots for each semester
-  ];
-
-  const semester_credits = [19, 20, 21, 22, 19, 20, 21, 22]; // Example total credits for each semester
-  const semesterscnt = [
-    "Semester 1",
-    "Semester 2",
-    "Semester 3",
-    "Semester 4",
-    "Semester 5",
-    "Semester 6",
-    "Semester 7",
-    "Semester 8",
-  ];
-
-  // State to manage hover effect and option visibility
+  const [curriculumData, setCurriculumData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
-  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] =
-    useState(false);
+  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const curriculumId = searchParams.get('curriculum');
+
+  useEffect(() => {
+    const fetchCurriculumData = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+  
+        const response = await axios.get(
+          `http://127.0.0.1:8000/programme_curriculum/api/admin_curriculum_semesters/${curriculumId}`,  // Use backticks for template literal
+          {
+            headers: {
+              Authorization: `Token ${token}`,  // Add the Authorization header
+            },
+          }
+        );
+        // console.log(response)
+        setCurriculumData(response.data);
+      } catch (error) {
+        console.error("Error fetching curriculum data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurriculumData();
+  }, []);
+  // console.log(curriculumData)
+
+  if (loading) return <div>Loading...</div>;
+  const { curriculum_name, version, batches} = curriculumData;
+  // console.log(batches)
+  const semesters = curriculumData.semesters;
+  const semesterWiseSlots = curriculumData.semesters.reduce((acc, semester) => {
+    acc[`Semester ${semester.semester_no}`] = semester.slots;
+    return acc;
+  }, {});
+  // console.log(semesterWiseSlots)
+  const semester_credits = semesters.map((semester) => semester.credits);
+  // console.log(semester_credits)
+  const semesterscnt = semesters.map(
+    (semester) => `Semester ${semester.semester_no}`
+  );
+  const maxSlots = Math.max(...Object.values(semesterWiseSlots).map(slots => slots.length));
+
   return (
     <div style={{ position: "relative" }}>
-      {/* <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Curriculums</span>
-        <span>CSE UG Curriculum</span>
-      </nav> */}
-
-      {/* Options Section */}
-      {/* <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>disciplines</p>
-        <p>batches</p>
-      </div> */}
-      <h2>{curriculum.name} Table</h2>
+      <h2>{curriculum_name} Table</h2>
 
       <button
         className="options-button"
@@ -306,14 +189,11 @@ function Admin_view_semesters_of_a_curriculum() {
         <thead>
           <tr style={{ border: "1px solid black" }}>
             <td style={{ border: "1px solid black" }} />
-            <td
-              colSpan={curriculum.no_of_semester}
-              style={{ border: "1px solid black" }}
-            >
-              <h2>{curriculum.name}</h2>
+            <td colSpan={semesterscnt.length} style={{ border: "1px solid black" }}>
+              <h2>{curriculum_name} &nbsp; v{version}</h2>
             </td>
           </tr>
-          {curriculum.batches.length > 0 && (
+          {batches.length > 0 && (
             <tr style={{ border: "1px solid black" }}>
               <td style={{ border: "1px solid black" }} />
               <td
@@ -322,8 +202,8 @@ function Admin_view_semesters_of_a_curriculum() {
               >
                 <h4>
                   Batches:&nbsp;&nbsp;&nbsp;
-                  {curriculum.batches.map((batch, index) => (
-                    <span key={index}>{batch},&nbsp;&nbsp;&nbsp;</span>
+                  {batches.map((batch, index) => (
+                    <span key={index}>{batch.name} {batch.discipline} {batch.year},&nbsp;&nbsp;&nbsp;</span>
                   ))}
                 </h4>
               </td>
@@ -334,8 +214,8 @@ function Admin_view_semesters_of_a_curriculum() {
             {semesters.map((semester, index) => (
               <td key={index} style={{ border: "1px solid black" }}>
                 <a
-                  href={`/programme_curriculum/semester_info?semester_no=${semester.semester_no}`}
-                  style={{textDecoration:'none'}}
+                  href={`/programme_curriculum/semester_info?semester_id=${semester.id}`}
+                  style={{ textDecoration: "none" }}
                 >
                   <strong style={{ color: "blue", fontSize: "0.85vw" }}>
                     Semester {semester.semester_no}
@@ -346,35 +226,48 @@ function Admin_view_semesters_of_a_curriculum() {
           </tr>
         </thead>
         <tbody>
-          {semester_slots.map((slotRow, slotIndex) => (
-            <tr key={slotIndex} style={{ border: "1px solid black" }}>
-              <td style={{ border: "1px solid black" }} />
-              {semesters.map((semester, index) => (
-                <td key={index} style={{ border: "1px solid black" }}>
-                  {slotRow[index] &&
-                  slotRow[index].name &&
-                  slotRow[index].courses.length ? (
-                    <div>
-                      {slotRow[index].courses.map((course, courseIndex) => (
-                        <a href={`/programme_curriculum/course_slot_details?course=${course.name}`} style={{textDecoration:'none'}}>
-                          <p key={courseIndex}>
-                            <strong style={{ fontSize: "0.65vw" }}>
-                              {course.name}
-                            </strong>{" "}
+        {Array.from({ length: maxSlots }).map((_, slotIndex) => (
+          <tr key={slotIndex} style={{ border: "1px solid black" }}>
+            <td style={{ border: "1px solid black" }}>Slot {slotIndex + 1}</td>
+            {Object.values(semesterWiseSlots).map((slotRow, semesterIndex) => {
+              const slot = slotRow[slotIndex];
+              return (
+                <td key={semesterIndex} style={{ border: "1px solid black" }}>
+                  {slot && slot.name ? (
+                    slot.courses.length === 1 ? (
+                      <div>
+                        <a
+                          href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
+                          style={{ textDecoration: "none" }}
+                        >
+                          <p>
+                            <strong style={{ fontSize: "0.65vw" }}>{slot.courses[0].name}</strong>
                             <br />
-                            (L: {course.lecture_hours}, T:{" "}
-                            {course.tutorial_hours}, C: {course.credit})
+                            (L: {slot.courses[0].lecture_hours}, T: {slot.courses[0].tutorial_hours}, C: {slot.courses[0].credit})
                           </p>
                         </a>
-                      ))}
-                    </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <a
+                          href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
+                          style={{ textDecoration: "none" }}
+                        >
+                        <strong style={{ fontSize: "0.65vw" }}>{slot.name}</strong>
+
+                        </a>
+                      </div>
+                    )
                   ) : (
                     <div />
                   )}
                 </td>
-              ))}
-            </tr>
-          ))}
+              );
+            })}
+          </tr>
+        ))}
+
+
           <tr style={{ border: "1px solid black" }}>
             <td style={{ border: "1px solid black" }}>
               <strong style={{ color: "blue", fontSize: "0.75vw" }}>
@@ -405,9 +298,9 @@ function Admin_view_semesters_of_a_curriculum() {
                 Total Credits
               </strong>
             </td>
-            {semester_credits.map((totalCredits, index) => (
+            {semester_credits.map((credit, index) => (
               <td key={index} style={{ border: "1px solid black" }}>
-                {totalCredits}
+                {credit}
               </td>
             ))}
           </tr>
@@ -419,7 +312,7 @@ function Admin_view_semesters_of_a_curriculum() {
             </td>
             {semesters.map((semester, index) => (
               <td key={index} style={{ border: "1px solid black" }}>
-                {semester.instigate_semester ? (
+                {semester.is_instigated ? (
                   <div style={{ color: "green" }}>
                     <i className="icon checkmark" /> Yes
                   </div>

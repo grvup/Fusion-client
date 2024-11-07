@@ -1,10 +1,16 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Container, Button, Table, Flex, Text, Group } from "@mantine/core";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-
+import axios from "axios";
+import { useSearchParams } from 'react-router-dom';
 export default function SemesterInfo({ curriculum }) {
   const [activeTab, setActiveTab] = useState(0);
+
+  const [searchParams] = useSearchParams();
+  const semesterId = searchParams.get('semester_id');
+  const [semcourseSlots, setsemCourseSlots] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const sampleSemester = {
     semester_no: 1,
@@ -88,6 +94,34 @@ export default function SemesterInfo({ curriculum }) {
       ],
     },
   ];
+  useEffect(() => {
+    const fetchsemCourseslotData = async() => {
+        try {
+        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+  
+        const response = await axios.get(
+          `http://127.0.0.1:8000/programme_curriculum/api/admin_semester/${semesterId}`,  // Use backticks for template literal
+          {
+            headers: {
+              Authorization: `Token ${token}`,  // Add the Authorization header
+            },
+          }
+        );
+        // console.log(response)
+        setsemCourseSlots(response.data);
+      } catch (error) {
+        console.error("Error fetching curriculum data:", error);
+      } finally {
+        setLoading(false);
+      }
+    
+    };
+
+    fetchsemCourseslotData();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  // console.log(semcourseSlots)
 
   const renderCourseTables = (data) =>
     data.map((slot) => (
@@ -114,7 +148,7 @@ export default function SemesterInfo({ curriculum }) {
                 borderBottom: "1px solid #d3d3d3",
               }}
             >
-              {slot.slotName || "NS1"}
+              {slot.name || "NS1"}
             </th>
           </tr>
           <tr>
@@ -128,7 +162,7 @@ export default function SemesterInfo({ curriculum }) {
                 borderBottom: "1px solid #d3d3d3",
               }}
             >
-              Type : {slot.courseType || "Natural Science"}
+              Type : {slot.type || "Natural Science"}
             </th>
           </tr>
           <tr>
@@ -195,7 +229,7 @@ export default function SemesterInfo({ curriculum }) {
                   href={`/programme_curriculum/admin_course/${course.courseCode}`}
                   style={{ textDecoration: "none" }}
                 >
-                  {course.courseCode}
+                  {course.code}
                 </a>
               </td>
               <td
@@ -207,7 +241,7 @@ export default function SemesterInfo({ curriculum }) {
                   borderBottom: "1px solid #d3d3d3",
                 }}
               >
-                {course.courseName}
+                {course.name}
               </td>
               <td
                 style={{
@@ -218,7 +252,7 @@ export default function SemesterInfo({ curriculum }) {
                   borderBottom: "1px solid #d3d3d3",
                 }}
               >
-                {course.credits}
+                {course.credit}
               </td>
               <td
                 style={{
@@ -326,7 +360,7 @@ export default function SemesterInfo({ curriculum }) {
                       borderBottom: "1px solid #d3d3d3",
                     }}
                   >
-                    {curriculum || "CSE UG Curriculum v1.0"}
+                    {semcourseSlots.curriculum || "CSE UG Curriculum "} v{semcourseSlots.curriculum_version}
                   </td>
                 </tr>
 
@@ -342,7 +376,7 @@ export default function SemesterInfo({ curriculum }) {
                       borderBottom: "1px solid #d3d3d3",
                     }}
                   >
-                    Semester : {sampleSemester.semester_no}
+                    Semester : {semcourseSlots.semester_no}
                   </td>
                 </tr>
 
@@ -369,7 +403,7 @@ export default function SemesterInfo({ curriculum }) {
                       textAlign: "center",
                     }}
                   >
-                    {sampleSemester.is_instigated ? "Active" : "Not Yet"}
+                    {semcourseSlots.instigate_semester ? "Active" : "Not Yet"}
                   </td>
                 </tr>
 
@@ -394,7 +428,7 @@ export default function SemesterInfo({ curriculum }) {
                       textAlign: "center",
                     }}
                   >
-                    {sampleSemester.start_date || "None"}
+                    {semcourseSlots.start_semester || "None"}
                   </td>
                 </tr>
 
@@ -419,7 +453,7 @@ export default function SemesterInfo({ curriculum }) {
                       textAlign: "center",
                     }}
                   >
-                    {sampleSemester.end_date || "None"}
+                    {semcourseSlots.end_semester || "None"}
                   </td>
                 </tr>
 
@@ -444,7 +478,7 @@ export default function SemesterInfo({ curriculum }) {
                       textAlign: "center",
                     }}
                   >
-                    {sampleSemester.info || "None"}
+                    {semcourseSlots.semester_info || "None"}
                   </td>
                 </tr>
               </tbody>
@@ -502,7 +536,7 @@ export default function SemesterInfo({ curriculum }) {
             alignItems: "flex-start",
           }}
         >
-          <div style={{ width: "65vw" }}>{renderCourseTables(courseSlots)}</div>
+          <div style={{ width: "65vw" }}>{renderCourseTables(semcourseSlots.course_slots)}</div>
 
           <div
             style={{

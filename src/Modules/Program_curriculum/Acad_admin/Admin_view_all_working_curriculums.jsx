@@ -24,7 +24,7 @@ function Admin_view_all_working_curriculums() {
       try {
         const token = localStorage.getItem("authToken");
         const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/admin_working_curriculums/",
+          "http://127.0.0.1:8000/programme_curriculum/api/admin_working_curriculums/",
           {
             headers: {
               Authorization: `Token ${token}`,
@@ -66,7 +66,7 @@ function Admin_view_all_working_curriculums() {
       >
         {/* Curriculum name as a link */}
         <Link
-          to={`/programme_curriculum/view_curriculum?curriculum=${element.name}`}
+          to={`/programme_curriculum/view_curriculum?curriculum=${element.id}`}
           style={{ color: "#3498db", textDecoration: "underline" }}
         >
           {element.name}

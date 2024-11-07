@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Copy } from "@phosphor-icons/react";
-
+import { useLocation } from 'react-router-dom';
 import {
   Table,
   ScrollArea,
@@ -11,7 +11,7 @@ import {
   TextInput,
   Text,
 } from "@mantine/core";
-
+import axios from "axios";
 const CURRICULUM_DATA = {
   info: {
     programName: "B.Des",
@@ -49,11 +49,62 @@ const CURRICULUM_DATA = {
 };
 
 function BDesAcadView() {
+  const location = useLocation();
+
+  // Create an instance of URLSearchParams to parse query parameters
+  const queryParams = new URLSearchParams(location.search);
+
+  // Get the value of the 'programme' query parameter
+  const programmeId = queryParams.get('programme');  // This will be '1'
+
   const [activeTab, setActiveTab] = useState("info");
 
   // New States for Filtering
   const [searchName, setSearchName] = useState("");
   const [searchVersion, setSearchVersion] = useState("");
+  const [program, setProgram] = useState(null);
+  const [workingCurriculums, setWorkingCurriculums] = useState([]);
+  const [pastCurriculums, setPastCurriculums] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCurriculmns = async () => {
+      try {
+        // Assuming you have stored the token in localStorage or state
+        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+  
+        const response = await axios.get(
+          `http://127.0.0.1:8000/programme_curriculum/api/admin_curriculums/${programmeId}`,  // Use backticks for template literal
+          {
+            headers: {
+              Authorization: `Token ${token}`,  // Add the Authorization header
+            },
+          }
+        );
+  
+        setProgram(response.data.program);
+        setWorkingCurriculums(response.data.working_curriculums);
+        setPastCurriculums(response.data.past_curriculums);
+        setLoading(false);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        setError("Failed to load data");
+        setLoading(false);
+      }
+    };
+    
+    fetchCurriculmns();
+  }, []);
+  console.log(workingCurriculums)
+  // if (loading) {
+  //   return <p>Loading...</p>;
+  // }
+
+  // if (error) {
+  //   return <p>{error}</p>;
+  // }
 
   // Filter Logic for Working Curriculums
   const filteredWorkingCurriculums = CURRICULUM_DATA.workingCurriculums.filter(
@@ -70,15 +121,7 @@ function BDesAcadView() {
         curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
     );
 
-  const handleSearch = () => {
-    // Implement search functionality if needed (currently using live filtering)
-    console.log(
-      "Search initiated with Name:",
-      searchName,
-      "and Version:",
-      searchVersion,
-    );
-  };
+
   const [isHovered, setIsHovered] = useState(false);
   const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
 
@@ -110,7 +153,7 @@ function BDesAcadView() {
                 fontSize: "20px",
               }}
             >
-              B.DESIGN
+              {program?program.name:""}
             </td>
           </tr>
 
@@ -131,7 +174,7 @@ function BDesAcadView() {
               Programme Name
             </td>
             <td style={{ padding: "10px" }}>
-              {CURRICULUM_DATA.info.programName}
+              {program?program.name:""}
             </td>
           </tr>
 
@@ -152,7 +195,7 @@ function BDesAcadView() {
               Programme Category
             </td>
             <td style={{ padding: "10px" }}>
-              {CURRICULUM_DATA.info.programCategory}
+            {program?program.category:""}
             </td>
           </tr>
 
@@ -235,8 +278,8 @@ function BDesAcadView() {
             </tr>
           </thead>
           <tbody>
-            {filteredWorkingCurriculums.length > 0 ? (
-              filteredWorkingCurriculums.map((curr, idx) => (
+            {workingCurriculums.length > 0 ? (
+              workingCurriculums[0].map((curr, idx) => (
                 <tr
                   key={idx}
                   style={{
@@ -252,10 +295,9 @@ function BDesAcadView() {
                     }}
                   >
                     <a
-                      href={`/programme_curriculum/view_curriculum?curriculum=
-                        ${curr.name}`}
+                      href={`/programme_curriculum/view_curriculum?curriculum=${curr.id}`} style={{textDecoration:"none"}}
                     >
-                      {curr.name}
+                      {curr.name} 
                     </a>
                   </td>
                   <td
@@ -274,7 +316,7 @@ function BDesAcadView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                    {curr.batch.map((b, i) => (
+                    {/* {curr.batch.map((b, i) => (
                       <React.Fragment key={i}>
                         <span
                           style={{
@@ -287,7 +329,8 @@ function BDesAcadView() {
                           <span style={{ margin: "0 10px" }}>|</span>
                         )}
                       </React.Fragment>
-                    ))}
+                    ))} */}
+                    {curr.batch}
                   </td>
                   <td
                     style={{
@@ -295,7 +338,7 @@ function BDesAcadView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                    {curr.semesters}
+                    {curr.no_of_semester}
                   </td>
                   <td style={{ padding: "10px", textAlign: "center" }}>
                     <a
@@ -389,8 +432,8 @@ function BDesAcadView() {
             </tr>
           </thead>
           <tbody>
-            {filteredObsoleteCurriculums.length > 0 ? (
-              filteredObsoleteCurriculums.map((curr, idx) => (
+            {pastCurriculums.length > 0 ? (
+              pastCurriculums.map((curr, idx) => (
                 <tr
                   key={idx}
                   style={{
@@ -568,9 +611,7 @@ function BDesAcadView() {
         mb={10}
       />
 
-      <Button onClick={handleSearch} variant="outline" fullWidth>
-        Search
-      </Button>
+ 
     </Paper>
   );
 

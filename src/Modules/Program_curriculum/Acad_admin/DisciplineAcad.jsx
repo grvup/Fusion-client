@@ -14,7 +14,7 @@ function DisciplineAcad() {
       try {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
         const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/admin_disciplines/",
+          "http://127.0.0.1:8000/programme_curriculum/api/admin_disciplines/",
           {
             headers: {
               Authorization: `Token ${token}`,  // Add the Authorization header
@@ -103,7 +103,7 @@ function DisciplineAcad() {
                       <React.Fragment key={i}>
                         <Anchor
                           component={Link}
-                          to={`/programme_curriculum/acad_view?programme=${program.name}`}
+                          to={`/programme_curriculum/acad_view?programme=${program.id}`}
                           style={{
                             marginRight: "10px",
                             color: "#1e90ff",

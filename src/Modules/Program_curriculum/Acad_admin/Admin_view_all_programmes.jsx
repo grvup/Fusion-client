@@ -27,7 +27,7 @@ function AdminViewProgrammes() {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
   
         const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/admin_programmes/",
+          "http://127.0.0.1:8000/programme_curriculum/api/admin_programmes/",
           {
             headers: {
               Authorization: `Token ${token}`,  // Add the Authorization header
@@ -71,7 +71,7 @@ function AdminViewProgrammes() {
         >
           <Link
             to={`/programme_curriculum/acad_view?programme=${encodeURIComponent(
-              element.programme,
+              element.id,
             )}`}
             style={{ color: "#3498db", textDecoration: "none" }}
           >

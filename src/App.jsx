@@ -44,10 +44,10 @@ export default function App() {
         <Route
           path="/programme_curriculum/*"
           element={
-            <Layout>
+            <div>
               {/* <BreadcrumbTabs/> */}
               <ProgrammeCurriculumRoutes />
-            </Layout>
+            </div>
           }
         />
         <Route path="/academics" element={renderLayout(AcademicPage)} />
