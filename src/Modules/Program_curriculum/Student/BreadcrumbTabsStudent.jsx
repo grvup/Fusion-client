@@ -1,8 +1,8 @@
-import { Flex, Button, Tabs, Text, Badge } from "@mantine/core";
+import { Flex, Button, Tabs, Text } from "@mantine/core";
 import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // To navigate to URLs
-import classes from "../Dashboard/Dashboard.module.css"; // Assuming you have a CSS module for styling
+import classes from "../../Dashboard/Dashboard.module.css"; // Assuming you have a CSS module for styling
 
 function BreadcrumbTabs() {
   const [activeTab, setActiveTab] = useState("0"); // Default tab is the first one
@@ -12,7 +12,10 @@ function BreadcrumbTabs() {
   // Define breadcrumbItems directly within the file
   const breadcrumbItems = [
     { title: "Programme", url: "/programme_curriculum/view_all_programmes" },
-    { title: "Curriculum", url: "/programme_curriculum/view_all_working_curriculums" },
+    {
+      title: "Curriculum",
+      url: "/programme_curriculum/view_all_working_curriculums",
+    },
     { title: "Discipline", url: "/programme_curriculum/stud_discipline_view" },
     { title: "Batches", url: "/programme_curriculum/student_batches" },
     { title: "Courses", url: "/programme_curriculum/student_courses" },
@@ -22,7 +25,7 @@ function BreadcrumbTabs() {
   const handleTabChange = (direction) => {
     const currentIndex = parseInt(activeTab, 10);
     const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
-    
+
     // Ensure index is within bounds
     if (newIndex >= 0 && newIndex < breadcrumbItems.length) {
       setActiveTab(newIndex.toString());
@@ -70,7 +73,7 @@ function BreadcrumbTabs() {
                 >
                   <Flex gap="4px">
                     <Text>{item.title}</Text>
-                   
+
                     {/* {activeTab !== `${index}` && (
                       <Badge color="blue" size="sm" p={6}>
                        

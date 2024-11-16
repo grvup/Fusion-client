@@ -22,14 +22,14 @@ function AdminViewAllBatches() {
     const fetchBatches = async () => {
       try {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-  
+
         const response = await axios.get(
           "http://127.0.0.1:8000/programme_curriculum/api/admin_batches/",
           {
             headers: {
-              Authorization: `Token ${token}`,  // Add the Authorization header
+              Authorization: `Token ${token}`, // Add the Authorization header
             },
-          }
+          },
         ); // Replace with actual endpoint
         setBatches(response.data.batches); // Assuming API returns {runningBatches, finishedBatches}
         setFinishedBatches(response.data.finished_batches);
@@ -69,7 +69,9 @@ function AdminViewAllBatches() {
   return (
     <div>
       <div className="courses-container">
-        <div className={`courses-table-section ${isSearchVisible ? "" : "full-width"}`}>
+        <div
+          className={`courses-table-section ${isSearchVisible ? "" : "full-width"}`}
+        >
           <div className="tabs">
             <Button
               variant={activeTab === "Batches" ? "filled" : "outline"}
@@ -85,7 +87,10 @@ function AdminViewAllBatches() {
             </Button>
           </div>
           <div className="top-actions">
-            <a href="/programme_curriculum/acad_admin_add_batch_form" style={{ textDecoration: "none" }}>
+            <a
+              href="/programme_curriculum/acad_admin_add_batch_form"
+              style={{ textDecoration: "none" }}
+            >
               <Button variant="filled" color="blue">
                 Add Batch
               </Button>
@@ -98,11 +103,25 @@ function AdminViewAllBatches() {
               />
             ) : null}
           </div>
-          <ScrollArea className="courses-scroll-area" type="hover" style={{ height: "100vh" ,backgroundColor:'white',padding:'0px 20px',boxShadow:'0px 0px 1px 1px rgba(0, 0, 0, 0.2)',borderRadius:'5px', margin:'20px 0 0 0'}}>
+          <ScrollArea
+            className="courses-scroll-area"
+            type="hover"
+            style={{
+              height: "100vh",
+              backgroundColor: "white",
+              padding: "0px 20px",
+              boxShadow: "0px 0px 1px 1px rgba(0, 0, 0, 0.2)",
+              borderRadius: "5px",
+              margin: "20px 0 0 0",
+            }}
+          >
             {activeTab === "Batches" && (
               <div className="batches-table">
                 <table className="courses-table">
-                  <thead className="courses-table-header" style={{ backgroundColor: "#b0e0ff" }}>
+                  <thead
+                    className="courses-table-header"
+                    style={{ backgroundColor: "#b0e0ff" }}
+                  >
                     <tr>
                       <th>Name</th>
                       <th>Discipline</th>
@@ -112,12 +131,16 @@ function AdminViewAllBatches() {
                     </tr>
                   </thead>
                   <tbody>
-                    {Array.isArray(batches) && batches.length > 0 ? (
-                      batches.map((batch, index) => (
+                    {Array.isArray(filteredBatches) &&
+                    filteredBatches.length > 0 ? (
+                      filteredBatches.map((batch, index) => (
                         <tr
                           key={index}
                           className="courses-table-row"
-                          style={{ backgroundColor: index % 2 === 0 ? "#fff" : "#15ABFF1C" }}
+                          style={{
+                            backgroundColor:
+                              index % 2 === 0 ? "#fff" : "#15ABFF1C",
+                          }}
                         >
                           <td>{batch.name}</td>
                           <td>{batch.discipline}</td>
@@ -128,7 +151,8 @@ function AdminViewAllBatches() {
                               className="course-link"
                               style={{ textDecoration: "none" }}
                             >
-                              {batch.curriculum} &nbsp;v{batch.curriculumVersion}
+                              {batch.curriculum} &nbsp;v
+                              {batch.curriculumVersion}
                             </a>
                           </td>
                           <td>
@@ -140,7 +164,8 @@ function AdminViewAllBatches() {
                               <Button variant="filled" color="green">
                                 Edit
                               </Button>
-                            </a>/
+                            </a>
+                            /
                           </td>
                         </tr>
                       ))
@@ -150,7 +175,6 @@ function AdminViewAllBatches() {
                       </tr>
                     )}
                   </tbody>
-
                 </table>
               </div>
             )}
@@ -158,7 +182,10 @@ function AdminViewAllBatches() {
             {activeTab === "Finished Batches" && (
               <div className="batches-table">
                 <table className="courses-table">
-                  <thead className="courses-table-header" style={{ backgroundColor: "#b0e0ff" }}>
+                  <thead
+                    className="courses-table-header"
+                    style={{ backgroundColor: "#b0e0ff" }}
+                  >
                     <tr>
                       <th>Name</th>
                       <th>Discipline</th>
@@ -169,7 +196,14 @@ function AdminViewAllBatches() {
                   </thead>
                   <tbody>
                     {finishedBatches.map((batch, index) => (
-                      <tr key={index} className="courses-table-row" style={{ backgroundColor: index % 2 === 0 ? "#fff" : "#15ABFF1C" }}>
+                      <tr
+                        key={index}
+                        className="courses-table-row"
+                        style={{
+                          backgroundColor:
+                            index % 2 === 0 ? "#fff" : "#15ABFF1C",
+                        }}
+                      >
                         <td>{batch.name}</td>
                         <td>{batch.discipline}</td>
                         <td>{batch.year}</td>
@@ -203,7 +237,11 @@ function AdminViewAllBatches() {
         </div>
 
         {isSearchVisible && (
-          <ScrollArea className="courses-search-section" type="hover" style={{ height: "500px" }}>
+          <ScrollArea
+            className="courses-search-section"
+            type="hover"
+            style={{ height: "500px" }}
+          >
             <div className="courses-search-card">
               <div className="filter-form">
                 {/* Close icon in the search section */}
@@ -236,17 +274,27 @@ function AdminViewAllBatches() {
                   label="Curriculum"
                   placeholder="Select curriculum"
                   value={filter.curriculum}
-                  onChange={(value) => setFilter({ ...filter, curriculum: value })}
+                  onChange={(value) =>
+                    setFilter({ ...filter, curriculum: value })
+                  }
                   data={[
-                    { value: "CSE PhD Curriculum v1.0", label: "CSE PhD Curriculum v1.0" },
-                    { value: "ME PhD Curriculum v1.0", label: "ME PhD Curriculum v1.0" },
+                    {
+                      value: "CSE PhD Curriculum v1.0",
+                      label: "CSE PhD Curriculum v1.0",
+                    },
+                    {
+                      value: "ME PhD Curriculum v1.0",
+                      label: "ME PhD Curriculum v1.0",
+                    },
                   ]}
                 />
                 <Select
                   label="Running batch"
                   placeholder="Select batch status"
                   value={filter.runningBatch}
-                  onChange={(value) => setFilter({ ...filter, runningBatch: value })}
+                  onChange={(value) =>
+                    setFilter({ ...filter, runningBatch: value })
+                  }
                   data={[
                     { value: "Unknown", label: "Unknown" },
                     { value: "Running", label: "Running" },
@@ -256,10 +304,18 @@ function AdminViewAllBatches() {
                   label="Discipline"
                   placeholder="Select discipline"
                   value={filter.discipline}
-                  onChange={(value) => setFilter({ ...filter, discipline: value })}
+                  onChange={(value) =>
+                    setFilter({ ...filter, discipline: value })
+                  }
                   data={[
-                    { value: "Mechanical Engineering ME", label: "Mechanical Engineering ME" },
-                    { value: "Computer Science and Engineering CSE", label: "Computer Science and Engineering CSE" },
+                    {
+                      value: "Mechanical Engineering ME",
+                      label: "Mechanical Engineering ME",
+                    },
+                    {
+                      value: "Computer Science and Engineering CSE",
+                      label: "Computer Science and Engineering CSE",
+                    },
                   ]}
                 />
                 <Button variant="filled" color="blue" onClick={handleSearch}>

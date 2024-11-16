@@ -18,38 +18,35 @@ function AdminViewProgrammes() {
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
 
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Assuming you have stored the token in localStorage or state
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-  
+
         const response = await axios.get(
           "http://127.0.0.1:8000/programme_curriculum/api/admin_programmes/",
           {
             headers: {
-              Authorization: `Token ${token}`,  // Add the Authorization header
+              Authorization: `Token ${token}`, // Add the Authorization header
             },
-          }
+          },
         );
-  
+
         setUgData(response.data.ug_programmes);
         setPgData(response.data.pg_programmes);
         setPhdData(response.data.phd_programmes);
         setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
+      } catch (fetchError) {
+        console.error("Error fetching data: ", fetchError);
         setError("Failed to load data");
         setLoading(false);
       }
     };
-    
+
     fetchData();
   }, []);
-  console.log(ugData)
-  
+  console.log(ugData);
 
   // Function to render the table
   const renderTable = (data) => {
@@ -127,7 +124,9 @@ function AdminViewProgrammes() {
 
   return (
     <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles>
-      <Container style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}>
+      <Container
+        style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
+      >
         <Flex mb={20}>
           <Button
             variant={activeSection === "ug" ? "filled" : "outline"}

@@ -1,165 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   MantineProvider,
   Table,
   Flex,
   Container,
-  Text,
   TextInput,
   Grid,
   Paper,
   Button,
 } from "@mantine/core";
 
-// Sample data for curriculum
-const data = [
-  {
-    name: "CSE UG Curriculum",
-    version: "1.0",
-    batch: [
-      "B.Tech CSE 2016",
-      "B.Tech CSE 2017",
-      "B.Tech CSE 2018",
-      "B.Tech CSE 2019",
-      "B.Tech CSE 2020",
-      "B.Tech CSE 2021",
-      "B.Tech CSE 2022",
-    ],
-    semesters: 8,
-  },
-  {
-    name: "ECE UG Curriculum",
-    version: "1.0",
-    batch: [
-      "B.Tech ECE 2016",
-      "B.Tech ECE 2017",
-      "B.Tech ECE 2018",
-      "B.Tech ECE 2019",
-      "B.Tech ECE 2020",
-      "B.Tech ECE 2021",
-      "Phd ECE 2022",
-      "B.Tech ECE 2022",
-    ],
-    semesters: 8,
-  },
-  {
-    name: "ME UG Curriculum",
-    version: "1.0",
-    batch: [
-      "B.Tech ME 2016",
-      "B.Tech ME 2017",
-      "B.Tech ME 2018",
-      "B.Tech ME 2019",
-      "B.Tech ME 2020",
-      "B.Tech ME 2021",
-      "B.Tech ME 2022",
-    ],
-    semesters: 8,
-  },
-  {
-    name: "Design UG Curriculum",
-    version: "1.0",
-    batch: [
-      "B.Des Des. 2018",
-      "B.Des Des. 2019",
-      "B.Des Des. 2020",
-      "B.Des Des. 2021",
-      "B.Des Des. 2022",
-    ],
-    semesters: 8,
-  },
-  {
-    name: "CSE PG Curriculum",
-    version: "1.0",
-    batch: ["M.Tech CSE 2020", "M.Tech CSE 2021"],
-    semesters: 4,
-  },
-  {
-    name: "ECE PG Curriculum",
-    version: "1.0",
-    batch: ["M.Tech ECE 2020", "M.Tech ECE 2021"],
-    semesters: 4,
-  },
-  {
-    name: "ME PG Curriculum",
-    version: "1.0",
-    batch: ["M.Tech ME 2020", "M.Tech ME 2021"],
-    semesters: 4,
-  },
-  {
-    name: "Design PG Curriculum",
-    version: "1.0",
-    batch: ["B.Des Des.2020", "B.Des Des.2021"],
-    semesters: 4,
-  },
-  {
-    name: "CSE Phd Curriculum",
-    version: "1.0",
-    batch: [
-      "Phd CSE 2016",
-      "Phd CSE 2017",
-      "Phd CSE 2018",
-      "Phd CSE 2019",
-      "Phd CSE 2020",
-      "Phd CSE 2021",
-      "Phd CSE 2022",
-    ],
-    semesters: 4,
-  },
-  {
-    name: "ECE Phd Curriculum",
-    version: "1.0",
-    batch: [
-      "Phd ECE 2016",
-      "Phd ECE 2017",
-      "Phd ECE 2018",
-      "Phd ECE 2019",
-      "Phd ECE 2020",
-      "Phd ECE 2021",
-    ],
-    semesters: 4,
-  },
-  {
-    name: "ME Phd Curriculum",
-    version: "1.0",
-    batch: [
-      "Phd ME 2016",
-      "Phd ME 2017",
-      "Phd ME 2018",
-      "Phd ME 2019",
-      "Phd ME 2020",
-      "Phd ME 2021",
-      "Phd ME 2022",
-    ],
-    semesters: 4,
-  },
-  {
-    name: "CSE UG Curriculum",
-    version: "2.0",
-    batch: [],
-    semesters: 8,
-  },
-  {
-    name: "ME UG Curriculum",
-    version: "2.0",
-    batch: [],
-    semesters: 8,
-  },
-  {
-    name: "SM UG Curriculum",
-    version: "1.0",
-    batch: ["B.Tech SM 2020", "B.Tech SM 2021", "B.Tech SM 2022"],
-    semesters: 8,
-  },
-  // ... Add other entries as in your data
-];
+import { fetchWorkingCurriculumsData } from "./api/api";
 
 function View_all_working_curriculums() {
   const [searchName, setSearchName] = useState("");
   const [searchVersion, setSearchVersion] = useState("");
+  const [curriculums, setCurriculums] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch data from the API on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("Authorization token is missing");
+        }
+
+        const data = await fetchWorkingCurriculumsData(token);
+        setCurriculums(data.curriculums); // Set the fetched curriculums
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching curriculums: ", error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Filtered data based on search inputs
-  const filteredData = data.filter(
+  const filteredData = curriculums.filter(
     (item) =>
       item.name.toLowerCase().includes(searchName.toLowerCase()) &&
       item.version.includes(searchVersion),
@@ -168,7 +49,7 @@ function View_all_working_curriculums() {
   // Define alternating row colors (white and light blue)
   const rows = filteredData.map((element, index) => (
     <tr
-      key={element.name}
+      key={element.name + element.version}
       style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#E6F7FF" }}
     >
       <td
@@ -182,9 +63,7 @@ function View_all_working_curriculums() {
         }}
       >
         <a
-          href={`/programme_curriculum/stud_curriculum_view?curriculum=${
-            element.name
-          }`} 
+          href={`/programme_curriculum/stud_curriculum_view/${element.id}`}
           style={{ color: "#3498db", textDecoration: "underline" }}
         >
           {element.name}
@@ -198,7 +77,6 @@ function View_all_working_curriculums() {
         }}
       >
         {element.version}
-        
       </td>
       <td
         style={{
@@ -206,9 +84,11 @@ function View_all_working_curriculums() {
           borderRight: "1px solid #d3d3d3",
         }}
       >
-        {element.batch.map((b, i) => (
-          <div key={i}>{b}</div>
-        ))}
+        {element.batch && element.batch.length > 0 ? (
+          element.batch.map((b, i) => <div key={i}>{b}</div>)
+        ) : (
+          <div>No batches available</div>
+        )}
       </td>
       <td
         style={{
@@ -230,25 +110,8 @@ function View_all_working_curriculums() {
       <Container
         style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
       >
-        {/* Breadcrumb Section */}
-       
-        {/* Title Section */}
         <Flex justify="flex-start" align="center" mb={20}>
-          {/* <Text
-            size="md"
-            weight={700}
-            style={{
-              color: "#2C3E50",
-              marginRight: "15px",
-              textDecoration: "underline",
-            }}
-          >
-            Curriculums
-          </Text> */}
-          <Button
-            variant= "filled" 
-            style={{ marginRight: "10px" }}
-          >
+          <Button variant="filled" style={{ marginRight: "10px" }}>
             Curriculums
           </Button>
         </Flex>
@@ -322,7 +185,23 @@ function View_all_working_curriculums() {
                     </th>
                   </tr>
                 </thead>
-                <tbody>{rows}</tbody>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="4" style={{ textAlign: "center" }}>
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : rows.length > 0 ? (
+                    rows
+                  ) : (
+                    <tr>
+                      <td colSpan="4" style={{ textAlign: "center" }}>
+                        No curriculums found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </Table>
             </div>
           </Grid.Col>
@@ -330,11 +209,6 @@ function View_all_working_curriculums() {
           {/* Search Filter Section */}
           <Grid.Col span={3}>
             <Paper shadow="xs" p="md">
-              {/* Filter Search Inputs */}
-              <Text weight={700} mb={10}>
-                FILTER SEARCH
-              </Text>
-
               <TextInput
                 label="Name contains:"
                 value={searchName}

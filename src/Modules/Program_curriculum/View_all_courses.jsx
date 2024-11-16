@@ -1,133 +1,46 @@
-import { Button, Card, ScrollArea, Table } from "@mantine/core";
-import React, { useState } from "react";
-// import { FaSearch, FaTimes } from "react-icons/fa";
+import { Button, Card, ScrollArea, Table, Loader } from "@mantine/core";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
 function Admin_view_a_courses() {
-  // const [selectedOption, setSelectedOption] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true); // Show loader until data is fetched
+  const [error, setError] = useState(null); // Handle errors
   const [showSearch, setShowSearch] = useState(false);
 
-  // Uncomment for actual DB API call
-  // const [courses, setCourses] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
 
-  // useEffect(() => {
-  //   // Fetch data from Django backend API
-  //   fetch('http://127.0.0.1:8000/api/courses/') // Replace with your actual Django API URL
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setCourses(data); // Assuming the data is an array of courses
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching course data:", error);
-  //       setLoading(false);
-  //     });
-  // }, []);
+        const response = await axios.get(
+          "http://127.0.0.1:8000/programme_curriculum/admin_courses/",
+          {
+            headers: {
+              Authorization: `Token ${token}`, // Add the Authorization header
+            },
+          },
+        ); // Replace with actual endpoint
+        setCourses(response.data.courses);
+        setLoading(false);
+      } catch (fetchError) {
+        console.error("Error fetching batch data:", fetchError);
+        setError(fetchError.message); // Store error message
+        setLoading(false);
+      }
+    };
 
-  // Temporary mock data for testing
-  const courses = [
-    {
-      code: "NS205c",
-      name: "Discrete Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205i",
-      name: "Culture and Science - comparison",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "EC2002",
-      name: "Digital Electronics and Microprocessor Interfacing",
-      version: "1.0",
-      credits: 4,
-    },
-    { code: "Mathematics", name: "Mechatronics", version: "1.0", credits: 4 },
-    { code: "Design", name: "Design", version: "1.0", credits: 4 },
-    {
-      code: "Natural Sciences",
-      name: "Natural Science-Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "Humanities - English",
-      name: "Humanities - English",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205c",
-      name: "Discrete Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205i",
-      name: "Culture and Science - comparison",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "EC2002",
-      name: "Digital Electronics and Microprocessor Interfacing",
-      version: "1.0",
-      credits: 4,
-    },
-    { code: "Mathematics", name: "Mechatronics", version: "1.0", credits: 4 },
-    { code: "Design", name: "Design", version: "1.0", credits: 4 },
-    {
-      code: "Natural Sciences",
-      name: "Natural Science-Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "Humanities - English",
-      name: "Humanities - English",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205c",
-      name: "Discrete Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "NS205i",
-      name: "Culture and Science - comparison",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "EC2002",
-      name: "Digital Electronics and Microprocessor Interfacing",
-      version: "1.0",
-      credits: 4,
-    },
-    { code: "Mathematics", name: "Mechatronics", version: "1.0", credits: 4 },
-    { code: "Design", name: "Design", version: "1.0", credits: 4 },
-    {
-      code: "Natural Sciences",
-      name: "Natural Science-Mathematics",
-      version: "1.0",
-      credits: 4,
-    },
-    {
-      code: "Humanities - English",
-      name: "Humanities - English",
-      version: "1.0",
-      credits: 4,
-    },
-  ];
+    fetchCourses();
+  }, []);
 
-  // if (loading) {
-  //   return <Loader />; // Show loader while loading
-  // }
+  if (loading) {
+    return <Loader size="lg" variant="dots" />; // Show loader while loading
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>; // Show error message if there's an issue
+  }
 
   return (
     <div>
@@ -138,8 +51,6 @@ function Admin_view_a_courses() {
 
       {/* Options Section */}
       <div className="program-options">
-        
-
         <div className="top-actions">
           {/* <Button className="add-course-btn">ADD COURSE</Button> */}
           {/* <Button className="search-btn" onClick={() => setShowSearch(!showSearch)}>
@@ -185,8 +96,8 @@ function Admin_view_a_courses() {
                     <tr key={index} className="courses-table-row">
                       <td>
                         <a
-                          href={`/programme_curriculum/student_course?course=${ course.code}`}
-                          style={{textDecoration:'none'}}
+                          href={`/programme_curriculum/student_course/${course.id}`}
+                          style={{ textDecoration: "none" }}
                           className="course-link"
                         >
                           {course.code}

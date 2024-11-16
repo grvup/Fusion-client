@@ -1,9 +1,10 @@
 import { ActionIcon, Table } from "@mantine/core";
 import { Bell } from "@phosphor-icons/react";
-import React, { useState , useEffect } from "react";
-import { useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import "./Admin_view_semesters_of_a_curriculum.css";
 import axios from "axios";
+
 function Admin_view_semesters_of_a_curriculum() {
   // Demo data (matches the example layout)
   const curriculum = {
@@ -12,28 +13,28 @@ function Admin_view_semesters_of_a_curriculum() {
     batches: ["2020", "2021"],
   };
 
-
   const [curriculumData, setCurriculumData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
   const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
-  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
+  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] =
+    useState(false);
 
   const [searchParams] = useSearchParams();
-  const curriculumId = searchParams.get('curriculum');
+  const curriculumId = searchParams.get("curriculum");
 
   useEffect(() => {
     const fetchCurriculumData = async () => {
       try {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-  
+
         const response = await axios.get(
-          `http://127.0.0.1:8000/programme_curriculum/api/admin_curriculum_semesters/${curriculumId}`,  // Use backticks for template literal
+          `http://127.0.0.1:8000/programme_curriculum/api/admin_curriculum_semesters/${curriculumId}`, // Use backticks for template literal
           {
             headers: {
-              Authorization: `Token ${token}`,  // Add the Authorization header
+              Authorization: `Token ${token}`, // Add the Authorization header
             },
-          }
+          },
         );
         // console.log(response)
         setCurriculumData(response.data);
@@ -49,9 +50,9 @@ function Admin_view_semesters_of_a_curriculum() {
   // console.log(curriculumData)
 
   if (loading) return <div>Loading...</div>;
-  const { curriculum_name, version, batches} = curriculumData;
+  const { curriculum_name, version, batches } = curriculumData;
   // console.log(batches)
-  const semesters = curriculumData.semesters;
+  const { semesters } = curriculumData;
   const semesterWiseSlots = curriculumData.semesters.reduce((acc, semester) => {
     acc[`Semester ${semester.semester_no}`] = semester.slots;
     return acc;
@@ -60,9 +61,11 @@ function Admin_view_semesters_of_a_curriculum() {
   const semester_credits = semesters.map((semester) => semester.credits);
   // console.log(semester_credits)
   const semesterscnt = semesters.map(
-    (semester) => `Semester ${semester.semester_no}`
+    (semester) => `Semester ${semester.semester_no}`,
   );
-  const maxSlots = Math.max(...Object.values(semesterWiseSlots).map(slots => slots.length));
+  const maxSlots = Math.max(
+    ...Object.values(semesterWiseSlots).map((slots) => slots.length),
+  );
 
   return (
     <div style={{ position: "relative" }}>
@@ -189,8 +192,13 @@ function Admin_view_semesters_of_a_curriculum() {
         <thead>
           <tr style={{ border: "1px solid black" }}>
             <td style={{ border: "1px solid black" }} />
-            <td colSpan={semesterscnt.length} style={{ border: "1px solid black" }}>
-              <h2>{curriculum_name} &nbsp; v{version}</h2>
+            <td
+              colSpan={semesterscnt.length}
+              style={{ border: "1px solid black" }}
+            >
+              <h2>
+                {curriculum_name} &nbsp; v{version}
+              </h2>
             </td>
           </tr>
           {batches.length > 0 && (
@@ -203,7 +211,10 @@ function Admin_view_semesters_of_a_curriculum() {
                 <h4>
                   Batches:&nbsp;&nbsp;&nbsp;
                   {batches.map((batch, index) => (
-                    <span key={index}>{batch.name} {batch.discipline} {batch.year},&nbsp;&nbsp;&nbsp;</span>
+                    <span key={index}>
+                      {batch.name} {batch.discipline} {batch.year}
+                      ,&nbsp;&nbsp;&nbsp;
+                    </span>
                   ))}
                 </h4>
               </td>
@@ -226,47 +237,58 @@ function Admin_view_semesters_of_a_curriculum() {
           </tr>
         </thead>
         <tbody>
-        {Array.from({ length: maxSlots }).map((_, slotIndex) => (
-          <tr key={slotIndex} style={{ border: "1px solid black" }}>
-            <td style={{ border: "1px solid black" }}>Slot {slotIndex + 1}</td>
-            {Object.values(semesterWiseSlots).map((slotRow, semesterIndex) => {
-              const slot = slotRow[slotIndex];
-              return (
-                <td key={semesterIndex} style={{ border: "1px solid black" }}>
-                  {slot && slot.name ? (
-                    slot.courses.length === 1 ? (
-                      <div>
-                        <a
-                          href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
-                          style={{ textDecoration: "none" }}
-                        >
-                          <p>
-                            <strong style={{ fontSize: "0.65vw" }}>{slot.courses[0].name}</strong>
-                            <br />
-                            (L: {slot.courses[0].lecture_hours}, T: {slot.courses[0].tutorial_hours}, C: {slot.courses[0].credit})
-                          </p>
-                        </a>
-                      </div>
-                    ) : (
-                      <div>
-                        <a
-                          href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
-                          style={{ textDecoration: "none" }}
-                        >
-                        <strong style={{ fontSize: "0.65vw" }}>{slot.name}</strong>
-
-                        </a>
-                      </div>
-                    )
-                  ) : (
-                    <div />
-                  )}
-                </td>
-              );
-            })}
-          </tr>
-        ))}
-
+          {Array.from({ length: maxSlots }).map((_, slotIndex) => (
+            <tr key={slotIndex} style={{ border: "1px solid black" }}>
+              <td style={{ border: "1px solid black" }}>
+                Slot {slotIndex + 1}
+              </td>
+              {Object.values(semesterWiseSlots).map(
+                (slotRow, semesterIndex) => {
+                  const slot = slotRow[slotIndex];
+                  return (
+                    <td
+                      key={semesterIndex}
+                      style={{ border: "1px solid black" }}
+                    >
+                      {slot && slot.name ? (
+                        slot.courses.length === 1 ? (
+                          <div>
+                            <a
+                              href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
+                              style={{ textDecoration: "none" }}
+                            >
+                              <p>
+                                <strong style={{ fontSize: "0.65vw" }}>
+                                  {slot.courses[0].name}
+                                </strong>
+                                <br />
+                                (L: {slot.courses[0].lecture_hours}, T:{" "}
+                                {slot.courses[0].tutorial_hours}, C:{" "}
+                                {slot.courses[0].credit})
+                              </p>
+                            </a>
+                          </div>
+                        ) : (
+                          <div>
+                            <a
+                              href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
+                              style={{ textDecoration: "none" }}
+                            >
+                              <strong style={{ fontSize: "0.65vw" }}>
+                                {slot.name}
+                              </strong>
+                            </a>
+                          </div>
+                        )
+                      ) : (
+                        <div />
+                      )}
+                    </td>
+                  );
+                },
+              )}
+            </tr>
+          ))}
 
           <tr style={{ border: "1px solid black" }}>
             <td style={{ border: "1px solid black" }}>

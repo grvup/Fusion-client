@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollArea, Button, Select, TextInput } from "@mantine/core";
+// import axios from "axios";
 // import { BiSearch } from "react-icons/bi"; // Search icon
 // import { AiOutlineClose } from "react-icons/ai"; // Close icon
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { fetchBatchesData } from "./api/api";
 
 function Batches() {
   const [activeTab, setActiveTab] = useState("Batches");
@@ -14,140 +16,49 @@ function Batches() {
     discipline: "",
   });
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [batches, setBatches] = useState([]);
+  const [finishedBatches, setFinishedBatches] = useState([]);
+  // const [filteredBatches, setFilteredBatches] = useState([]);
 
-  const batches = [
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
+  // Fetch data from the backend
+  // useEffect(() => {
+  //   const fetchBatches = async () => {
+  //     try {
+  //       const token = localStorage.getItem("authToken"); // Replace with actual method to get token
 
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
+  //       const response = await axios.get(
+  //         "http://127.0.0.1:8000/programme_curriculum/admin_batches/",
+  //         {
+  //           headers: {
+  //             Authorization: `Token ${token}`, // Add the Authorization header
+  //           },
+  //         },
+  //       ); // Replace with actual endpoint
+  //       setBatches(response.data.batches); // Assuming API returns {runningBatches, finishedBatches}
+  //       setFinishedBatches(response.data.finished_batches);
+  //       setFilteredBatches(response.data.filter);
+  //     } catch (error) {
+  //       console.error("Error fetching batch data:", error);
+  //     }
+  //   };
 
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
-  ];
+  //   fetchBatches();
+  // }, []);
 
-  const finishedBatches = [
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-  ];
+  useEffect(() => {
+    const loadBatches = async () => {
+      try {
+        const data = await fetchBatchesData();
+        setBatches(data.runningBatches);
+        setFinishedBatches(data.finishedBatches);
+        // setFilteredBatches(data.filter);
+      } catch (err) {
+        console.error("Error loading batches:", err);
+      }
+    };
+
+    loadBatches();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -229,7 +140,11 @@ function Batches() {
                         <td>{batch.discipline}</td>
                         <td>{batch.year}</td>
                         <td>
-                          <a href={`/programme_curriculum/stud_curriculum_view?semester=${ batch.curriculum}`} style={{textDecoration:"none"}} className="course-link">
+                          <a
+                            href={`/programme_curriculum/stud_curriculum_view/${batch.id}`}
+                            style={{ textDecoration: "none" }}
+                            className="course-link"
+                          >
                             {batch.curriculum}
                           </a>
                         </td>
@@ -252,7 +167,6 @@ function Batches() {
                       <th>Discipline</th>
                       <th>Year</th>
                       <th>Curriculum</th>
-                     
                     </tr>
                   </thead>
                   <tbody>
@@ -262,11 +176,14 @@ function Batches() {
                         <td>{batch.discipline}</td>
                         <td>{batch.year}</td>
                         <td>
-                          <a href={`/programme_curriculum/stud_curriculum_view?batch=${ batch.curriculum}`} className="course-link" style={{textDecoration:"none"}}>
+                          <a
+                            href={`/programme_curriculum/stud_curriculum_view?batch=${batch.curriculum}`}
+                            className="course-link"
+                            style={{ textDecoration: "none" }}
+                          >
                             {batch.curriculum}
                           </a>
                         </td>
-                      
                       </tr>
                     ))}
                   </tbody>

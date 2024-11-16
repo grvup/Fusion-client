@@ -1,35 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Table, Anchor, Container, Button, Flex } from "@mantine/core";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // For making API requests
+import { Table, Anchor, Container, Flex, Button } from "@mantine/core";
+import { Link } from "react-router-dom";
+import { fetchDisciplinesData } from "../api/api";
 
-function DisciplineAcad() {
+function DisciplineStud() {
   const [disciplines, setDisciplines] = useState([]); // State to hold discipline data
   const [loading, setLoading] = useState(true); // Loading state for the API call
-  const navigate = useNavigate(); // Hook to navigate between routes
 
   // Fetch data from the API
   useEffect(() => {
-    const fetchDisciplines = async () => {
+    const loadDisciplines = async () => {
       try {
-        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-        const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/api/admin_disciplines/",
-          {
-            headers: {
-              Authorization: `Token ${token}`, // Add the Authorization header
-            },
-          },
-        );
-        setDisciplines(response.data.disciplines); // Set the data into state
-        setLoading(false); // Set loading to false when data is fetched
-      } catch (error) {
-        console.error("Error fetching disciplines: ", error);
-        setLoading(false); // Set loading to false if there is an error
+        const data = await fetchDisciplinesData();
+        setDisciplines(data);
+      } catch (err) {
+        console.error("Error loading disciplines:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchDisciplines(); // Trigger data fetch
+    loadDisciplines();
   }, []);
 
   return (
@@ -40,15 +31,15 @@ function DisciplineAcad() {
         width: "100vw",
       }}
     >
-      {/* Header and Button */}
+      {/* Align Discipline Heading */}
       <Flex
         justify="space-between"
         align="center"
-        style={{ marginTop: "20px" }}
-        mb={20}
+        style={{ marginBottom: "20px" }}
       >
-        <Button variant="filled" style={{ marginRight: "10px" }}>
-          Disciplines
+        {/* Discipline Heading */}
+        <Button variant="filled" style={{ marginTop: "20px" }}>
+          Discipline
         </Button>
       </Flex>
 
@@ -58,8 +49,8 @@ function DisciplineAcad() {
           highlightOnHover
           verticalSpacing="sm"
           style={{
-            width: "65vw", // Make the table larger by using full width
-            border: "2px solid #1e90ff", // Added blue border
+            width: "65vw",
+            border: "2px solid #1e90ff",
             borderRadius: "8px", // Optional: rounded corners for the table
           }}
         >
@@ -67,13 +58,12 @@ function DisciplineAcad() {
             <tr style={{ backgroundColor: "#15ABFF54" }}>
               <th style={{ padding: "10px", textAlign: "left" }}>Discipline</th>
               <th style={{ padding: "10px", textAlign: "left" }}>Programmes</th>
-              <th style={{ padding: "10px", textAlign: "center" }}>Action</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan="3" style={{ textAlign: "center" }}>
+                <td colSpan="2" style={{ textAlign: "center" }}>
                   Loading...
                 </td>
               </tr>
@@ -103,14 +93,13 @@ function DisciplineAcad() {
                       padding: "20px",
                       display: "flex",
                       alignItems: "center",
-                      borderRight: "1px solid black",
                     }}
                   >
                     {item.programmes.map((program, i, array) => (
                       <React.Fragment key={i}>
                         <Anchor
                           component={Link}
-                          to={`/programme_curriculum/acad_view?programme=${program.id}`}
+                          to={`/programme_curriculum/curriculums/${program.id}`}
                           style={{
                             marginRight: "10px",
                             color: "#1e90ff",
@@ -125,51 +114,20 @@ function DisciplineAcad() {
                       </React.Fragment>
                     ))}
                   </td>
-
-                  {/* Edit Button */}
-                  <td style={{ padding: "10px", textAlign: "center" }}>
-                    <a
-                      href={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${item.name}`}
-                    >
-                      <Button
-                        style={{
-                          backgroundColor: "#28a745",
-                          color: "white",
-                          padding: "5px 10px",
-                        }}
-                      >
-                        EDIT
-                      </Button>
-                    </a>
-                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" style={{ textAlign: "center" }}>
+                <td colSpan="2" style={{ textAlign: "center" }}>
                   No disciplines found
                 </td>
               </tr>
             )}
           </tbody>
         </Table>
-
-        <Button
-          style={{
-            backgroundColor: "#007bff",
-            color: "white",
-            width: "15vw",
-            marginLeft: "1.5vw",
-          }}
-          onClick={() =>
-            navigate("/programme_curriculum/acad_admin_add_discipline_form")
-          }
-        >
-          ADD DISCIPLINE
-        </Button>
       </Flex>
     </Container>
   );
 }
 
-export default DisciplineAcad;
+export default DisciplineStud;

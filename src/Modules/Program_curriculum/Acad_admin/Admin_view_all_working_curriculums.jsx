@@ -29,7 +29,7 @@ function Admin_view_all_working_curriculums() {
             headers: {
               Authorization: `Token ${token}`,
             },
-          }
+          },
         );
         setCurriculums(response.data.curriculums);
         setLoading(false);
@@ -45,7 +45,7 @@ function Admin_view_all_working_curriculums() {
   const filteredData = curriculums.filter(
     (item) =>
       item.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      item.version.toString().includes(searchVersion)
+      item.version.toString().includes(searchVersion),
   );
 
   // Define alternating row colors
@@ -85,7 +85,7 @@ function Admin_view_all_working_curriculums() {
         style={{
           padding: "15px 20px",
           borderRight: "1px solid #d3d3d3",
-          textAlign:"center"
+          textAlign: "center",
         }}
       >
         {element.batch && element.batch.length > 0 ? (

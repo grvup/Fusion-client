@@ -1,93 +1,28 @@
-import React, { useState } from "react";
-import { Container, Button, Table, Flex, Text, Group } from "@mantine/core";
+import React, { useState, useEffect } from "react";
+import { Container, Button, Table, Flex } from "@mantine/core";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { studentFetchSemesterData } from "../api/api";
 
 export default function StudSemesterInfo({ curriculum }) {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState(0);
+  const [semesterData, setSemesterData] = useState(null);
+  const [courseSlots, setCourseSlots] = useState([]);
 
-  const sampleSemester = {
-    semester_no: 1,
-    is_instigated: false,
-    start_date: null,
-    end_date: null,
-    info: null,
-  };
+  useEffect(() => {
+    const getSemesterData = async () => {
+      try {
+        const data = await studentFetchSemesterData(id);
+        setSemesterData(data.semester);
+        setCourseSlots(data.semester.course_slots);
+      } catch (error) {
+        console.error("Error fetching semester data:", error);
+      }
+    };
 
-  const courseSlots = [
-    {
-      id: "NS1",
-      slotName: "NS1",
-      courseType: "Natural Science",
-      courses: [
-        {
-          courseCode: "NS101",
-          courseName: "Mathematics-I",
-          credits: 4,
-        },
-        {
-          courseCode: "NS102",
-          courseName: "Physics-I",
-          credits: 3,
-        },
-        {
-          courseCode: "NS102",
-          courseName: "Physics-I",
-          credits: 3,
-        },
-        {
-          courseCode: "NS102",
-          courseName: "Physics-I",
-          credits: 3,
-        },
-        {
-          courseCode: "NS102",
-          courseName: "Physics-I",
-          credits: 3,
-        },
-        // add more courses as needed
-      ],
-    },
-    {
-      id: "NS2",
-      slotName: "NS2",
-      courseType: "Engineering",
-      courses: [
-        {
-          courseCode: "ENG101",
-          courseName: "Mechanics",
-          credits: 4,
-        },
-        // add more courses here as needed
-      ],
-    },
-    {
-      id: "NS2",
-      slotName: "NS2",
-      courseType: "Engineering",
-      courses: [
-        {
-          courseCode: "ENG101",
-          courseName: "Mechanics",
-          credits: 4,
-        },
-        // add more courses here as needed
-      ],
-    },
-    {
-      id: "NS2",
-      slotName: "NS2",
-      courseType: "Engineering",
-      courses: [
-        {
-          courseCode: "ENG101",
-          courseName: "Mechanics",
-          credits: 4,
-        },
-        // add more courses here as needed
-      ],
-    },
-  ];
+    getSemesterData();
+  }, [id]);
 
   const renderCourseTables = (data) =>
     data.map((slot) => (
@@ -97,8 +32,8 @@ export default function StudSemesterInfo({ curriculum }) {
           backgroundColor: "white",
           borderRadius: "10px",
           border: "1px solid #d3d3d3",
-          marginBottom: "20px", // add spacing between table
-          width: "100%", // full width for the table
+          marginBottom: "20px",
+          width: "100%",
         }}
       >
         <thead>
@@ -114,7 +49,7 @@ export default function StudSemesterInfo({ curriculum }) {
                 borderBottom: "1px solid #d3d3d3",
               }}
             >
-              {slot.slotName || "NS1"}
+              {slot.course_slot_info || "NS1"}
             </th>
           </tr>
           <tr>
@@ -128,7 +63,7 @@ export default function StudSemesterInfo({ curriculum }) {
                 borderBottom: "1px solid #d3d3d3",
               }}
             >
-              Type : {slot.courseType || "Natural Science"}
+              Type: {slot.type || "Natural Science"}
             </th>
           </tr>
           <tr>
@@ -138,7 +73,7 @@ export default function StudSemesterInfo({ curriculum }) {
                 backgroundColor: "#C5E2F6",
                 color: "#3498db",
                 textAlign: "center",
-                width: "20%", // fixed width for Course Code
+                width: "20%",
               }}
             >
               Course Code
@@ -149,7 +84,7 @@ export default function StudSemesterInfo({ curriculum }) {
                 backgroundColor: "#C5E2F6",
                 color: "#3498db",
                 textAlign: "center",
-                width: "40%", // fixed width for Course Name
+                width: "40%",
               }}
             >
               Course Name
@@ -160,17 +95,16 @@ export default function StudSemesterInfo({ curriculum }) {
                 backgroundColor: "#C5E2F6",
                 color: "#3498db",
                 textAlign: "center",
-                width: "20%", // fixed width for Credits
+                width: "20%",
               }}
             >
               Credits
             </th>
-           
           </tr>
         </thead>
         <tbody>
           {slot.courses.map((course) => (
-            <tr key={`${slot.id}-${course.courseCode}`}>
+            <tr key={`${slot.id}-${course.code}`}>
               <td
                 style={{
                   padding: "15px 20px",
@@ -182,10 +116,10 @@ export default function StudSemesterInfo({ curriculum }) {
                 }}
               >
                 <a
-                  href={`/programme_curriculum/student_course/?course?=${course.courseCode}`}
+                  href={`/programme_curriculum/student_course/${course.id}`}
                   style={{ textDecoration: "none" }}
                 >
-                  {course.courseCode}
+                  {course.code}
                 </a>
               </td>
               <td
@@ -197,7 +131,7 @@ export default function StudSemesterInfo({ curriculum }) {
                   borderBottom: "1px solid #d3d3d3",
                 }}
               >
-                {course.courseName}
+                {course.name}
               </td>
               <td
                 style={{
@@ -210,10 +144,8 @@ export default function StudSemesterInfo({ curriculum }) {
               >
                 {course.credits}
               </td>
-            
             </tr>
           ))}
-        
         </tbody>
       </Table>
     ));
@@ -222,13 +154,6 @@ export default function StudSemesterInfo({ curriculum }) {
     <Container
       style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
     >
-      {/* Breadcrumb Section */}
-      {/* <Flex justify="flex-start" align="center" mb={20}>
-        <Text size="md" weight={500} style={{ color: "#2C3E50" }}>
-          Program and Curriculum &gt; Curriculums &gt; CSE UG Curriculum
-        </Text>
-      </Flex> */}
-
       {/* Tabs for Semester Info and Course Slots */}
       <Flex mb={20}>
         <Button
@@ -236,18 +161,18 @@ export default function StudSemesterInfo({ curriculum }) {
           onClick={() => setActiveTab(0)}
           style={{ marginRight: "10px" }}
         >
-          Semester {sampleSemester.semester_no} Info
+          Semester {semesterData?.semester_no || "1"} Info
         </Button>
         <Button
           variant={activeTab === 1 ? "filled" : "outline"}
           onClick={() => setActiveTab(1)}
         >
-          Semester {sampleSemester.semester_no} Course Slots
+          Semester {semesterData?.semester_no || "1"} Course Slots
         </Button>
       </Flex>
 
       {/* Conditional Rendering for Semester Info Tab */}
-      {activeTab === 0 && (
+      {activeTab === 0 && semesterData && (
         <div
           style={{
             display: "flex",
@@ -255,7 +180,7 @@ export default function StudSemesterInfo({ curriculum }) {
             alignItems: "flex-start",
           }}
         >
-          {/* Left side: Semester Information Table */}
+          {/* Semester Information Table */}
           <div>
             <Table
               style={{
@@ -266,7 +191,6 @@ export default function StudSemesterInfo({ curriculum }) {
               }}
             >
               <tbody>
-                {/* First row: Curriculum */}
                 <tr>
                   <td
                     colSpan="2"
@@ -281,8 +205,6 @@ export default function StudSemesterInfo({ curriculum }) {
                     {curriculum || "CSE UG Curriculum v1.0"}
                   </td>
                 </tr>
-
-                {/* Second row: Semester */}
                 <tr>
                   <td
                     colSpan="2"
@@ -294,11 +216,9 @@ export default function StudSemesterInfo({ curriculum }) {
                       borderBottom: "1px solid #d3d3d3",
                     }}
                   >
-                    Semester : {sampleSemester.semester_no}
+                    Semester: {semesterData.semester_no}
                   </td>
                 </tr>
-
-                {/* Third row: Instigate Semester */}
                 <tr>
                   <td
                     style={{
@@ -316,16 +236,14 @@ export default function StudSemesterInfo({ curriculum }) {
                     style={{
                       padding: "15px 20px",
                       backgroundColor: "#C5E2F6",
-                      color: sampleSemester.is_instigated ? "green" : "red",
+                      color: semesterData.instigate_semester ? "green" : "red",
                       fontWeight: "bold",
                       textAlign: "center",
                     }}
                   >
-                    {sampleSemester.is_instigated ? "Active" : "Not Yet"}
+                    {semesterData.instigate_semester ? "Active" : "Not Yet"}
                   </td>
                 </tr>
-
-                {/* Fourth row: Start Semester Date */}
                 <tr>
                   <td
                     style={{
@@ -346,11 +264,9 @@ export default function StudSemesterInfo({ curriculum }) {
                       textAlign: "center",
                     }}
                   >
-                    {sampleSemester.start_date || "None"}
+                    {semesterData.start_semester || "None"}
                   </td>
                 </tr>
-
-                {/* Fifth row: End Semester Date */}
                 <tr>
                   <td
                     style={{
@@ -371,11 +287,9 @@ export default function StudSemesterInfo({ curriculum }) {
                       textAlign: "center",
                     }}
                   >
-                    {sampleSemester.end_date || "None"}
+                    {semesterData.end_semester || "None"}
                   </td>
                 </tr>
-
-                {/* Sixth row: Semester Information */}
                 <tr>
                   <td
                     style={{
@@ -387,7 +301,7 @@ export default function StudSemesterInfo({ curriculum }) {
                       borderRight: "1px solid #d3d3d3",
                     }}
                   >
-                    Semester Information
+                    Registration Start Date
                   </td>
                   <td
                     style={{
@@ -396,30 +310,46 @@ export default function StudSemesterInfo({ curriculum }) {
                       textAlign: "center",
                     }}
                   >
-                    {sampleSemester.info || "None"}
+                    {semesterData.registration_start || "None"}
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      backgroundColor: "#C5E2F6",
+                      color: "#3498db",
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
+                    Registration End Date
+                  </td>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      backgroundColor: "#C5E2F6",
+                      textAlign: "center",
+                    }}
+                  >
+                    {semesterData.registration_end || "None"}
                   </td>
                 </tr>
               </tbody>
             </Table>
           </div>
-
-          {/* Right side: Buttons */}
-         
         </div>
       )}
 
       {/* Conditional Rendering for Course Slots Tab */}
       {activeTab === 1 && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
-          <div style={{ width: "65vw" }}>{renderCourseTables(courseSlots)}</div>
-
-          
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {courseSlots.length > 0 ? (
+            renderCourseTables(courseSlots)
+          ) : (
+            <div>No course slots available.</div>
+          )}
         </div>
       )}
     </Container>
@@ -427,5 +357,5 @@ export default function StudSemesterInfo({ curriculum }) {
 }
 
 StudSemesterInfo.propTypes = {
-  curriculum: PropTypes.string,
+  curriculum: PropTypes.string.isRequired,
 };

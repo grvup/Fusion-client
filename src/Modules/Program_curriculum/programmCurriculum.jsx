@@ -1,6 +1,6 @@
 // src/programmeCurriculum.jsx
 
-import { Route, Routes , Router } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { Layout } from "../../components/layout";
 import AdminViewAllCourses from "./Acad_admin/Admin_view_all_courses";
 import AdminViewACourse from "./Acad_admin/Admin_view_a_course";
@@ -15,9 +15,9 @@ import ViewACourse from "./View_a_course";
 import ViewAllWorkingCurriculums from "./View_all_working_curriculums";
 import ViewAllProgrammes from "./View_all_programmes";
 import BDesAcadView from "./Acad_admin/BDesAcadView";
-import BDesstudView from "./BDesStudView";
+import BDesstudView from "./Student/BDesStudView";
 import DisciplineAcad from "./Acad_admin/DisciplineAcad";
-import DisciplineStud from "./DisciplineStud";
+import DisciplineStud from "./Student/DisciplineStud";
 import FacultyCourseProposal from "./Faculty/Faculty_course_proposal";
 import VCourseProposalForm from "./Faculty/VCourseProposalForm";
 import CourseSlotDetails from "./CourseSlotDetails";
@@ -31,8 +31,8 @@ import OutwardFile from "./Faculty/OutwardFiles";
 import BDesView from "./Faculty/BDesView";
 import Discipline from "./Faculty/Discipline";
 
-import StudCourseSlotDetails from "./StudCourseSlotDetails";
-import StudSemesterInfo from "./StudSemesterinfo";
+import StudCourseSlotDetails from "./Student/StudCourseSlotDetails";
+import StudSemesterInfo from "./Student/StudSemesterinfo";
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -45,23 +45,23 @@ import AdminEditProgrammeForm from "./Acad_admin/Admin_edit_programme_form";
 import AdminEditCurriculumForm from "./Acad_admin/Admin_edit_curriculum_form";
 import AdminEditCourseSlotForm from "./Acad_admin/Admin_edit_course_slot_form";
 
-
 // breadcrumb
 // import BreadCrumbs from "./BreadCrumbsPorgrammeCurriculum";
 import BreadcrumbTabsAcadadmin from "./Acad_admin/BreadcrumbTabsAcadadmin";
-import BreadcrumbTabs from "./BreadcrumbTabsStudent";
+import BreadcrumbTabs from "./Student/BreadcrumbTabsStudent";
+
 export default function ProgrammeCurriculumRoutes() {
   return (
     <>
       {/* Admin Routes */}
-      
+
       <Routes>
         {/* <BreadCrumbs/> */}
         <Route
           path="/admin_courses"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminViewAllCourses />
               {/* <CourseProposalForm /> */}
             </Layout>
@@ -71,7 +71,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/admin_course/:id"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminViewACourse />
             </Layout>
           }
@@ -81,7 +81,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               {/* <AdminViewACourse /> */}
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminViewAllBatches />
 
               {/* <FacultyViewACourse/> */}
@@ -94,7 +94,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/view_curriculum"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminViewSemestersOfACurriculum />
             </Layout>
           }
@@ -103,7 +103,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_view"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <BDesAcadView />
             </Layout>
           }
@@ -112,7 +112,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_discipline_view"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <DisciplineAcad />
             </Layout>
           }
@@ -121,7 +121,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_view_all_programme"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminViewAllProgrammes />
             </Layout>
           }
@@ -130,7 +130,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_view_all_working_curriculums"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminViewAllWorkingCurriculum />
             </Layout>
           }
@@ -180,7 +180,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/view_all_programmes"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <ViewAllProgrammes />
             </Layout>
           }
@@ -189,16 +189,16 @@ export default function ProgrammeCurriculumRoutes() {
           path="/view_all_working_curriculums"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <ViewAllWorkingCurriculums />
             </Layout>
           }
         />
         <Route
-          path="/curriculums"
+          path="/curriculums/:id"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <BDesstudView />
             </Layout>
           }
@@ -249,16 +249,16 @@ export default function ProgrammeCurriculumRoutes() {
           path="/student_courses"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <ViewAllCourses />
             </Layout>
           }
         />
         <Route
-          path="/student_course"
+          path="/student_course/:id"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <ViewACourse />
             </Layout>
           }
@@ -267,7 +267,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/student_batches"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <ViewAllBatches />
             </Layout>
           }
@@ -276,34 +276,34 @@ export default function ProgrammeCurriculumRoutes() {
           path="/stud_discipline_view"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <DisciplineStud />
             </Layout>
           }
         />
         <Route
-          path="/stud_semester_info"
+          path="/stud_semester_info/:id"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <StudSemesterInfo />
             </Layout>
           }
         />
         <Route
-          path="/stud_course_slot_details"
+          path="/stud_course_slot_details/:id"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <StudCourseSlotDetails />
             </Layout>
           }
         />
-         <Route
-          path="/stud_curriculum_view"
+        <Route
+          path="/stud_curriculum_view/:id"
           element={
             <Layout>
-              <BreadcrumbTabs/>
+              <BreadcrumbTabs />
               <ViewSemesterOfACurriculum />
             </Layout>
           }
@@ -313,7 +313,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_add_batch_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddBatchForm />
             </Layout>
           }
@@ -322,7 +322,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_add_course_proposal_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddCourseProposalForm />
             </Layout>
           }
@@ -331,7 +331,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_add_courseslot_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddCourseSlotForm />
             </Layout>
           }
@@ -340,7 +340,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_add_curriculum_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddCurriculumForm />
             </Layout>
           }
@@ -349,7 +349,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_add_discipline_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddDisciplineForm />
             </Layout>
           }
@@ -358,7 +358,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_add_programme_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddProgrammeForm />
             </Layout>
           }
@@ -367,7 +367,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_instigate_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <InstigateForm />
             </Layout>
           }
@@ -376,7 +376,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/course_slot_details"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <CourseSlotDetails />
             </Layout>
           }
@@ -385,7 +385,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/semester_info"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <SemesterInfo />
             </Layout>
           }
@@ -394,7 +394,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/admin_edit_programme_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminEditProgrammeForm />
             </Layout>
           }
@@ -403,7 +403,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/admin_edit_curriculum_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminEditCurriculumForm />
             </Layout>
           }
@@ -412,7 +412,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/admin_edit_course_slot_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminEditCourseSlotForm />
             </Layout>
           }
@@ -421,7 +421,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_replicate_curriculum"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddCurriculumForm />
             </Layout>
           }
@@ -430,7 +430,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/admin_edit_discipline_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddDisciplineForm />
             </Layout>
           }
@@ -439,7 +439,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_edit_discipline_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddDisciplineForm />
             </Layout>
           }
@@ -448,7 +448,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/admin_edit_batch_form"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddBatchForm />
             </Layout>
           }
@@ -457,7 +457,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_edit_course_form/:id"
           element={
             <Layout>
-              <BreadcrumbTabsAcadadmin/>
+              <BreadcrumbTabsAcadadmin />
               <AdminAddCourseProposalForm />
             </Layout>
           }

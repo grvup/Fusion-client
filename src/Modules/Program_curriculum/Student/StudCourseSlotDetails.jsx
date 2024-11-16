@@ -1,38 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Assuming you're using react-router for routing
-import "./CourseSlotDetails.css"; // Separate CSS file for styling
+import { Link, useParams } from "react-router-dom"; // Assuming you're using react-router for routing
+import "../CourseSlotDetails.css"; // Separate CSS file for styling
+import { studentFetchCourseSlotDetails } from "../api/api";
 
 function StudCourseSlotDetails() {
-  const [courseSlot, setCourseSlot] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const { id } = useParams(); // Get course slot ID from the URL
+  const [courseSlot, setCourseSlot] = useState(null); // State to hold course slot data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
-  // Simulate fetching the course slot data from a server with dummy data
   useEffect(() => {
-    const fetchDummyData = () => {
-      const dummyCourseSlot = {
-        id: 1,
-        name: "NS1",
-        semester: "CSE UG Curriculum v1.0, sem-1",
-        type: "Natural Science",
-        course_slot_info: "Sem 1, B.Tech UG",
-        duration: 2,
-        min_registration_limit: 10,
-        max_registration_limit: 100,
-        courses: [{ id: 101, code: "NS101", name: "Mathematics-I", credit: 4 }],
-      };
-
-      setCourseSlot(dummyCourseSlot);
+    const getCourseSlotData = async () => {
+      try {
+        console.log("Fetching course slot data for ID:", id);
+        const data = await studentFetchCourseSlotDetails(id);
+        setCourseSlot(data);
+      } catch (err) {
+        console.error("Error fetching course slot data:", err);
+        setError("Failed to load course slot data.");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchDummyData();
-  }, []);
+    if (id) {
+      getCourseSlotData();
+    }
+  }, [id]);
 
-  const handleDelete = () => {
-    setShowModal(false);
-    alert("Course Slot Deleted (simulation).");
-  };
-
-  if (!courseSlot) return <div className="loading">Loading...</div>;
+  // Render loading, error, or the main content
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">{error}</div>;
+  if (!courseSlot) return <div>No course slot data available</div>;
 
   return (
     <div className="flex-container">
@@ -82,7 +81,6 @@ function StudCourseSlotDetails() {
                       <td>Course Code</td>
                       <td>Course Name</td>
                       <td>Credits</td>
-                     
                     </tr>
                   </thead>
                   <tbody>
@@ -90,7 +88,7 @@ function StudCourseSlotDetails() {
                       <tr key={course.id}>
                         <td>
                           <Link
-                            to={`/programme_curriculum/student_course/?course=${ course.id}`}
+                            to={`/programme_curriculum/student_course/${course.id}`}
                             style={{ textDecoration: "none" }}
                           >
                             {course.code}
@@ -98,7 +96,6 @@ function StudCourseSlotDetails() {
                         </td>
                         <td>{course.name}</td>
                         <td>{course.credit}</td>
-                       
                       </tr>
                     ))}
                   </tbody>
@@ -111,10 +108,7 @@ function StudCourseSlotDetails() {
         </div>
 
         {/* Action Buttons */}
-        
       </div>
-    
-     
     </div>
   );
 }
