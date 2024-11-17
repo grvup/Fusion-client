@@ -1,9 +1,7 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   Table,
-  Anchor,
   ScrollArea,
   Container,
   Button,
@@ -13,73 +11,58 @@ import {
   Text,
 } from "@mantine/core";
 
-const CURRICULUM_DATA = {
-  info: {
-    programName: "B.Des",
-    programCategory: "UG",
-    programBeginYear: "2021",
-  },
-  workingCurriculums: [
-    {
-      name: "Design UG Curriculum",
-      version: "1.0",
-      batch: ["B.Des 2021", "B.Des 2022"],
-      semesters: 8,
-    },
-    {
-      name: "Design UG Curriculum",
-      version: "2.0",
-      batch: ["B.Des 2023"],
-      semesters: 8,
-    },
-  ],
-  obsoleteCurriculums: [
-    {
-      name: "Old Design Curriculum",
-      version: "0.5",
-      batch: ["B.Des 2019"],
-      semesters: 8,
-    },
-    {
-      name: "Outdated Design Curriculum",
-      version: "1.1",
-      batch: ["B.Des 2020"],
-      semesters: 8,
-    },
-  ],
-};
-const semesterscnt = [
-  "Semester 1",
-  "Semester 2",
-  "Semester 3",
-  "Semester 4",
-  "Semester 5",
-  "Semester 6",
-  "Semester 7",
-  "Semester 8",
-];
+import { fetchCurriculumData } from "../api/api";
 
 function BDesStudView() {
+  const { id } = useParams();
+  const [curriculumData, setCurriculumData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("info");
-
   // New States for Filtering
   const [searchName, setSearchName] = useState("");
   const [searchVersion, setSearchVersion] = useState("");
+  // const [filteredWorkingCurriculums, setWorkingCurriculum] = useState("");
+
+  useEffect(() => {
+    const loadCurriculumData = async () => {
+      try {
+        const data = await fetchCurriculumData(id);
+        setCurriculumData(data);
+      } catch (error) {
+        console.error("Error loading curriculum data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCurriculumData();
+  }, [id]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!curriculumData) {
+    return <div>No data available</div>;
+  }
 
   // Filter Logic for Working Curriculums
-  const filteredWorkingCurriculums = CURRICULUM_DATA.workingCurriculums.filter(
-    (curr) =>
-      curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      curr.version.toLowerCase().includes(searchVersion.toLowerCase())
-  );
+  const filteredWorkingCurriculums = curriculumData.working_curriculums
+    ? curriculumData.working_curriculums.filter(
+        (curr) =>
+          curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
+          curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
+      )
+    : []; // Default to an empty array if undefined
 
   // Filter Logic for Obsolete Curriculums
-  const filteredObsoleteCurriculums =
-    CURRICULUM_DATA.obsoleteCurriculums.filter(
-      (curr) =>
-        curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        curr.version.toLowerCase().includes(searchVersion.toLowerCase())
-    );
+  const filteredObsoleteCurriculums = curriculumData.obsoleteCurriculums
+    ? curriculumData.obsoleteCurriculums.filter(
+        (curr) =>
+          curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
+          curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
+      )
+    : []; // Default to an empty array if undefined
 
   const handleSearch = () => {
     // Implement search functionality if needed (currently using live filtering)
@@ -87,12 +70,12 @@ function BDesStudView() {
       "Search initiated with Name:",
       searchName,
       "and Version:",
-      searchVersion
+      searchVersion,
     );
   };
-  const [isHovered, setIsHovered] = useState(false);
-  const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
-  const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
+  // const [isHovered, setIsHovered] = useState(false);
+  // const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
+  // const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
 
   const renderInfo = () => (
     <div style={{ marginBottom: "20px", display: "flex" }}>
@@ -122,7 +105,7 @@ function BDesStudView() {
                 fontSize: "20px",
               }}
             >
-              B.DESIGN
+              {curriculumData.program.name}
             </td>
           </tr>
 
@@ -142,9 +125,7 @@ function BDesStudView() {
             >
               Programme Name
             </td>
-            <td style={{ padding: "10px" }}>
-              {CURRICULUM_DATA.info.programName}
-            </td>
+            <td style={{ padding: "10px" }}>{curriculumData.program.name}</td>
           </tr>
 
           <tr
@@ -164,7 +145,7 @@ function BDesStudView() {
               Programme Category
             </td>
             <td style={{ padding: "10px" }}>
-              {CURRICULUM_DATA.info.programCategory}
+              {curriculumData.program.category}
             </td>
           </tr>
 
@@ -180,7 +161,7 @@ function BDesStudView() {
               Programme Begin Year
             </td>
             <td style={{ padding: "10px" }}>
-              {CURRICULUM_DATA.info.programBeginYear}
+              {curriculumData.program.programme_begin_year}
             </td>
           </tr>
         </tbody>
@@ -243,7 +224,6 @@ function BDesStudView() {
               >
                 No. of Semesters
               </th>
-        
             </tr>
           </thead>
           <tbody>
@@ -264,13 +244,11 @@ function BDesStudView() {
                     }}
                   >
                     <a
-                      href={`/programme_curriculum/stud_curriculum_view?curriculum=
-                        ${curr.name}`}
-                        style={{textDecoration:'none'}}
+                      href={`/programme_curriculum/stud_curriculum_view/${curr.id}`}
+                      style={{ textDecoration: "none" }}
                     >
                       {curr.name}
                     </a>
-                  
                   </td>
                   <td
                     style={{
@@ -278,7 +256,6 @@ function BDesStudView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-
                     {curr.version}
                   </td>
                   <td
@@ -289,16 +266,16 @@ function BDesStudView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                     {curr.batch.map((b, i) => (
+                    {curr.batches.map((b, i) => (
                       <React.Fragment key={i}>
                         <span
                           style={{
                             marginRight: "10px",
                           }}
                         >
-                          {b}
+                          {`${b.name} ${b.year}`}
                         </span>
-                        {i < curr.batch.length - 1 && (
+                        {i < curr.batches.length - 1 && (
                           <span style={{ margin: "0 10px" }}>|</span>
                         )}
                       </React.Fragment>
@@ -310,9 +287,8 @@ function BDesStudView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                    {curr.semesters}
+                    {curr.no_of_semester}
                   </td>
-                 
                 </tr>
               ))
             ) : (
@@ -423,7 +399,7 @@ function BDesStudView() {
                       borderRight: "1px solid #1e90ff",
                     }}
                   >
-                     {curr.batch.map((b, i) => (
+                    {curr.batch.map((b, i) => (
                       <React.Fragment key={i}>
                         <span
                           style={{
@@ -473,7 +449,6 @@ function BDesStudView() {
       p="md"
       style={{ marginTop: "20px", margin: "1vw 0vw 0 1.5vw", width: "15vw" }}
     >
-
       <Text weight={700} mb={10}>
         FILTER SEARCH
       </Text>
@@ -502,7 +477,7 @@ function BDesStudView() {
 
   return (
     <Container fluid>
-      <Grid gutter="lg" style={{margin:'20px 0'}}>
+      <Grid gutter="lg" style={{ margin: "20px 0" }}>
         <Grid.Col span={12}>
           <Button
             onClick={() => setActiveTab("info")}
@@ -528,23 +503,19 @@ function BDesStudView() {
 
         <Grid.Col span={12}>
           {/* Render Filter Section Conditionally */}
-          <div style={{display:'flex' }}>
-
+          <div style={{ display: "flex" }}>
             <div>
-            {activeTab === "info" && renderInfo()}
-            {activeTab === "working" && renderWorkingCurriculums()}
-            {activeTab === "obsolete" && renderObsoleteCurriculums()}
-
+              {activeTab === "info" && renderInfo()}
+              {activeTab === "working" && renderWorkingCurriculums()}
+              {activeTab === "obsolete" && renderObsoleteCurriculums()}
             </div>
             <div>
               {(activeTab === "working" || activeTab === "obsolete") &&
                 renderFilterSection()}
-
             </div>
           </div>
         </Grid.Col>
       </Grid>
-       
     </Container>
   );
 }

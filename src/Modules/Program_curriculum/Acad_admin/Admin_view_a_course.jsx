@@ -1,15 +1,6 @@
-import React ,{useEffect, useState } from "react";
-import {
-  Button,
-  Table,
-  Card,
-  Text,
-  Grid,
-  Breadcrumbs,
-  Anchor,
-  Group,
-} from "@mantine/core";
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Button, Table, Card, Text, Grid } from "@mantine/core";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 function CourseDetail() {
@@ -21,16 +12,17 @@ function CourseDetail() {
   // Fetch course data from the backend
   useEffect(() => {
     const fetchCourseData = async () => {
-
       try {
         const token = localStorage.getItem("authToken");
-        const response = await axios.get(`http://localhost:8000/programme_curriculum/api/admin_course/${id}/`,
-        {
-          headers: {
-            Authorization: `Token ${token}`,  // Add the Authorization header
+        const response = await axios.get(
+          `http://localhost:8000/programme_curriculum/admin_course/${id}/`,
+          {
+            headers: {
+              Authorization: `Token ${token}`, // Add the Authorization header
+            }, // Add the missing indentation
           },
-        } );
-        console.log(response.data)
+        );
+        console.log(response.data);
         setCourseDetails(response.data); // Set the course data in state
         setLoading(false);
       } catch (err) {
@@ -42,7 +34,7 @@ function CourseDetail() {
     fetchCourseData(); // Call the fetch function on component mount
   }, [id]);
 
-  console.log(courseDetails)
+  console.log(courseDetails);
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -53,8 +45,6 @@ function CourseDetail() {
       className="course-detail-container"
       style={{ display: "flex", flexDirection: "column" }}
     >
-     
-
       {/* Course Details Card */}
       <div style={{ display: "flex" }}>
         <Card shadow="sm" padding="lg" className="course-card">
@@ -372,9 +362,7 @@ function CourseDetail() {
                 <td style={{ color: "blue", fontWeight: "bold" }}>
                   References & Books
                 </td>
-                <td>
-                  {courseDetails.ref_books}
-                </td>
+                <td>{courseDetails.ref_books}</td>
               </tr>
             </tbody>
           </Table>

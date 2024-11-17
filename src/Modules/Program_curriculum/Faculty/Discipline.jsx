@@ -177,7 +177,7 @@ function Discipline() {
                     <React.Fragment key={i}>
                       <Anchor
                         component={Link}
-                        to="/programme_curriculum/faculty_view"
+                        to={`/programme_curriculum/faculty_view/${program.id}`}
                         style={{
                           marginRight: "10px",
                           color: "#1e90ff",

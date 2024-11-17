@@ -2,6 +2,7 @@ import { Button, Card, ScrollArea, Table, Loader } from "@mantine/core";
 import React, { useState, useEffect } from "react";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import axios from "axios";
+
 function Admin_view_all_courses() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true); // Show loader until data is fetched
@@ -12,28 +13,27 @@ function Admin_view_all_courses() {
     const fetchCourses = async () => {
       try {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-  
+
         const response = await axios.get(
           "http://127.0.0.1:8000/programme_curriculum/api/admin_courses/",
           {
             headers: {
-              Authorization: `Token ${token}`,  // Add the Authorization header
+              Authorization: `Token ${token}`, // Add the Authorization header
             },
-          }
+          },
         ); // Replace with actual endpoint
         setCourses(response.data.courses);
         setLoading(false);
-      } catch (error) {
-        console.error("Error fetching batch data:", error);
-        setError(error.message); // Store error message
+      } catch (fetchError) {
+        console.error("Error fetching batch data:", fetchError);
+        setError(fetchError.message); // Store error message
         setLoading(false);
       }
     };
 
     fetchCourses();
   }, []);
-  
-    
+
   if (loading) {
     return <Loader size="lg" variant="dots" />; // Show loader while loading
   }
@@ -46,11 +46,9 @@ function Admin_view_all_courses() {
     <div>
       <div className={`courses-container ${showSearch ? "search-active" : ""}`}>
         <div className="courses-table-section">
-          <div style={{ display: 'flex', margin: '0 0 20px 0px' }}>
+          <div style={{ display: "flex", margin: "0 0 20px 0px" }}>
             <div>
-              <Button variant={"filled"}>
-                Courses
-              </Button>
+              <Button variant="filled">Courses</Button>
             </div>
             <div className="top-actions">
               <a
