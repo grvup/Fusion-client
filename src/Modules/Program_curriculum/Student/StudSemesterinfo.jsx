@@ -49,7 +49,7 @@ export default function StudSemesterInfo({ curriculum }) {
                 borderBottom: "1px solid #d3d3d3",
               }}
             >
-              {slot.course_slot_info || "NS1"}
+              {slot.name || "NS1"}
             </th>
           </tr>
           <tr>

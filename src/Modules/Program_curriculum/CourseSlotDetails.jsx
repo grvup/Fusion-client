@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Assuming you're using react-router for routing
+import { Link, useSearchParams } from "react-router-dom"; // Assuming you're using react-router for routing
 import "./CourseSlotDetails.css"; // Separate CSS file for styling
-import { useSearchParams } from 'react-router-dom';
-import axios from "axios";
+import { fetchCourseSlotData } from "./api/api";
 
 function CourseSlotDetails() {
   const [courseSlot, setCourseSlot] = useState(null);
@@ -10,37 +9,27 @@ function CourseSlotDetails() {
   const [loading, setLoading] = useState(true);
 
   const [searchParams] = useSearchParams();
-  const courseslotId = searchParams.get('course_slot');
+  const courseslotId = searchParams.get("course_slot");
 
   // Simulate fetching the course slot data from a server with dummy data
   useEffect(() => {
-    const fetchCourseslotData = async() => {
-        try {
-        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-  
-        const response = await axios.get(
-          `http://127.0.0.1:8000/programme_curriculum/api/admin_courseslot/${courseslotId}`,  // Use backticks for template literal
-          {
-            headers: {
-              Authorization: `Token ${token}`,  // Add the Authorization header
-            },
-          }
-        );
-        // console.log(response)
-        setCourseSlot(response.data);
-      } catch (error) {
-        console.error("Error fetching curriculum data:", error);
+    const loadCourseSlotData = async () => {
+      try {
+        const data = await fetchCourseSlotData(courseslotId);
+        setCourseSlot(data);
+      } catch (err) {
+        // setError("Failed to fetch course slot data.");
+        console.error("Error loading course slot data:", err);
       } finally {
         setLoading(false);
       }
-    
     };
 
-    fetchCourseslotData();
-  }, []);
+    loadCourseSlotData();
+  }, [courseslotId]);
 
   if (loading) return <div>Loading...</div>;
-  console.log(courseSlot)
+  console.log(courseSlot);
   const handleDelete = () => {
     setShowModal(false);
     alert("Course Slot Deleted (simulation).");
@@ -64,7 +53,11 @@ function CourseSlotDetails() {
                   </tr>
                   <tr>
                     <td colSpan="4">
-                      <h3>Semester: {courseSlot.course_slot.curriculum.name} v{courseSlot.course_slot.curriculum.version}, sem-{courseSlot.course_slot.curriculum.semester_no}</h3>
+                      <h3>
+                        Semester: {courseSlot.course_slot.curriculum.name} v
+                        {courseSlot.course_slot.curriculum.version}, sem-
+                        {courseSlot.course_slot.curriculum.semester_no}
+                      </h3>
                     </td>
                   </tr>
                   <tr>
@@ -74,11 +67,15 @@ function CourseSlotDetails() {
                   </tr>
                   <tr className="course-slot-row">
                     <td>Info</td>
-                    <td colSpan="3">{courseSlot.course_slot.course_slot_info}</td>
+                    <td colSpan="3">
+                      {courseSlot.course_slot.course_slot_info}
+                    </td>
                   </tr>
                   <tr className="course-slot-row">
                     <td>Duration</td>
-                    <td colSpan="3">{courseSlot.course_slot.duration} Semesters</td>
+                    <td colSpan="3">
+                      {courseSlot.course_slot.duration} Semesters
+                    </td>
                   </tr>
                   <tr className="course-slot-row">
                     <td>Min Registration Limit</td>
@@ -90,7 +87,7 @@ function CourseSlotDetails() {
               </table>
 
               {courseSlot.course_slot.courses.length > 0 ? (
-                <table className="course-list-table" >
+                <table className="course-list-table">
                   <thead>
                     <tr className="table-header">
                       <td>Course Code</td>
@@ -101,7 +98,7 @@ function CourseSlotDetails() {
                   </thead>
                   <tbody>
                     {courseSlot.course_slot.courses.map((course) => (
-                      <tr key={course.id} style={{textAlign:'center'}}>
+                      <tr key={course.id} style={{ textAlign: "center" }}>
                         <td>
                           <Link
                             to={`/programme_curriculum/admin_course/${course.id}`}

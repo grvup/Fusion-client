@@ -1,111 +1,28 @@
-import React, { useState , useEffect } from "react";
-import { Container, Button, Table, Flex, Text, Group } from "@mantine/core";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Container, Button, Table, Flex, Group } from "@mantine/core";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { useSearchParams } from 'react-router-dom';
-export default function SemesterInfo({ curriculum }) {
+
+export default function SemesterInfo() {
   const [activeTab, setActiveTab] = useState(0);
 
   const [searchParams] = useSearchParams();
-  const semesterId = searchParams.get('semester_id');
+  const semesterId = searchParams.get("semester_id");
   const [semcourseSlots, setsemCourseSlots] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const sampleSemester = {
-    semester_no: 1,
-    is_instigated: false,
-    start_date: null,
-    end_date: null,
-    info: null,
-  };
-
-  const courseSlots = [
-    {
-      id: "NS1",
-      slotName: "NS1",
-      courseType: "Natural Science",
-      courses: [
-        {
-          courseCode: "NS101",
-          courseName: "Mathematics-I",
-          credits: 4,
-        },
-        {
-          courseCode: "NS102",
-          courseName: "Physics-I",
-          credits: 3,
-        },
-        {
-          courseCode: "NS102",
-          courseName: "Physics-I",
-          credits: 3,
-        },
-        {
-          courseCode: "NS102",
-          courseName: "Physics-I",
-          credits: 3,
-        },
-        {
-          courseCode: "NS102",
-          courseName: "Physics-I",
-          credits: 3,
-        },
-        // add more courses as needed
-      ],
-    },
-    {
-      id: "NS2",
-      slotName: "NS2",
-      courseType: "Engineering",
-      courses: [
-        {
-          courseCode: "ENG101",
-          courseName: "Mechanics",
-          credits: 4,
-        },
-        // add more courses here as needed
-      ],
-    },
-    {
-      id: "NS2",
-      slotName: "NS2",
-      courseType: "Engineering",
-      courses: [
-        {
-          courseCode: "ENG101",
-          courseName: "Mechanics",
-          credits: 4,
-        },
-        // add more courses here as needed
-      ],
-    },
-    {
-      id: "NS2",
-      slotName: "NS2",
-      courseType: "Engineering",
-      courses: [
-        {
-          courseCode: "ENG101",
-          courseName: "Mechanics",
-          credits: 4,
-        },
-        // add more courses here as needed
-      ],
-    },
-  ];
   useEffect(() => {
-    const fetchsemCourseslotData = async() => {
-        try {
+    const fetchsemCourseslotData = async () => {
+      try {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-  
+
         const response = await axios.get(
-          `http://127.0.0.1:8000/programme_curriculum/api/admin_semester/${semesterId}`,  // Use backticks for template literal
+          `http://127.0.0.1:8000/programme_curriculum/api/admin_semester/${semesterId}`, // Use backticks for template literal
           {
             headers: {
-              Authorization: `Token ${token}`,  // Add the Authorization header
+              Authorization: `Token ${token}`, // Add the Authorization header
             },
-          }
+          },
         );
         // console.log(response)
         setsemCourseSlots(response.data);
@@ -114,7 +31,6 @@ export default function SemesterInfo({ curriculum }) {
       } finally {
         setLoading(false);
       }
-    
     };
 
     fetchsemCourseslotData();
@@ -263,15 +179,17 @@ export default function SemesterInfo({ curriculum }) {
                   borderBottom: "1px solid #d3d3d3",
                 }}
               >
-                <a href={`/programme_curriculum/acad_admin_edit_course_form/${slot.id}`}>
-                <Button
-                  variant="outline"
-                  color="green"
-                  size="xs"
-                  style={{ marginRight: "10px" }}
+                <a
+                  href={`/programme_curriculum/acad_admin_edit_course_form/${slot.id}`}
                 >
-                  Edit
-                </Button>
+                  <Button
+                    variant="outline"
+                    color="green"
+                    size="xs"
+                    style={{ marginRight: "10px" }}
+                  >
+                    Edit
+                  </Button>
                 </a>
               </td>
             </tr>
@@ -280,7 +198,7 @@ export default function SemesterInfo({ curriculum }) {
             <td colSpan="4" style={{ textAlign: "right", padding: "10px" }}>
               <a
                 href={`/programme_curriculum/admin_edit_course_slot_form?courseslot=
-                  ${courseSlots.id}`}
+                  ${slot.id}`}
               >
                 <Button
                   variant="solid"
@@ -318,13 +236,13 @@ export default function SemesterInfo({ curriculum }) {
           onClick={() => setActiveTab(0)}
           style={{ marginRight: "10px" }}
         >
-          Semester {sampleSemester.semester_no} Info
+          Semester {semcourseSlots.semester_no} Info
         </Button>
         <Button
           variant={activeTab === 1 ? "filled" : "outline"}
           onClick={() => setActiveTab(1)}
         >
-          Semester {sampleSemester.semester_no} Course Slots
+          Semester {semcourseSlots.semester_no} Course Slots
         </Button>
       </Flex>
 
@@ -360,7 +278,8 @@ export default function SemesterInfo({ curriculum }) {
                       borderBottom: "1px solid #d3d3d3",
                     }}
                   >
-                    {semcourseSlots.curriculum || "CSE UG Curriculum "} v{semcourseSlots.curriculum_version}
+                    {semcourseSlots.curriculum || "CSE UG Curriculum "} v
+                    {semcourseSlots.curriculum_version}
                   </td>
                 </tr>
 
@@ -398,7 +317,7 @@ export default function SemesterInfo({ curriculum }) {
                     style={{
                       padding: "15px 20px",
                       backgroundColor: "#C5E2F6",
-                      color: sampleSemester.is_instigated ? "green" : "red",
+                      color: semcourseSlots.is_instigated ? "green" : "red",
                       fontWeight: "bold",
                       textAlign: "center",
                     }}
@@ -498,7 +417,7 @@ export default function SemesterInfo({ curriculum }) {
             <Group>
               <a
                 href={`/programme_curriculum/acad_admin_instigate_form?semester=
-                  ${sampleSemester.semester_no}`}
+                  ${semcourseSlots.semester_no}`}
               >
                 <Button
                   variant="filled"
@@ -536,7 +455,9 @@ export default function SemesterInfo({ curriculum }) {
             alignItems: "flex-start",
           }}
         >
-          <div style={{ width: "65vw" }}>{renderCourseTables(semcourseSlots.course_slots)}</div>
+          <div style={{ width: "65vw" }}>
+            {renderCourseTables(semcourseSlots.course_slots)}
+          </div>
 
           <div
             style={{
@@ -550,7 +471,7 @@ export default function SemesterInfo({ curriculum }) {
             <Group>
               <a
                 href={`/programme_curriculum/acad_admin_instigate_form?semester=
-                  ${sampleSemester.semester_no}`}
+                  ${semcourseSlots.semester_no}`}
               >
                 <Button
                   variant="filled"
@@ -581,7 +502,3 @@ export default function SemesterInfo({ curriculum }) {
     </Container>
   );
 }
-
-SemesterInfo.propTypes = {
-  curriculum: PropTypes.string,
-};

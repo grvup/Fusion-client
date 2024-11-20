@@ -18,32 +18,6 @@ function Batches() {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [batches, setBatches] = useState([]);
   const [finishedBatches, setFinishedBatches] = useState([]);
-  // const [filteredBatches, setFilteredBatches] = useState([]);
-
-  // Fetch data from the backend
-  // useEffect(() => {
-  //   const fetchBatches = async () => {
-  //     try {
-  //       const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-
-  //       const response = await axios.get(
-  //         "http://127.0.0.1:8000/programme_curriculum/admin_batches/",
-  //         {
-  //           headers: {
-  //             Authorization: `Token ${token}`, // Add the Authorization header
-  //           },
-  //         },
-  //       ); // Replace with actual endpoint
-  //       setBatches(response.data.batches); // Assuming API returns {runningBatches, finishedBatches}
-  //       setFinishedBatches(response.data.finished_batches);
-  //       setFilteredBatches(response.data.filter);
-  //     } catch (error) {
-  //       console.error("Error fetching batch data:", error);
-  //     }
-  //   };
-
-  //   fetchBatches();
-  // }, []);
 
   useEffect(() => {
     const loadBatches = async () => {

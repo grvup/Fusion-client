@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8000";
+const BASE_URL = "http://127.0.0.1:8000";
 
 export const studentFetchSemesterData = async (id) => {
   try {
@@ -9,7 +9,7 @@ export const studentFetchSemesterData = async (id) => {
     }
 
     const response = await axios.get(
-      `${BASE_URL}/programme_curriculum/semester/${id}`,
+      `${BASE_URL}/programme_curriculum/api/semester/${id}`,
     );
 
     return response.data;
@@ -37,7 +37,7 @@ export const studentFetchCourseSlotDetails = async (id) => {
     }
 
     const response = await axios.get(
-      `${BASE_URL}/programme_curriculum/courseslot/${id}`,
+      `${BASE_URL}/programme_curriculum/api/courseslot/${id}`,
     );
 
     return response.data;
@@ -70,11 +70,11 @@ export const fetchAllProgrammes = async () => {
 
     // Make the API call with the token
     const response = await axios.get(
-      `${BASE_URL}/programme_curriculum/admin_programmes/`,
+      `${BASE_URL}/programme_curriculum/api/admin_programmes/`,
       {
         headers: {
-          Authorization: `Token ${token}`,
-        }, // Add a comma here
+          Authorization: `Token ${token}`, // Removed trailing comma here
+        },
       },
     );
 
@@ -98,7 +98,7 @@ export const fetchAllProgrammes = async () => {
 export const fetchSemestersOfCurriculumData = async (id) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/programme_curriculum/admin_curriculum_semesters/${id}/`,
+      `${BASE_URL}/programme_curriculum/api/curriculum_semesters/${id}/`,
     );
     return response.data;
   } catch (error) {
@@ -110,7 +110,7 @@ export const fetchSemestersOfCurriculumData = async (id) => {
 export const fetchWorkingCurriculumsData = async (token) => {
   try {
     const response = await axios.get(
-      `${BASE_URL}/programme_curriculum/admin_working_curriculums/`,
+      `${BASE_URL}/programme_curriculum/api/admin_working_curriculums/`,
       {
         headers: {
           Authorization: `Token ${token}`,
@@ -128,7 +128,7 @@ export const fetchCurriculumData = async (id) => {
   try {
     // const token = localStorage.getItem("authToken"); // Uncomment if authentication is needed
     const response = await axios.get(
-      `${BASE_URL}/programme_curriculum/curriculums/${id}`,
+      `${BASE_URL}/programme_curriculum/api/curriculums/${id}`,
       // Uncomment if authentication is needed
       // {
       //   headers: {
@@ -147,7 +147,7 @@ export const fetchDisciplinesData = async () => {
   try {
     const token = localStorage.getItem("authToken"); // Replace with your token retrieval method
     const response = await axios.get(
-      `${BASE_URL}/programme_curriculum/admin_disciplines/`,
+      `${BASE_URL}/programme_curriculum/api/admin_disciplines/`,
       {
         headers: {
           Authorization: `Token ${token}`, // Add Authorization header if needed
@@ -165,7 +165,7 @@ export const fetchBatchesData = async () => {
   try {
     const token = localStorage.getItem("authToken"); // Retrieve auth token from localStorage
     const response = await axios.get(
-      `${BASE_URL}/programme_curriculum/admin_batches/`,
+      `${BASE_URL}/programme_curriculum/api/admin_batches/`,
       {
         headers: {
           Authorization: `Token ${token}`, // Add Authorization header if token exists
@@ -182,5 +182,107 @@ export const fetchBatchesData = async () => {
   } catch (error) {
     console.error("Error fetching batch data:", error);
     throw error; // Propagate error to be handled by the calling function
+  }
+};
+
+export const fetchCourseSlotData = async (courseslotId) => {
+  try {
+    const token = localStorage.getItem("authToken"); // Retrieve auth token from localStorage
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_courseslot/${courseslotId}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`, // Add Authorization header
+        },
+      },
+    );
+    return response.data; // Return the fetched course slot data
+  } catch (error) {
+    console.error("Error fetching course slot data:", error);
+    throw error; // Propagate error for handling by the caller
+  }
+};
+
+export const fetchCourseDetails = async (id) => {
+  try {
+    const token = localStorage.getItem("authToken"); // Retrieve auth token from localStorage
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_course/${id}/`,
+      {
+        headers: {
+          Authorization: `Token ${token}`, // Add the Authorization header
+        },
+      },
+    );
+    return response.data; // Return the fetched course details
+  } catch (error) {
+    console.error("Error fetching course details:", error);
+    throw error; // Propagate error for handling by the caller
+  }
+};
+
+export const fetchAllCourses = async () => {
+  try {
+    const token = localStorage.getItem("authToken"); // Retrieve auth token
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_courses/`,
+      {
+        headers: {
+          Authorization: `Token ${token}`, // Add Authorization header
+        },
+      },
+    );
+    return response.data.courses; // Return the courses data
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    throw error; // Propagate error for handling by the caller
+  }
+};
+
+export const adminFetchCurriculumSemesters = async (curriculumId, token) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_curriculum_semesters/${curriculumId}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error in fetchCurriculumSemesters: ", error);
+    throw error.response?.data?.detail || "Failed to fetch curriculum data.";
+  }
+};
+
+// export const AdminFetchCurriculumData = async (programmeId, token) => {
+//   const response = await axios.get(
+//     `${BASE_URL}/programme_curriculum/api/admin_curriculums/${programmeId}`,
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     },
+//   );
+//   return response.data; // Return the data part of the response
+// };
+
+export const adminFetchCurriculumData = async (id) => {
+  try {
+    // const token = localStorage.getItem("authToken"); // Uncomment if authentication is needed
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/curriculums/${id}`,
+      // Uncomment if authentication is needed
+      // {
+      //   headers: {
+      //     Authorization: `Token ${token}`,
+      //   },
+      // }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching curriculum data: ", error);
+    throw error;
   }
 };

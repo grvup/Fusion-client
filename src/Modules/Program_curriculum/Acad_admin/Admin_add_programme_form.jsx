@@ -1,8 +1,7 @@
 import React from "react";
 import {
-  Breadcrumbs,
-  Anchor,
   Select,
+  Input,
   NumberInput,
   Button,
   Group,
@@ -11,6 +10,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useNavigate } from "react-router-dom";
 
 function Admin_add_programme_form() {
   const form = useForm({
@@ -21,35 +21,51 @@ function Admin_add_programme_form() {
     },
   });
 
-  const handleSubmit = (values) => {
-    console.log("Programme Data Submitted:", values);
-  };
+  const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "Add Curriculum Form", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  const handleSubmit = async (values) => {
+    const apiUrl =
+      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_programme/";
+
+    console.log("Form Values:", values);
+
+    const formData = new FormData();
+    formData.append("category", values.category);
+    formData.append("name", values.programmeName);
+    formData.append("programme_begin_year", values.year);
+
+    console.log("Form Data:", formData);
+
+    try {
+      setLoading(true);
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert("Programme added successfully!");
+        console.log("Response Data:", data);
+        navigate("/programme_curriculum/acad_view_all_programme");
+      } else {
+        const errorText = await response.text(); // Fallback to plain text
+        console.error("Error:", errorText);
+        alert("Failed to add programme.");
+      }
+    } catch (error) {
+      console.error("Network Error:", error);
+      alert("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs> */}
-
-      {/* Options Section */}
-      {/* <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programs</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group> */}
-
       <Container
         fluid
         style={{
@@ -70,7 +86,6 @@ function Admin_add_programme_form() {
             flex: 4,
           }}
         >
-          {/* Form Section */}
           <div style={{ flex: 4 }}>
             <form
               onSubmit={form.onSubmit(handleSubmit)}
@@ -89,19 +104,18 @@ function Admin_add_programme_form() {
                 <Select
                   label="Programme Category"
                   placeholder="-- Select Category --"
-                  data={["UG", "PG", "PhD"]}
+                  data={["UG", "PG", "PHD"]}
                   value={form.values.category}
                   onChange={(value) => form.setFieldValue("category", value)}
                   required
                 />
 
-                <Select
+                <Input
                   label="Programme Name"
                   placeholder="Enter Programme Name"
-                  data={[]} // Provide the options here if needed
                   value={form.values.programmeName}
-                  onChange={(value) =>
-                    form.setFieldValue("programmeName", value)
+                  onChange={(event) =>
+                    form.setFieldValue("programmeName", event.target.value)
                   }
                   required
                 />
@@ -115,17 +129,20 @@ function Admin_add_programme_form() {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
+                <Button
+                  variant="outline"
+                  onClick={() => form.reset()}
+                  className="cancel-btn"
+                >
                   Cancel
                 </Button>
-                <Button type="submit" className="submit-btn">
+                <Button type="submit" className="submit-btn" loading={loading}>
                   Submit
                 </Button>
               </Group>
             </form>
           </div>
 
-          {/* Right Panel Buttons */}
           <div
             style={{
               flex: 1,

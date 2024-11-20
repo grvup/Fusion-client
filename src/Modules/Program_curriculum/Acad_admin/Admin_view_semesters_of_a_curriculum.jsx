@@ -3,7 +3,7 @@ import { Bell } from "@phosphor-icons/react";
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import "./Admin_view_semesters_of_a_curriculum.css";
-import axios from "axios";
+import { adminFetchCurriculumSemesters } from "../api/api";
 
 function Admin_view_semesters_of_a_curriculum() {
   // Demo data (matches the example layout)
@@ -24,29 +24,27 @@ function Admin_view_semesters_of_a_curriculum() {
   const curriculumId = searchParams.get("curriculum");
 
   useEffect(() => {
-    const fetchCurriculumData = async () => {
+    const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("Authorization token not found");
+        }
 
-        const response = await axios.get(
-          `http://127.0.0.1:8000/programme_curriculum/api/admin_curriculum_semesters/${curriculumId}`, // Use backticks for template literal
-          {
-            headers: {
-              Authorization: `Token ${token}`, // Add the Authorization header
-            },
-          },
+        const response = await adminFetchCurriculumSemesters(
+          curriculumId,
+          token,
         );
-        // console.log(response)
-        setCurriculumData(response.data);
+        setCurriculumData(response);
       } catch (error) {
-        console.error("Error fetching curriculum data:", error);
+        console.error("Error fetching curriculum data: ", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCurriculumData();
-  }, []);
+    fetchData();
+  }, [curriculumId]);
   // console.log(curriculumData)
 
   if (loading) return <div>Loading...</div>;

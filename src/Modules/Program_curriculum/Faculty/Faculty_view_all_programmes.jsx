@@ -7,11 +7,10 @@ import {
   Button,
   Text,
 } from "@mantine/core";
-import { Link } from "react-router-dom";
 import { fetchAllProgrammes } from "../api/api";
 
-function AdminViewProgrammes() {
-  const [activeSection, setActiveSection] = useState("ug"); // Default section
+function ViewAllProgrammes() {
+  const [activeSection, setActiveSection] = useState("ug"); // Default to UG
   const [ugData, setUgData] = useState([]); // State to store UG programs
   const [pgData, setPgData] = useState([]); // State to store PG programs
   const [phdData, setPhdData] = useState([]); // State to store PhD programs
@@ -21,19 +20,14 @@ function AdminViewProgrammes() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("Authorization token not found");
-        }
-
-        const data = await fetchAllProgrammes(token);
-
-        setUgData(data.ug_programmes || []);
-        setPgData(data.pg_programmes || []);
-        setPhdData(data.phd_programmes || []);
-      } catch (getError) {
-        console.error("Error fetching data: ", error);
-        setError(error);
+        // Call the API without token for now
+        const data = await fetchAllProgrammes();
+        setUgData(data.ug_programmes);
+        setPgData(data.pg_programmes);
+        setPhdData(data.phd_programmes);
+      } catch (fetchError) {
+        console.error("Error fetching data:", fetchError);
+        setError("Failed to load data");
       } finally {
         setLoading(false);
       }
@@ -41,61 +35,38 @@ function AdminViewProgrammes() {
 
     fetchData();
   }, []);
-  console.log(ugData);
 
-  // Function to render the table
   const renderTable = (data) => {
     return data.map((element, index) => (
       <tr
         key={element.programme}
-        style={{
-          backgroundColor: index % 2 === 0 ? "#E6F7FF" : "#ffffff",
-        }}
+        style={{ backgroundColor: index % 2 === 0 ? "#E6F7FF" : "#ffffff" }}
       >
         <td
           style={{
             padding: "15px 20px",
             textAlign: "center",
             color: "#3498db",
+            width: "33%",
             borderRight: "1px solid #d3d3d3",
-            width: "25%",
           }}
         >
-          <Link
-            to={`/programme_curriculum/acad_view?programme=${encodeURIComponent(
-              element.id,
-            )}`}
+          <a
+            href={`/programme_curriculum/curriculums/${element.id}`}
             style={{ color: "#3498db", textDecoration: "none" }}
           >
             {element.name}
-          </Link>
+          </a>
         </td>
         <td
           style={{
             padding: "15px 20px",
             textAlign: "left",
+            width: "67%",
             borderRight: "1px solid #d3d3d3",
-            width: "50%",
           }}
         >
           {element.discipline__name}
-        </td>
-        <td
-          style={{
-            padding: "15px 20px",
-            textAlign: "center",
-            width: "25%",
-          }}
-        >
-          <Link
-            to={`/programme_curriculum/admin_edit_programme_form?programme=${encodeURIComponent(
-              element.programme,
-            )}`}
-          >
-            <Button variant="filled" color="green" radius="md">
-              EDIT
-            </Button>
-          </Link>
         </td>
       </tr>
     ));
@@ -118,10 +89,15 @@ function AdminViewProgrammes() {
   }
 
   return (
-    <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles>
+    <MantineProvider
+      theme={{ colorScheme: "light" }}
+      withGlobalStyles
+      withNormalizeCSS
+    >
       <Container
         style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
       >
+        {/* Buttons for Section Selection */}
         <Flex mb={20}>
           <Button
             variant={activeSection === "ug" ? "filled" : "outline"}
@@ -165,7 +141,7 @@ function AdminViewProgrammes() {
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         textAlign: "center",
-                        width: "25%",
+                        width: "33%",
                       }}
                     >
                       Programme
@@ -176,21 +152,10 @@ function AdminViewProgrammes() {
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         textAlign: "center",
-                        width: "50%",
+                        width: "67%",
                       }}
                     >
                       Discipline
-                    </th>
-                    <th
-                      style={{
-                        padding: "12px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        textAlign: "center",
-                        width: "25%",
-                      }}
-                    >
-                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -213,7 +178,7 @@ function AdminViewProgrammes() {
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         textAlign: "center",
-                        width: "25%",
+                        width: "33%",
                       }}
                     >
                       Programme
@@ -224,21 +189,10 @@ function AdminViewProgrammes() {
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         textAlign: "center",
-                        width: "50%",
+                        width: "67%",
                       }}
                     >
                       Discipline
-                    </th>
-                    <th
-                      style={{
-                        padding: "12px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        textAlign: "center",
-                        width: "25%",
-                      }}
-                    >
-                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -261,7 +215,7 @@ function AdminViewProgrammes() {
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         textAlign: "center",
-                        width: "25%",
+                        width: "33%",
                       }}
                     >
                       Programme
@@ -272,21 +226,10 @@ function AdminViewProgrammes() {
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         textAlign: "center",
-                        width: "50%",
+                        width: "67%",
                       }}
                     >
                       Discipline
-                    </th>
-                    <th
-                      style={{
-                        padding: "12px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        textAlign: "center",
-                        width: "25%",
-                      }}
-                    >
-                      Actions
                     </th>
                   </tr>
                 </thead>
@@ -294,22 +237,10 @@ function AdminViewProgrammes() {
               </Table>
             )}
           </div>
-
-          {/* Add Programme Button */}
-          <Link to="/programme_curriculum/acad_admin_add_programme_form">
-            <Button
-              variant="filled"
-              color="blue"
-              radius="md"
-              style={{ marginLeft: "20px", height: "45px" }}
-            >
-              ADD PROGRAMME
-            </Button>
-          </Link>
         </Flex>
       </Container>
     </MantineProvider>
   );
 }
 
-export default AdminViewProgrammes;
+export default ViewAllProgrammes;

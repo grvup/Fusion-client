@@ -30,6 +30,7 @@ import InwardFile from "./Faculty/InwardFiles";
 import OutwardFile from "./Faculty/OutwardFiles";
 import BDesView from "./Faculty/BDesView";
 import Discipline from "./Faculty/Discipline";
+import FacultyViewAllProgrammes from "./Faculty/Faculty_view_all_programmes";
 
 import StudCourseSlotDetails from "./Student/StudCourseSlotDetails";
 import StudSemesterInfo from "./Student/StudSemesterinfo";
@@ -240,6 +241,14 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <Discipline />
+            </Layout>
+          }
+        />
+        <Route
+          path="/faculty_view_all_programmes"
+          element={
+            <Layout>
+              <FacultyViewAllProgrammes />
             </Layout>
           }
         />

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Table, Card, Text, Grid } from "@mantine/core";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { fetchCourseDetails } from "../api/api";
 
 function CourseDetail() {
   const { id } = useParams(); // Extract the course ID from the URL
@@ -11,30 +11,20 @@ function CourseDetail() {
 
   // Fetch course data from the backend
   useEffect(() => {
-    const fetchCourseData = async () => {
+    const loadCourseDetails = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get(
-          `http://localhost:8000/programme_curriculum/admin_course/${id}/`,
-          {
-            headers: {
-              Authorization: `Token ${token}`, // Add the Authorization header
-            }, // Add the missing indentation
-          },
-        );
-        console.log(response.data);
-        setCourseDetails(response.data); // Set the course data in state
-        setLoading(false);
+        const data = await fetchCourseDetails(id); // Fetch course details
+        setCourseDetails(data); // Update the state with the fetched data
       } catch (err) {
-        setError("Failed to load course details.");
-        setLoading(false);
+        setError("Failed to load course details."); // Set error message in case of failure
+      } finally {
+        setLoading(false); // End loading state
       }
     };
 
-    fetchCourseData(); // Call the fetch function on component mount
+    loadCourseDetails(); // Call the fetch function when the component mounts
   }, [id]);
 
-  console.log(courseDetails);
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import {
   MantineProvider,
   Table,
@@ -11,6 +10,7 @@ import {
   Grid,
   Paper,
 } from "@mantine/core";
+import { fetchWorkingCurriculumsData } from "../api/api";
 
 function Admin_view_all_working_curriculums() {
   const [searchName, setSearchName] = useState("");
@@ -18,26 +18,24 @@ function Admin_view_all_working_curriculums() {
   const [curriculums, setCurriculums] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch data from the API on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/api/admin_working_curriculums/",
-          {
-            headers: {
-              Authorization: `Token ${token}`,
-            },
-          },
-        );
-        setCurriculums(response.data.curriculums);
-        setLoading(false);
+        if (!token) {
+          throw new Error("Authorization token not found");
+        }
+
+        const data = await fetchWorkingCurriculumsData(token);
+        setCurriculums(data.curriculums);
+        // console.log(data);
       } catch (error) {
         console.error("Error fetching curriculums: ", error);
+      } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
