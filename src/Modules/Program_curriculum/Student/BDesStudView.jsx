@@ -484,7 +484,7 @@ function BDesStudView() {
             variant={activeTab === "info" ? "filled" : "outline"}
             style={{ marginRight: "10px" }}
           >
-            B.Design Info
+            Programme Info
           </Button>
           <Button
             onClick={() => setActiveTab("working")}

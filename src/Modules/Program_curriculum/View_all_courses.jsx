@@ -1,37 +1,27 @@
 import { Button, Card, ScrollArea, Table, Loader } from "@mantine/core";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { fetchAllCourses } from "./api/api";
 
 function Admin_view_a_courses() {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true); // Show loader until data is fetched
-  const [error, setError] = useState(null); // Handle errors
-  const [showSearch, setShowSearch] = useState(false);
+  const [courses, setCourses] = useState([]); // State for courses
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+  const [showSearch, setShowSearch] = useState(false); // State for search toggle
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const loadCourses = async () => {
       try {
-        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-
-        const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/admin_courses/",
-          {
-            headers: {
-              Authorization: `Token ${token}`, // Add the Authorization header
-            },
-          },
-        ); // Replace with actual endpoint
-        setCourses(response.data.courses);
-        setLoading(false);
-      } catch (fetchError) {
-        console.error("Error fetching batch data:", fetchError);
-        setError(fetchError.message); // Store error message
-        setLoading(false);
+        const data = await fetchAllCourses(); // Fetch the courses data
+        setCourses(data); // Update the courses state
+      } catch (err) {
+        setError("Failed to load courses."); // Handle errors
+      } finally {
+        setLoading(false); // Stop the loader
       }
     };
 
-    fetchCourses();
+    loadCourses(); // Fetch courses on component mount
   }, []);
 
   if (loading) {

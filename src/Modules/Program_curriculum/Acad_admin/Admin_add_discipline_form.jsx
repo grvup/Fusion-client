@@ -1,7 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Breadcrumbs,
-  Anchor,
   Select,
   Button,
   Group,
@@ -11,6 +9,8 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useNavigate } from "react-router-dom";
+import { fetchAllProgrammes } from "../api/api";
 
 function Admin_add_discipline_form() {
   const form = useForm({
@@ -21,19 +21,79 @@ function Admin_add_discipline_form() {
     },
   });
 
-  const handleSubmit = (values) => {
-    console.log("Discipline Data Submitted:", values);
+  const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false);
+  const [programmes, setProgrammes] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Call the API without token for now
+        const response = await fetchAllProgrammes();
+        console.log(response.data);
+
+        const programmeData = response.data.programmes || []; // Adjust if needed
+
+        // Now map the data
+        const programmeList = programmeData.map((prog) => ({
+          value: prog.id,
+          label: `${prog.name} (${prog.programme_begin_year})`,
+        }));
+        setProgrammes(programmeList);
+      } catch (fetchError) {
+        console.error("Error fetching data:", fetchError);
+      }
+    };
+
+    fetchData();
+  }, []);
+  const handleSubmit = async (values) => {
+    const apiUrl =
+      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_discipline/";
+
+    console.log("Form Values:", values);
+
+    const formData = new FormData();
+    formData.append("category", values.disciplineName);
+    formData.append("name", values.acronym);
+    formData.append("programme_begin_year", values.linkedProgramme);
+
+    console.log("Form Data:", formData);
+
+    try {
+      setLoading(true);
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert("Programme added successfully!");
+        console.log("Response Data:", data);
+        navigate("/programme_curriculum/acad_discipline_view");
+      } else {
+        const errorText = await response.text();
+        console.error("Error:", errorText);
+        alert("Failed to add programme.");
+      }
+    } catch (error) {
+      console.error("Network Error:", error);
+      alert("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "Discipline Form", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  // const breadcrumbItems = [
+  //   { title: "Program and Curriculum", href: "#" },
+  //   { title: "Curriculums", href: "#" },
+  //   { title: "Discipline Form", href: "#" },
+  // ].map((item, index) => (
+  //   <Anchor href={item.href} key={index}>
+  //     {item.title}
+  //   </Anchor>
+  // ));
 
   return (
     <div
@@ -112,7 +172,7 @@ function Admin_add_discipline_form() {
                 <Select
                   label="Link Programmes to this Discipline"
                   placeholder="-- Select Programme --"
-                  data={["Undergraduate", "Postgraduate", "Doctorate"]}
+                  data={programmes}
                   value={form.values.linkedProgramme}
                   onChange={(value) =>
                     form.setFieldValue("linkedProgramme", value)
@@ -125,7 +185,7 @@ function Admin_add_discipline_form() {
                 <Button variant="outline" className="cancel-btn">
                   Cancel
                 </Button>
-                <Button type="submit" className="submit-btn">
+                <Button type="submit" className="submit-btn" loading={loading}>
                   Submit
                 </Button>
               </Group>

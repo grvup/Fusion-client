@@ -1,6 +1,6 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Copy } from "@phosphor-icons/react";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 import {
   Table,
   ScrollArea,
@@ -12,6 +12,7 @@ import {
   Text,
 } from "@mantine/core";
 import axios from "axios";
+
 const CURRICULUM_DATA = {
   info: {
     programName: "B.Des",
@@ -55,7 +56,7 @@ function BDesAcadView() {
   const queryParams = new URLSearchParams(location.search);
 
   // Get the value of the 'programme' query parameter
-  const programmeId = queryParams.get('programme');  // This will be '1'
+  const programmeId = queryParams.get("programme"); // This will be '1'
 
   const [activeTab, setActiveTab] = useState("info");
 
@@ -65,7 +66,7 @@ function BDesAcadView() {
   const [program, setProgram] = useState(null);
   const [workingCurriculums, setWorkingCurriculums] = useState([]);
   const [pastCurriculums, setPastCurriculums] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -73,54 +74,31 @@ function BDesAcadView() {
       try {
         // Assuming you have stored the token in localStorage or state
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-  
+
         const response = await axios.get(
-          `http://127.0.0.1:8000/programme_curriculum/api/admin_curriculums/${programmeId}`,  // Use backticks for template literal
+          `http://127.0.0.1:8000/programme_curriculum/api/admin_curriculums/${programmeId}`, // Use backticks for template literal
           {
             headers: {
-              Authorization: `Token ${token}`,  // Add the Authorization header
+              Authorization: `Token ${token}`, // Add the Authorization header
             },
-          }
+          },
         );
-  
+
         setProgram(response.data.program);
         setWorkingCurriculums(response.data.working_curriculums);
         setPastCurriculums(response.data.past_curriculums);
-        setLoading(false);
+        // setLoading(false);
         console.log(response.data);
-      } catch (error) {
+      } catch (FetchError) {
         console.error("Error fetching data: ", error);
         setError("Failed to load data");
-        setLoading(false);
+        // setLoading(false);
       }
     };
-    
+
     fetchCurriculmns();
   }, []);
-  console.log(workingCurriculums)
-  // if (loading) {
-  //   return <p>Loading...</p>;
-  // }
-
-  // if (error) {
-  //   return <p>{error}</p>;
-  // }
-
-  // Filter Logic for Working Curriculums
-  const filteredWorkingCurriculums = CURRICULUM_DATA.workingCurriculums.filter(
-    (curr) =>
-      curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
-  );
-
-  // Filter Logic for Obsolete Curriculums
-  const filteredObsoleteCurriculums =
-    CURRICULUM_DATA.obsoleteCurriculums.filter(
-      (curr) =>
-        curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-        curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
-    );
-
+  console.log(workingCurriculums);
 
   const [isHovered, setIsHovered] = useState(false);
   const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
@@ -153,7 +131,7 @@ function BDesAcadView() {
                 fontSize: "20px",
               }}
             >
-              {program?program.name:""}
+              {program ? program.name : ""}
             </td>
           </tr>
 
@@ -173,9 +151,7 @@ function BDesAcadView() {
             >
               Programme Name
             </td>
-            <td style={{ padding: "10px" }}>
-              {program?program.name:""}
-            </td>
+            <td style={{ padding: "10px" }}>{program ? program.name : ""}</td>
           </tr>
 
           <tr
@@ -195,7 +171,7 @@ function BDesAcadView() {
               Programme Category
             </td>
             <td style={{ padding: "10px" }}>
-            {program?program.category:""}
+              {program ? program.category : ""}
             </td>
           </tr>
 
@@ -295,9 +271,10 @@ function BDesAcadView() {
                     }}
                   >
                     <a
-                      href={`/programme_curriculum/view_curriculum?curriculum=${curr.id}`} style={{textDecoration:"none"}}
+                      href={`/programme_curriculum/view_curriculum?curriculum=${curr.id}`}
+                      style={{ textDecoration: "none" }}
                     >
-                      {curr.name} 
+                      {curr.name}
                     </a>
                   </td>
                   <td
@@ -610,13 +587,11 @@ function BDesAcadView() {
         placeholder="Search by Version"
         mb={10}
       />
-
- 
     </Paper>
   );
 
   return (
-    <Container fluid style={{margin:'2vh 0 0 0'}}>
+    <Container fluid style={{ margin: "2vh 0 0 0" }}>
       <Grid gutter="lg">
         <Grid.Col span={12}>
           <Button
@@ -624,7 +599,7 @@ function BDesAcadView() {
             variant={activeTab === "info" ? "filled" : "outline"}
             style={{ marginRight: "10px" }}
           >
-            B.Design Info
+            Programme Info
           </Button>
           <Button
             onClick={() => setActiveTab("working")}

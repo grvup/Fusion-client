@@ -93,23 +93,33 @@ function ViewSemesterOfACurriculum() {
                   {slotRow[index] &&
                   slotRow[index].name &&
                   slotRow[index].courses.length ? (
-                    <div>
-                      {slotRow[index].courses.map((course, courseIndex) => (
-                        <a
-                          href={`/programme_curriculum/stud_course_slot_details/${slotRow[index].id}`}
-                          style={{ textDecoration: "none" }}
-                        >
-                          <p key={courseIndex}>
-                            <strong style={{ fontSize: "0.65vw" }}>
-                              {course.name}
-                            </strong>
-                            <br />
-                            (L: {course.lecture_hours}, T:{" "}
-                            {course.tutorial_hours}, C: {course.credit})
-                          </p>
-                        </a>
-                      ))}
-                    </div>
+                    slotRow[index].courses.length === 1 ? (
+                      // Show course details if there is only one course
+                      <a
+                        href={`/programme_curriculum/stud_course_slot_details/${slotRow[index].id}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <p>
+                          <strong style={{ fontSize: "0.65vw" }}>
+                            {slotRow[index].courses[0].name}
+                          </strong>
+                          <br />
+                          (L: {slotRow[index].courses[0].lecture_hours}, T:{" "}
+                          {slotRow[index].courses[0].tutorial_hours}, C:{" "}
+                          {slotRow[index].courses[0].credit})
+                        </p>
+                      </a>
+                    ) : (
+                      // Show only the slot name if there are multiple courses
+                      <a
+                        href={`/programme_curriculum/stud_course_slot_details/${slotRow[index].id}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <strong style={{ fontSize: "0.75vw" }}>
+                          {slotRow[index].name}
+                        </strong>
+                      </a>
+                    )
                   ) : (
                     <div />
                   )}

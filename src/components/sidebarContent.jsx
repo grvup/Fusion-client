@@ -39,7 +39,6 @@ import { useSelector, useDispatch } from "react-redux";
 import IIITLOGO from "../assets/IIITJ_logo.webp";
 import { setCurrentModule } from "../redux/moduleslice";
 
-
 const otherItems = [
   { label: "Profile", icon: <ProfileIcon size={18} /> },
   { label: "Settings", icon: <SettingsIcon size={18} /> },
@@ -68,7 +67,9 @@ function SidebarContent({ isCollapsed, toggleSidebar }) {
       url:
         role === "acadadmin"
           ? "/programme_curriculum/acad_view_all_programme"
-          : "/programme_curriculum/view_all_programmes",
+          : role === "student"
+            ? "/programme_curriculum/view_all_programmes"
+            : "/programme_curriculum/faculty_view_all_programmes",
     },
     {
       label: "Mess Management",
@@ -118,7 +119,12 @@ function SidebarContent({ isCollapsed, toggleSidebar }) {
       icon: <DepartmentIcon size={18} />,
       url: "/",
     },
-    { label: "Research", id: "rspc", icon: <ResearchIcon size={18} />, url: "/" },
+    {
+      label: "Research",
+      id: "rspc",
+      icon: <ResearchIcon size={18} />,
+      url: "/",
+    },
     {
       label: "Purchase and Store",
       id: "purchase_and_store",
@@ -162,7 +168,7 @@ function SidebarContent({ isCollapsed, toggleSidebar }) {
       url: "/",
     },
   ];
-  
+
   const dispatch = useDispatch();
   const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState(null);

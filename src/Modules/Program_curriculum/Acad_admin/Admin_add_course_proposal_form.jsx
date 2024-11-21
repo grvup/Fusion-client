@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  Breadcrumbs,
-  Anchor,
   Select,
   NumberInput,
   Textarea,
@@ -46,15 +44,15 @@ function Admin_add_course_proposal_form() {
     console.log(values);
   };
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  // const breadcrumbItems = [
+  //   { title: "Program and Curriculum", href: "#" },
+  //   { title: "Curriculums", href: "#" },
+  //   { title: "CSE UG Curriculum", href: "#" },
+  // ].map((item, index) => (
+  //   <Anchor href={item.href} key={index}>
+  //     {item.title}
+  //   </Anchor>
+  // ));
   console.log(form);
   return (
     <div
@@ -257,7 +255,7 @@ function Admin_add_course_proposal_form() {
                 </Table>
 
                 {/* Contact Hours */}
-              <Group
+                <Group
                   grow
                   style={{
                     borderBottom: "2px solid lightblue",
@@ -409,7 +407,7 @@ function Admin_add_course_proposal_form() {
                   }
                   required
                 />
-                 <Group
+                <Group
                   grow
                   style={{
                     borderBottom: "2px solid lightblue",
@@ -420,9 +418,7 @@ function Admin_add_course_proposal_form() {
                     label="Quiz 1"
                     placeholder="3"
                     value={form.values.quiz1}
-                    onChange={(value) =>
-                      form.setFieldValue("quiz1", value)
-                    }
+                    onChange={(value) => form.setFieldValue("quiz1", value)}
                     required
                     styles={{
                       input: {
@@ -439,9 +435,7 @@ function Admin_add_course_proposal_form() {
                     label="Midsem"
                     placeholder="1"
                     value={form.values.midsem}
-                    onChange={(value) =>
-                      form.setFieldValue("midsem", value)
-                    }
+                    onChange={(value) => form.setFieldValue("midsem", value)}
                     required
                     styles={{
                       input: {
@@ -458,9 +452,7 @@ function Admin_add_course_proposal_form() {
                     label="Quiz 2"
                     placeholder="2"
                     value={form.values.quiz2}
-                    onChange={(value) =>
-                      form.setFieldValue("quiz2", value)
-                    }
+                    onChange={(value) => form.setFieldValue("quiz2", value)}
                     required
                     styles={{
                       input: {
@@ -477,9 +469,7 @@ function Admin_add_course_proposal_form() {
                     label="Endsem"
                     placeholder="0"
                     value={form.values.endsem}
-                    onChange={(value) =>
-                      form.setFieldValue("endsem", value)
-                    }
+                    onChange={(value) => form.setFieldValue("endsem", value)}
                     required
                     styles={{
                       input: {
@@ -496,9 +486,7 @@ function Admin_add_course_proposal_form() {
                     label="Project"
                     placeholder="0"
                     value={form.values.project}
-                    onChange={(value) =>
-                      form.setFieldValue("project", value)
-                    }
+                    onChange={(value) => form.setFieldValue("project", value)}
                     required
                     styles={{
                       input: {

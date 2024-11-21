@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Anchor, Container, Button, Flex } from "@mantine/core";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios"; // For making API requests
+import { fetchDisciplinesData } from "../api/api";
 
 function DisciplineAcad() {
   const [disciplines, setDisciplines] = useState([]); // State to hold discipline data
@@ -10,26 +10,23 @@ function DisciplineAcad() {
 
   // Fetch data from the API
   useEffect(() => {
-    const fetchDisciplines = async () => {
+    const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
-        const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/api/admin_disciplines/",
-          {
-            headers: {
-              Authorization: `Token ${token}`, // Add the Authorization header
-            },
-          },
-        );
-        setDisciplines(response.data.disciplines); // Set the data into state
-        setLoading(false); // Set loading to false when data is fetched
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("Authorization token not found");
+        }
+
+        const data = await fetchDisciplinesData(token);
+        setDisciplines(data);
       } catch (error) {
         console.error("Error fetching disciplines: ", error);
-        setLoading(false); // Set loading to false if there is an error
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchDisciplines(); // Trigger data fetch
+    fetchData();
   }, []);
 
   return (
