@@ -6,19 +6,23 @@ import {
   Container,
   TextInput,
   Grid,
-  Paper,
   Button,
 } from "@mantine/core";
-
+import { useMediaQuery } from "@mantine/hooks";
 import { fetchWorkingCurriculumsData } from "./api/api";
 
-function View_all_working_curriculums() {
-  const [searchName, setSearchName] = useState("");
-  const [searchVersion, setSearchVersion] = useState("");
+function ViewAllWorkingCurriculums() {
+  const [filters, setFilters] = useState({
+    name: "",
+    version: "",
+    batch: "",
+    semesters: "",
+  });
   const [curriculums, setCurriculums] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  // Fetch data from the API on component mount
+  // Fetch data on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,10 +32,10 @@ function View_all_working_curriculums() {
         }
 
         const data = await fetchWorkingCurriculumsData(token);
-        setCurriculums(data.curriculums); // Set the fetched curriculums
-        setLoading(false);
+        setCurriculums(data.curriculums || []);
       } catch (error) {
-        console.error("Error fetching curriculums: ", error);
+        console.error("Error fetching curriculums:", error);
+      } finally {
         setLoading(false);
       }
     };
@@ -39,65 +43,43 @@ function View_all_working_curriculums() {
     fetchData();
   }, []);
 
-  // Filtered data based on search inputs
-  const filteredData = curriculums.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      item.version.includes(searchVersion),
-  );
-
-  // Define alternating row colors (white and light blue)
-  const rows = filteredData.map((element, index) => (
+  // Filter data based on input filters
+  const filteredData = curriculums.filter((item) => {
+    return (
+      item.name.toLowerCase().includes(filters.name.toLowerCase()) &&
+      item.version.toLowerCase().includes(filters.version.toLowerCase()) &&
+      (item.batch || []).some((b) =>
+        b.toLowerCase().includes(filters.batch.toLowerCase()),
+      ) &&
+      item.semesters.toString().includes(filters.semesters)
+    );
+  });
+  const cellStyle = {
+    padding: "15px 20px",
+    textAlign: "center",
+    borderRight: "1px solid #d3d3d3",
+  };
+  // Generate table rows with alternating row colors
+  const rows = filteredData.map((curriculum, index) => (
     <tr
-      key={element.name + element.version}
+      key={curriculum.id}
       style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#E6F7FF" }}
     >
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "left",
-          color: "#3498db",
-          textDecoration: "underline",
-          cursor: "pointer",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
+      <td style={cellStyle}>
         <a
-          href={`/programme_curriculum/stud_curriculum_view/${element.id}`}
-          style={{ color: "#3498db", textDecoration: "underline" }}
+          href={`/programme_curriculum/stud_curriculum_view/${curriculum.id}`}
+          style={{ color: "#3498db", textDecoration: "none" }}
         >
-          {element.name}
+          {curriculum.name}
         </a>
       </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
-        {element.version}
+      <td style={cellStyle}>{curriculum.version}</td>
+      <td style={cellStyle}>
+        {curriculum.batch && curriculum.batch.length > 0
+          ? curriculum.batch.join(", ")
+          : "No batches available"}
       </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
-        {element.batch && element.batch.length > 0 ? (
-          element.batch.map((b, i) => <div key={i}>{b}</div>)
-        ) : (
-          <div>No batches available</div>
-        )}
-      </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-        }}
-      >
-        {element.semesters}
-      </td>
+      <td style={cellStyle}>{curriculum.semesters}</td>
     </tr>
   ));
 
@@ -107,82 +89,77 @@ function View_all_working_curriculums() {
       withGlobalStyles
       withNormalizeCSS
     >
-      <Container
-        style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
-      >
-        <Flex justify="flex-start" align="center" mb={20}>
+      <Container style={{ padding: "20px", maxWidth: "100%" }}>
+        <Flex justify="flex-start" align="center" mb={10}>
           <Button variant="filled" style={{ marginRight: "10px" }}>
             Curriculums
           </Button>
         </Flex>
-
+        <hr />
         <Grid>
-          <Grid.Col span={9}>
-            {/* Table Section with Increased Height */}
+          {isMobile && (
+            <Grid.Col span={12}>
+              {[
+                { label: "Name", field: "name" },
+                { label: "Version", field: "version" },
+                { label: "Batch", field: "batch" },
+                { label: "No. of Semesters", field: "semesters" },
+              ].map((filter) => (
+                <TextInput
+                  key={filter.field}
+                  label={`${filter.label}:`}
+                  value={filters[filter.field]}
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      [filter.field]: e.target.value,
+                    })
+                  }
+                  placeholder={`Search by ${filter.label}`}
+                  mb={5}
+                />
+              ))}
+            </Grid.Col>
+          )}
+          <Grid.Col span={isMobile ? 12 : 9}>
+            {/* Table Section */}
             <div
               style={{
-                height: "500px",
+                maxHeight: "61vh",
                 overflowY: "auto",
                 border: "1px solid #d3d3d3",
                 borderRadius: "10px",
+                scrollbarWidth: "none",
               }}
             >
-              <Table
-                style={{
-                  backgroundColor: "white",
-                  padding: "20px",
-                  flexGrow: 1,
-                }}
-              >
+              <style>
+                {`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}
+              </style>
+              <Table style={{ backgroundColor: "white", padding: "20px" }}>
                 <thead>
                   <tr>
-                    <th
-                      style={{
-                        padding: "12px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "left",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Name
-                    </th>
-                    <th
-                      style={{
-                        padding: "12px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Version
-                    </th>
-                    <th
-                      style={{
-                        padding: "12px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Batch
-                    </th>
-                    <th
-                      style={{
-                        padding: "12px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                      }}
-                    >
-                      No. of Semesters
-                    </th>
+                    {["Name", "Version", "Batch", "No. of Semesters"].map(
+                      (header, index) => (
+                        <th
+                          key={index}
+                          style={{
+                            padding: "12px 20px",
+                            backgroundColor: "#C5E2F6",
+                            color: "#3498db",
+                            fontSize: "16px",
+                            textAlign: "center",
+                            borderRight:
+                              index < 3 ? "1px solid #d3d3d3" : "none",
+                          }}
+                        >
+                          {header}
+                        </th>
+                      ),
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -206,30 +183,35 @@ function View_all_working_curriculums() {
             </div>
           </Grid.Col>
 
-          {/* Search Filter Section */}
-          <Grid.Col span={3}>
-            <Paper shadow="xs" p="md">
-              <TextInput
-                label="Name contains:"
-                value={searchName}
-                onChange={(e) => setSearchName(e.target.value)}
-                placeholder="Search by Name"
-                mb={10}
-              />
-
-              <TextInput
-                label="Version"
-                value={searchVersion}
-                onChange={(e) => setSearchVersion(e.target.value)}
-                placeholder="Search by Version"
-                mb={10}
-              />
-            </Paper>
-          </Grid.Col>
+          {/* Filter Section */}
+          {!isMobile && (
+            <Grid.Col span={3}>
+              {[
+                { label: "Name", field: "name" },
+                { label: "Version", field: "version" },
+                { label: "Batch", field: "batch" },
+                { label: "No. of Semesters", field: "semesters" },
+              ].map((filter) => (
+                <TextInput
+                  key={filter.field}
+                  label={`${filter.label}:`}
+                  value={filters[filter.field]}
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      [filter.field]: e.target.value,
+                    })
+                  }
+                  placeholder={`Search by ${filter.label}`}
+                  mb={5}
+                />
+              ))}
+            </Grid.Col>
+          )}
         </Grid>
       </Container>
     </MantineProvider>
   );
 }
 
-export default View_all_working_curriculums;
+export default ViewAllWorkingCurriculums;
