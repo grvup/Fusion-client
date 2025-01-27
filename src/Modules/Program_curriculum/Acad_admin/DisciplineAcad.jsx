@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Table, Anchor, Container, Button, Flex } from "@mantine/core";
+import {
+  MantineProvider,
+  Table,
+  Anchor,
+  Container,
+  Flex,
+  Button,
+  Grid,
+  TextInput,
+  ScrollArea,
+} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchDisciplinesData } from "../api/api";
 
@@ -7,6 +18,9 @@ function DisciplineAcad() {
   const [disciplines, setDisciplines] = useState([]); // State to hold discipline data
   const [loading, setLoading] = useState(true); // Loading state for the API call
   const navigate = useNavigate(); // Hook to navigate between routes
+  const [disciplineFilter, setDisciplineFilter] = useState("");
+  const [programFilter, setProgramFilter] = useState("");
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // Fetch data from the API
   useEffect(() => {
@@ -29,143 +43,245 @@ function DisciplineAcad() {
     fetchData();
   }, []);
 
+  const filteredDisciplines = disciplines.filter((item) => {
+    const disciplineMatch = item.name
+      .toLowerCase()
+      .includes(disciplineFilter.toLowerCase());
+    const programMatch = item.programmes.some((program) =>
+      program.name.toLowerCase().includes(programFilter.toLowerCase()),
+    );
+    return disciplineMatch && programMatch;
+  });
+
   return (
-    <Container
-      style={{
-        borderRadius: "8px",
-        marginLeft: "0",
-        width: "100vw",
-      }}
+    <MantineProvider
+      theme={{ colorScheme: "light" }}
+      withGlobalStyles
+      withNormalizeCSS
     >
-      {/* Header and Button */}
-      <Flex
-        justify="space-between"
-        align="center"
-        style={{ marginTop: "20px" }}
-        mb={20}
-      >
-        <Button variant="filled" style={{ marginRight: "10px" }}>
-          Disciplines
-        </Button>
-      </Flex>
+      <Container style={{ padding: "20px", maxWidth: "100%" }}>
+        <Flex justify="flex-start" align="center" mb={10}>
+          <Button variant="filled" style={{ marginRight: "10px" }}>
+            Disciplines
+          </Button>
+        </Flex>
+        <hr />
 
-      {/* Scrollable and Larger Table */}
-      <Flex style={{ width: "85vw", display: "flex" }}>
-        <Table
-          highlightOnHover
-          verticalSpacing="sm"
-          style={{
-            width: "65vw", // Make the table larger by using full width
-            border: "2px solid #1e90ff", // Added blue border
-            borderRadius: "8px", // Optional: rounded corners for the table
-          }}
-        >
-          <thead>
-            <tr style={{ backgroundColor: "#15ABFF54" }}>
-              <th style={{ padding: "10px", textAlign: "left" }}>Discipline</th>
-              <th style={{ padding: "10px", textAlign: "left" }}>Programmes</th>
-              <th style={{ padding: "10px", textAlign: "center" }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan="3" style={{ textAlign: "center" }}>
-                  Loading...
-                </td>
-              </tr>
-            ) : disciplines.length > 0 ? (
-              disciplines.map((item, index) => (
-                <tr
-                  key={item.name}
-                  style={{
-                    backgroundColor: index % 2 === 0 ? "#fff" : "#15ABFF1C",
-                    transition: "background-color 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "#15ABFF1C";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor =
-                      index % 2 === 0 ? "#fff" : "#15ABFF1C";
-                  }}
+        {/* Scrollable and Larger Table */}
+        <Grid>
+          {isMobile && (
+            <Grid.Col span={12}>
+              <ScrollArea>
+                <TextInput
+                  label="Discipline:"
+                  placeholder="Select by Discipline:"
+                  value={disciplineFilter}
+                  onChange={(e) => setDisciplineFilter(e.target.value)}
+                  mt={5}
+                />
+                <TextInput
+                  label="Programme:"
+                  placeholder="Select by Programme"
+                  value={programFilter}
+                  onChange={(e) => setProgramFilter(e.target.value)}
+                  mt={5}
+                />
+                <Button
+                  variant="filled"
+                  color="blue"
+                  radius="sm"
+                  style={{ height: "35px", marginTop: "10px" }}
+                  onClick={() =>
+                    navigate(
+                      "/programme_curriculum/acad_admin_add_discipline_form",
+                    )
+                  }
                 >
-                  <td
-                    style={{ padding: "10px", borderRight: "1px solid black" }}
-                  >
-                    {item.name} ({item.acronym})
-                  </td>
-                  <td
-                    style={{
-                      padding: "20px",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRight: "1px solid black",
-                    }}
-                  >
-                    {item.programmes.map((program, i, array) => (
-                      <React.Fragment key={i}>
-                        <Anchor
-                          component={Link}
-                          to={`/programme_curriculum/acad_view?programme=${program.id}`}
-                          style={{
-                            marginRight: "10px",
-                            color: "#1e90ff",
-                            textDecoration: "underline",
-                          }}
-                        >
-                          {program.name}
-                        </Anchor>
-                        {i < array.length - 1 && (
-                          <span style={{ margin: "0 10px" }}>|</span>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </td>
-
-                  {/* Edit Button */}
-                  <td style={{ padding: "10px", textAlign: "center" }}>
-                    <a
-                      href={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${item.name}`}
+                  Add Discipline
+                </Button>
+              </ScrollArea>
+            </Grid.Col>
+          )}
+          <Grid.Col span={isMobile ? 12 : 9}>
+            <div
+              style={{
+                maxHeight: "61vh",
+                overflowY: "auto",
+                border: "1px solid #d3d3d3",
+                borderRadius: "10px",
+                scrollbarWidth: "none",
+              }}
+            >
+              <style>
+                {`
+                        div::-webkit-scrollbar {
+                          display: none;
+                        }
+                      `}
+              </style>
+              <Table style={{ backgroundColor: "white", padding: "20px" }}>
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        padding: "15px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        fontSize: "16px",
+                        textAlign: "center",
+                        borderRight: "1px solid #d3d3d3",
+                      }}
                     >
-                      <Button
+                      Discipline
+                    </th>
+                    <th
+                      style={{
+                        padding: "15px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        fontSize: "16px",
+                        textAlign: "center",
+                        borderRight: "1px solid #d3d3d3",
+                      }}
+                    >
+                      Programmes
+                    </th>
+                    <th
+                      style={{
+                        padding: "15px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        fontSize: "16px",
+                        textAlign: "center",
+                        borderRight: "1px solid #d3d3d3",
+                      }}
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <tr>
+                      <td colSpan="3" style={{ textAlign: "center" }}>
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : filteredDisciplines.length > 0 ? (
+                    filteredDisciplines.map((item, index) => (
+                      <tr
+                        key={item.name}
                         style={{
-                          backgroundColor: "#28a745",
-                          color: "white",
-                          padding: "5px 10px",
+                          backgroundColor:
+                            index % 2 === 0 ? "#fff" : "#15ABFF1C",
                         }}
                       >
-                        EDIT
-                      </Button>
-                    </a>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3" style={{ textAlign: "center" }}>
-                  No disciplines found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
+                        <td
+                          style={{
+                            width: "40%",
+                            padding: "15px 20px",
+                            textAlign: "center",
+                            color: "black",
+                            borderRight: "1px solid #d3d3d3",
+                          }}
+                        >
+                          {item.name} ({item.acronym})
+                        </td>
+                        <td
+                          style={{
+                            width: "40%",
+                            padding: "15px 20px",
+                            textAlign: "center",
+                            color: "black",
+                            borderRight: "1px solid #d3d3d3",
+                          }}
+                        >
+                          {item.programmes.map((program, i, array) => (
+                            <React.Fragment key={i}>
+                              <Anchor
+                                component={Link}
+                                to={`/programme_curriculum/acad_view?programme=${program.id}`}
+                                style={{
+                                  color: "#3498db",
+                                  textDecoration: "none",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {program.name}
+                              </Anchor>
+                              {i < array.length - 1 && (
+                                <span style={{ margin: "0 10px" }}>|</span>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </td>
 
-        <Button
-          style={{
-            backgroundColor: "#007bff",
-            color: "white",
-            width: "15vw",
-            marginLeft: "1.5vw",
-          }}
-          onClick={() =>
-            navigate("/programme_curriculum/acad_admin_add_discipline_form")
-          }
-        >
-          ADD DISCIPLINE
-        </Button>
-      </Flex>
-    </Container>
+                        {/* Edit Button */}
+                        <td
+                          style={{
+                            padding: "15px 20px",
+                            textAlign: "center",
+                            color: "black",
+                            borderRight: "1px solid #d3d3d3",
+                          }}
+                        >
+                          <a
+                            href={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${item.name}`}
+                          >
+                            <Button variant="filled" color="green" radius="sm">
+                              Edit
+                            </Button>
+                          </a>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="3" style={{ textAlign: "center" }}>
+                        No disciplines found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          </Grid.Col>
+          {!isMobile && (
+            <Grid.Col span={3}>
+              <ScrollArea>
+                <TextInput
+                  label="Discipline:"
+                  placeholder="Select by Discipline:"
+                  value={disciplineFilter}
+                  onChange={(e) => setDisciplineFilter(e.target.value)}
+                  mt={5}
+                />
+                <TextInput
+                  label="Programme:"
+                  placeholder="Select by Programme"
+                  value={programFilter}
+                  onChange={(e) => setProgramFilter(e.target.value)}
+                  mt={5}
+                />
+                <Button
+                  variant="filled"
+                  color="blue"
+                  radius="sm"
+                  style={{ height: "35px", marginTop: "10px" }}
+                  onClick={() =>
+                    navigate(
+                      "/programme_curriculum/acad_admin_add_discipline_form",
+                    )
+                  }
+                >
+                  Add Discipline
+                </Button>
+              </ScrollArea>
+            </Grid.Col>
+          )}
+        </Grid>
+      </Container>
+    </MantineProvider>
   );
 }
 

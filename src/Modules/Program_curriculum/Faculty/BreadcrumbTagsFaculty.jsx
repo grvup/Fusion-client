@@ -2,21 +2,22 @@ import { Flex, Button, Tabs, Text } from "@mantine/core";
 import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // To navigate to URLs
-import { useSelector } from "react-redux";
 import classes from "../../Dashboard/Dashboard.module.css"; // Assuming you have a CSS module for styling
 
-function BreadcrumbTabs() {
+function BreadcrumbTabsFaculty() {
   const [activeTab, setActiveTab] = useState("0"); // Default tab is the first one
   const navigate = useNavigate(); // React Router's useNavigate for navigation
   const tabsListRef = useRef(null);
-  const role = useSelector((state) => state.user.role); // Get the user's role
 
   // Define breadcrumbItems directly within the file
   const breadcrumbItems = [
-    { title: "Programme", url: "/programme_curriculum/view_all_programmes" },
+    {
+      title: "Programme",
+      url: "/programme_curriculum/faculty_view_all_programmes",
+    },
     {
       title: "Curriculum",
-      url: "/programme_curriculum/view_all_working_curriculums",
+      url: "/programme_curriculum/faculty_view_all_working_curriculums",
     },
     { title: "Discipline", url: "/programme_curriculum/faculty_discipline" },
     { title: "Batches", url: "/programme_curriculum/faculty_batches" },
@@ -35,37 +36,15 @@ function BreadcrumbTabs() {
     },
   ];
 
-  // Filter items based on the role
-  const filteredBreadcrumbItems = breadcrumbItems.filter((item) => {
-    if (role === "professor" || role === "assistant-professor") {
-      return (
-        item.title === "Programme" ||
-        item.title === "Curriculum" ||
-        item.title === "Course Proposal" ||
-        item.title === "Course Proposal Tracking"
-      );
-    }
-    if (role === "HOD") {
-      return (
-        item.title === "Programme" ||
-        item.title === "Curriculum" ||
-        item.title === "Course Proposal" ||
-        item.title === "Course Proposal Tracking" ||
-        item.title === "Inward Files"
-      );
-    }
-    return false; // No items if role doesn't match
-  });
-
   // Handle tab navigation
   const handleTabChange = (direction) => {
     const currentIndex = parseInt(activeTab, 10);
     const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
 
     // Ensure index is within bounds
-    if (newIndex >= 0 && newIndex < filteredBreadcrumbItems.length) {
+    if (newIndex >= 0 && newIndex < breadcrumbItems.length) {
       setActiveTab(newIndex.toString());
-      navigate(filteredBreadcrumbItems[newIndex].url); // Navigate to the URL
+      navigate(breadcrumbItems[newIndex].url); // Navigate to the URL
     }
   };
 
@@ -96,12 +75,12 @@ function BreadcrumbTabs() {
         <div className={classes.fusionTabsContainer} ref={tabsListRef}>
           <Tabs value={activeTab} onChange={setActiveTab}>
             <Tabs.List style={{ display: "flex", flexWrap: "nowrap" }}>
-              {filteredBreadcrumbItems.map((item, index) => (
+              {breadcrumbItems.map((item, index) => (
                 <Tabs.Tab
-                  value={index.toString()} // Ensure the value is a string
+                  value={`${index}`}
                   key={index}
                   className={
-                    activeTab === index.toString()
+                    activeTab === `${index}`
                       ? classes.fusionActiveRecentTab
                       : ""
                   }
@@ -109,6 +88,13 @@ function BreadcrumbTabs() {
                 >
                   <Flex gap="4px">
                     <Text>{item.title}</Text>
+
+                    {/* {activeTab !== `${index}` && (
+                      <Badge color="blue" size="sm" p={6}>
+                       
+                        1
+                      </Badge>
+                    )} */}
                   </Flex>
                 </Tabs.Tab>
               ))}
@@ -122,9 +108,7 @@ function BreadcrumbTabs() {
           variant="default"
           p={0}
           style={{ border: "none" }}
-          disabled={
-            parseInt(activeTab, 10) === filteredBreadcrumbItems.length - 1
-          } // Disable if on the last tab
+          disabled={parseInt(activeTab, 10) === breadcrumbItems.length - 1} // Disable if on the last tab
         >
           <CaretCircleRight
             className={classes.fusionCaretCircleIcon}
@@ -136,4 +120,4 @@ function BreadcrumbTabs() {
   );
 }
 
-export default BreadcrumbTabs;
+export default BreadcrumbTabsFaculty;

@@ -147,7 +147,7 @@ function ViewAllWorkingCurriculums() {
                         <th
                           key={index}
                           style={{
-                            padding: "12px 20px",
+                            padding: "15px 20px",
                             backgroundColor: "#C5E2F6",
                             color: "#3498db",
                             fontSize: "16px",

@@ -8,15 +8,20 @@ import {
   Button,
   TextInput,
   Grid,
-  Paper,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { fetchWorkingCurriculumsData } from "../api/api";
 
 function Admin_view_all_working_curriculums() {
-  const [searchName, setSearchName] = useState("");
-  const [searchVersion, setSearchVersion] = useState("");
+  const [filters, setFilters] = useState({
+    name: "",
+    version: "",
+    batch: "",
+    semesters: "",
+  });
   const [curriculums, setCurriculums] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,45 +45,38 @@ function Admin_view_all_working_curriculums() {
   }, []);
 
   // Filtered data based on search inputs
-  const filteredData = curriculums.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      item.version.toString().includes(searchVersion),
-  );
+  const filteredData = curriculums.filter((item) => {
+    return (
+      item.name.toLowerCase().includes(filters.name.toLowerCase()) &&
+      item.version.toLowerCase().includes(filters.version.toLowerCase()) &&
+      (item.batch || []).some((b) =>
+        b.toLowerCase().includes(filters.batch.toLowerCase()),
+      ) &&
+      item.semesters.toString().includes(filters.semesters)
+    );
+  });
+  const cellStyle = {
+    padding: "15px 20px",
+    textAlign: "center",
+    borderRight: "1px solid #d3d3d3",
+  };
 
   // Define alternating row colors
   const rows = filteredData.map((element, index) => (
     <tr
-      key={element.name + element.version}
+      key={element.id}
       style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#E6F7FF" }}
     >
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          color: "#3498db",
-          textDecoration: "underline",
-          cursor: "pointer",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
+      <td style={cellStyle}>
         {/* Curriculum name as a link */}
         <Link
           to={`/programme_curriculum/view_curriculum?curriculum=${element.id}`}
-          style={{ color: "#3498db", textDecoration: "underline" }}
+          style={{ color: "#3498db", textDecoration: "none" }}
         >
           {element.name}
         </Link>
       </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
-        {element.version}
-      </td>
+      <td style={cellStyle}>{element.version}</td>
       <td
         style={{
           padding: "15px 20px",
@@ -92,15 +90,7 @@ function Admin_view_all_working_curriculums() {
           <div>No batches available</div>
         )}
       </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
-        {element.semesters}
-      </td>
+      <td style={cellStyle}>{element.semesters}</td>
       <td
         style={{
           padding: "15px 20px",
@@ -109,8 +99,8 @@ function Admin_view_all_working_curriculums() {
       >
         {/* Edit button as a link */}
         <Link to="/programme_curriculum/admin_edit_curriculum_form">
-          <Button variant="filled" color="green" radius="md">
-            EDIT
+          <Button variant="filled" color="green" radius="sm">
+            Edit
           </Button>
         </Link>
       </td>
@@ -123,38 +113,63 @@ function Admin_view_all_working_curriculums() {
       withGlobalStyles
       withNormalizeCSS
     >
-      <Container
-        style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
-      >
-        <Flex justify="flex-start" align="center" mb={20}>
+      <Container style={{ padding: "20px", maxWidth: "100%" }}>
+        <Flex justify="flex-start" align="center" mb={10}>
           <Button variant="filled" style={{ marginRight: "10px" }}>
             Curriculums
           </Button>
         </Flex>
+        <hr />
 
         <Grid>
-          <Grid.Col span={9}>
+          {isMobile && (
+            <Grid.Col span={12}>
+              {[
+                { label: "Name", field: "name" },
+                { label: "Version", field: "version" },
+                { label: "Batch", field: "batch" },
+                { label: "No. of Semesters", field: "semesters" },
+              ].map((filter) => (
+                <TextInput
+                  key={filter.field}
+                  label={`${filter.label}:`}
+                  value={filters[filter.field]}
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      [filter.field]: e.target.value,
+                    })
+                  }
+                  placeholder={`Search by ${filter.label}`}
+                  mb={5}
+                />
+              ))}
+            </Grid.Col>
+          )}
+          <Grid.Col span={isMobile ? 12 : 9}>
             {/* Table Section */}
             <div
               style={{
-                height: "500px",
+                maxHeight: "61vh",
                 overflowY: "auto",
                 border: "1px solid #d3d3d3",
                 borderRadius: "10px",
+                scrollbarWidth: "none",
               }}
             >
-              <Table
-                style={{
-                  backgroundColor: "white",
-                  padding: "20px",
-                  flexGrow: 1,
-                }}
-              >
+              <style>
+                {`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}
+              </style>
+              <Table style={{ backgroundColor: "white", padding: "20px" }}>
                 <thead>
                   <tr>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -166,7 +181,7 @@ function Admin_view_all_working_curriculums() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -178,7 +193,7 @@ function Admin_view_all_working_curriculums() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -190,7 +205,7 @@ function Admin_view_all_working_curriculums() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -202,11 +217,12 @@ function Admin_view_all_working_curriculums() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
                         textAlign: "center",
+                        borderRight: "1px solid #d3d3d3",
                       }}
                     >
                       Actions
@@ -234,38 +250,30 @@ function Admin_view_all_working_curriculums() {
             </div>
           </Grid.Col>
 
-          <Grid.Col span={3}>
-            <Paper shadow="xs" p="md">
-              {/* ADD CURRICULUM button as a link */}
-              <Link
-                to="/programme_curriculum/acad_admin_add_curriculum_form"
-                style={{ textDecoration: "none" }}
-              >
-                <Button
-                  variant="outline"
-                  fullWidth
-                  style={{ marginBottom: "20px" }}
-                >
-                  ADD CURRICULUM
-                </Button>
-              </Link>
-
-              {/* Filters */}
-              <TextInput
-                label="Name"
-                value={searchName}
-                onChange={(event) => setSearchName(event.currentTarget.value)}
-                mb="sm"
-              />
-              <TextInput
-                label="Version"
-                value={searchVersion}
-                onChange={(event) =>
-                  setSearchVersion(event.currentTarget.value)
-                }
-              />
-            </Paper>
-          </Grid.Col>
+          {!isMobile && (
+            <Grid.Col span={3}>
+              {[
+                { label: "Name", field: "name" },
+                { label: "Version", field: "version" },
+                { label: "Batch", field: "batch" },
+                { label: "No. of Semesters", field: "semesters" },
+              ].map((filter) => (
+                <TextInput
+                  key={filter.field}
+                  label={`${filter.label}:`}
+                  value={filters[filter.field]}
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      [filter.field]: e.target.value,
+                    })
+                  }
+                  placeholder={`Search by ${filter.label}`}
+                  mb={5}
+                />
+              ))}
+            </Grid.Col>
+          )}
         </Grid>
       </Container>
     </MantineProvider>

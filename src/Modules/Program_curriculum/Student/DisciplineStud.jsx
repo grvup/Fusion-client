@@ -8,6 +8,7 @@ import {
   Button,
   Grid,
   TextInput,
+  ScrollArea,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
@@ -63,20 +64,22 @@ function DisciplineStud() {
         <Grid>
           {isMobile && (
             <Grid.Col span={12}>
-              <TextInput
-                label="Discipline:"
-                placeholder="Select by Discipline:"
-                value={disciplineFilter}
-                onChange={(e) => setDisciplineFilter(e.target.value)}
-                mt={5}
-              />
-              <TextInput
-                label="Programme:"
-                placeholder="Select by Programme"
-                value={programFilter}
-                onChange={(e) => setProgramFilter(e.target.value)}
-                mt={5}
-              />
+              <ScrollArea>
+                <TextInput
+                  label="Discipline:"
+                  placeholder="Select by Discipline:"
+                  value={disciplineFilter}
+                  onChange={(e) => setDisciplineFilter(e.target.value)}
+                  mt={5}
+                />
+                <TextInput
+                  label="Programme:"
+                  placeholder="Select by Programme"
+                  value={programFilter}
+                  onChange={(e) => setProgramFilter(e.target.value)}
+                  mt={5}
+                />
+              </ScrollArea>
             </Grid.Col>
           )}
           <Grid.Col span={isMobile ? 12 : 9}>
@@ -207,20 +210,22 @@ function DisciplineStud() {
           </Grid.Col>
           {!isMobile && (
             <Grid.Col span={3}>
-              <TextInput
-                label="Discipline:"
-                placeholder="Select by Discipline:"
-                value={disciplineFilter}
-                onChange={(e) => setDisciplineFilter(e.target.value)}
-                mt={5}
-              />
-              <TextInput
-                label="Programme:"
-                placeholder="Select by Programme"
-                value={programFilter}
-                onChange={(e) => setProgramFilter(e.target.value)}
-                mt={5}
-              />
+              <ScrollArea>
+                <TextInput
+                  label="Discipline:"
+                  placeholder="Select by Discipline:"
+                  value={disciplineFilter}
+                  onChange={(e) => setDisciplineFilter(e.target.value)}
+                  mt={5}
+                />
+                <TextInput
+                  label="Programme:"
+                  placeholder="Select by Programme"
+                  value={programFilter}
+                  onChange={(e) => setProgramFilter(e.target.value)}
+                  mt={5}
+                />
+              </ScrollArea>
             </Grid.Col>
           )}
         </Grid>
