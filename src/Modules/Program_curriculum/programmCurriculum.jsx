@@ -8,7 +8,7 @@ import AdminViewAllBatches from "./Acad_admin/Admin_view_all_batches";
 import AdminViewSemestersOfACurriculum from "./Acad_admin/Admin_view_semesters_of_a_curriculum";
 import FacultyViewAllCourses from "./Faculty/Faculty_view_all_courses";
 import FacultyViewACourse from "./Faculty/Faculty_view_a_course";
-import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
+// import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
 import ViewAllCourses from "./View_all_courses";
 import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
@@ -30,8 +30,8 @@ import ViewSemesterOfACurriculum from "./ViewSemesterOfACurriculum";
 import InwardFile from "./Faculty/InwardFiles";
 import OutwardFile from "./Faculty/OutwardFiles";
 import BDesView from "./Faculty/BDesView";
-import Discipline from "./Faculty/Discipline";
-import FacultyViewAllProgrammes from "./Faculty/Faculty_view_all_programmes";
+// import Discipline from "./Faculty/Discipline";
+// import FacultyViewAllProgrammes from "./Faculty/Faculty_view_all_programmes";
 
 import StudCourseSlotDetails from "./Student/StudCourseSlotDetails";
 import StudSemesterInfo from "./Student/StudSemesterinfo";
@@ -52,6 +52,7 @@ import AdminEditCourseSlotForm from "./Acad_admin/Admin_edit_course_slot_form";
 // import BreadCrumbs from "./BreadCrumbsPorgrammeCurriculum";
 import BreadcrumbTabsAcadadmin from "./Acad_admin/BreadcrumbTabsAcadadmin";
 import BreadcrumbTabs from "./Student/BreadcrumbTabsStudent";
+import BreadcrumbTabsFaculty from "./Faculty/BreadcrumbTagsFaculty";
 
 export default function ProgrammeCurriculumRoutes() {
   return (
@@ -138,11 +139,13 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
+
         {/* Faculty Routes */}
         <Route
           path="/faculty_courses"
           element={
             <Layout>
+              <BreadcrumbTabsFaculty />
               <FacultyViewAllCourses />
             </Layout>
           }
@@ -159,7 +162,8 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_batches"
           element={
             <Layout>
-              <FacultyViewAllBatches />
+              <BreadcrumbTabsFaculty />
+              <ViewAllBatches />
             </Layout>
           }
         />
@@ -167,6 +171,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_view_course_proposal"
           element={
             <Layout>
+              <BreadcrumbTabsFaculty />
               <FacultyCourseProposal />
             </Layout>
           }
@@ -198,6 +203,15 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
+          path="/faculty_view_all_working_curriculums"
+          element={
+            <Layout>
+              <BreadcrumbTabsFaculty />
+              <ViewAllWorkingCurriculums />
+            </Layout>
+          }
+        />
+        <Route
           path="/curriculums/:id"
           element={
             <Layout>
@@ -218,6 +232,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_inward_files"
           element={
             <Layout>
+              <BreadcrumbTabsFaculty />
               <InwardFile />
             </Layout>
           }
@@ -226,6 +241,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_outward_files"
           element={
             <Layout>
+              <BreadcrumbTabsFaculty />
               <OutwardFile />
             </Layout>
           }
@@ -242,7 +258,8 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_discipline"
           element={
             <Layout>
-              <Discipline />
+              <BreadcrumbTabsFaculty />
+              <DisciplineStud />
             </Layout>
           }
         />
@@ -250,7 +267,8 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_view_all_programmes"
           element={
             <Layout>
-              <FacultyViewAllProgrammes />
+              <BreadcrumbTabsFaculty />
+              <ViewAllProgrammes />
             </Layout>
           }
         />
@@ -319,6 +337,25 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
+
+        <Route
+          path="/course_slot_details"
+          element={
+            <Layout>
+              <BreadcrumbTabsAcadadmin />
+              <CourseSlotDetails />
+            </Layout>
+          }
+        />
+        <Route
+          path="/semester_info"
+          element={
+            <Layout>
+              <BreadcrumbTabsAcadadmin />
+              <SemesterInfo />
+            </Layout>
+          }
+        />
         {/* forms */}
         <Route
           path="/acad_admin_add_batch_form"
@@ -383,24 +420,7 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
-        <Route
-          path="/course_slot_details"
-          element={
-            <Layout>
-              <BreadcrumbTabsAcadadmin />
-              <CourseSlotDetails />
-            </Layout>
-          }
-        />
-        <Route
-          path="/semester_info"
-          element={
-            <Layout>
-              <BreadcrumbTabsAcadadmin />
-              <SemesterInfo />
-            </Layout>
-          }
-        />
+
         <Route
           path="/admin_edit_programme_form"
           element={
