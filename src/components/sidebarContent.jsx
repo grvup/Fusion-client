@@ -128,7 +128,7 @@ const Modules = [
   },
   {
     label: "Gymkhana",
-    id: "gymkhana",
+    id: "gymkhana", 
     icon: <GymkhanaIcon size={18} />,
     url: "/",
   },

@@ -22,6 +22,7 @@ import { notifications } from "@mantine/notifications";
 import { setRole, setCurrentAccessibleModules } from "../redux/userslice";
 import classes from "../Modules/Dashboard/Dashboard.module.css";
 import avatarImage from "../assets/avatar.png";
+import { setPfNo } from "../redux/pfNoSlice";
 
 import { logoutRoute, updateRoleRoute } from "../routes/dashboardRoutes";
 
@@ -83,6 +84,7 @@ function Header({ opened, toggleSidebar }) {
           },
         },
       );
+      dispatch(setPfNo(null));
       localStorage.removeItem("authToken");
       navigate("/accounts/login");
       // queryclient.invalidateQueries();
@@ -172,7 +174,7 @@ function Header({ opened, toggleSidebar }) {
                       variant="light"
                       color="blue"
                       size="xs"
-                      onClick={() => navigate("/profile")}
+                      onClick={() => navigate("/facultyprofessionalprofile")}
                     >
                       Profile
                     </Button>
