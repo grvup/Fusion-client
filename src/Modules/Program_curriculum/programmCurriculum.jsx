@@ -24,6 +24,7 @@ import CourseSlotDetails from "./CourseSlotDetails";
 import SemesterInfo from "./SemesterInfo";
 import AdminViewAllProgrammes from "./Acad_admin/Admin_view_all_programmes";
 import AdminViewAllWorkingCurriculum from "./Acad_admin/Admin_view_all_working_curriculums";
+import AdminViewAllCourseInstructors from "./Acad_admin/Admin_view_all_course_instructors";
 import ViewInwardFile from "./Faculty/ViewInwardFile";
 import ViewSemesterOfACurriculum from "./ViewSemesterOfACurriculum";
 import InwardFile from "./Faculty/InwardFiles";
@@ -39,6 +40,7 @@ import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
 import AdminAddCourseSlotForm from "./Acad_admin/Admin_add_course_slot_form";
 import AdminAddCurriculumForm from "./Acad_admin/Admin_add_curriculum_form";
+import AdminAddCourseInstructor from "./Acad_admin/Admin_add_course_instructor_form";
 import AdminAddDisciplineForm from "./Acad_admin/Admin_add_discipline_form";
 import AdminAddProgrammeForm from "./Acad_admin/Admin_add_programme_form";
 import InstigateForm from "./Acad_admin/Instigate_form";
@@ -488,6 +490,24 @@ export default function ProgrammeCurriculumRoutes() {
             <Layout>
               <BreadcrumbTabsAcadadmin />
               <AdminAddCourseProposalForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin_course_instructor"
+          element={
+            <Layout>
+              <BreadcrumbTabsAcadadmin />
+              <AdminViewAllCourseInstructors />
+            </Layout>
+          }
+        />
+        <Route
+          path="/acad_admin_add_course_instructor"
+          element={
+            <Layout>
+              <BreadcrumbTabsAcadadmin />
+              <AdminAddCourseInstructor />
             </Layout>
           }
         />

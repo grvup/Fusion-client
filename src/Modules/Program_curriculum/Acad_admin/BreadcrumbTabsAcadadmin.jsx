@@ -1,4 +1,4 @@
-import { Flex, Button, Tabs, Text, Badge } from "@mantine/core";
+import { Flex, Button, Tabs, Text } from "@mantine/core";
 import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // To navigate to URLs
@@ -11,18 +11,28 @@ function BreadcrumbTabsAcadadmin() {
 
   // Define breadcrumbItems directly within the file
   const breadcrumbItems = [
-    { title: "Programme", url: "/programme_curriculum/acad_view_all_programme" },
-    { title: "Curriculum", url: "/programme_curriculum/acad_view_all_working_curriculums" },
+    {
+      title: "Programme",
+      url: "/programme_curriculum/acad_view_all_programme",
+    },
+    {
+      title: "Curriculum",
+      url: "/programme_curriculum/acad_view_all_working_curriculums",
+    },
     { title: "Discipline", url: "/programme_curriculum/acad_discipline_view" },
     { title: "Batches", url: "/programme_curriculum/admin_batches" },
     { title: "Courses", url: "/programme_curriculum/admin_courses" },
+    {
+      title: "Course Instructor",
+      url: "/programme_curriculum/admin_course_instructor",
+    },
   ];
 
   // Handle tab navigation
   const handleTabChange = (direction) => {
     const currentIndex = parseInt(activeTab, 10);
     const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
-    
+
     // Ensure index is within bounds
     if (newIndex >= 0 && newIndex < breadcrumbItems.length) {
       setActiveTab(newIndex.toString());
