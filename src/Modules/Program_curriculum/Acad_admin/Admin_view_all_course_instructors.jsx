@@ -8,15 +8,19 @@ import {
   Button,
   TextInput,
   Grid,
-  Paper,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 // import { fetchAllCourseInstructors } from "../api/api";
 
 function Admin_view_all_course_instructors() {
-  const [searchName, setSearchName] = useState("");
-  const [searchVersion, setSearchVersion] = useState("");
+  const [filters, setFilters] = useState({
+    name: "",
+    instructor: "",
+    year: "",
+  });
   const [instructors, setInstructors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,27 +46,24 @@ function Admin_view_all_course_instructors() {
   // Filtered data based on search inputs
   const filteredData = instructors.filter(
     (item) =>
-      item.name.toLowerCase().includes(searchName.toLowerCase()) &&
-      item.version.toString().includes(searchVersion),
+      item.name.toLowerCase().includes(filters.name.toLowerCase()) &&
+      item.instructor.toString().includes(filters.instructor.toLowerCase()) &&
+      item.year.toLowerCase().includes(filters.year),
   );
+  const cellStyle = {
+    padding: "15px 20px",
+    textAlign: "center",
+    borderRight: "1px solid #d3d3d3",
+  };
 
   // Define alternating row colors
   const rows = filteredData.map((element, index) => (
     <tr
-      key={element.name + element.version}
+      key={element.id}
       style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#E6F7FF" }}
     >
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          color: "#3498db",
-          textDecoration: "underline",
-          cursor: "pointer",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
-        {/* Curriculum name as a link */}
+      <td style={cellStyle}>
+        {/* Instructor name as a link */}
         <Link
           to={`/programme_curriculum/view_curriculum?curriculum=${element.id}`}
           style={{ color: "#3498db", textDecoration: "underline" }}
@@ -70,37 +71,15 @@ function Admin_view_all_course_instructors() {
           {element.name}
         </Link>
       </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
-        {element.version}
-      </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          borderRight: "1px solid #d3d3d3",
-          textAlign: "center",
-        }}
-      >
+      <td style={cellStyle}>{element.version}</td>
+      <td style={cellStyle}>
         {element.batch && element.batch.length > 0 ? (
           element.batch.map((b, i) => <div key={i}>{b}</div>)
         ) : (
           <div>No batches available</div>
         )}
       </td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-          borderRight: "1px solid #d3d3d3",
-        }}
-      >
-        {element.semesters}
-      </td>
+      <td style={cellStyle}>{element.semesters}</td>
       <td
         style={{
           padding: "15px 20px",
@@ -133,28 +112,63 @@ function Admin_view_all_course_instructors() {
         </Flex>
 
         <Grid>
-          <Grid.Col span={9}>
+          {isMobile && (
+            <Grid.Col span={12}>
+              {[
+                { label: "Name", field: "name" },
+                { label: "Instructor", field: "instructor" },
+                { label: "Year", field: "year" },
+              ].map((filter) => (
+                <TextInput
+                  key={filter.field}
+                  label={`${filter.label}:`}
+                  value={filters[filter.field]}
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      [filter.field]: e.target.value,
+                    })
+                  }
+                  placeholder={`Search by ${filter.label}`}
+                  mb={5}
+                />
+              ))}
+              <Link to="/programme_curriculum/acad_admin_add_course_instructor">
+                <Button
+                  variant="filled"
+                  color="blue"
+                  radius="sm"
+                  style={{ height: "35px", marginTop: "10px" }}
+                >
+                  Add Course Instructor
+                </Button>
+              </Link>
+            </Grid.Col>
+          )}
+          <Grid.Col span={isMobile ? 12 : 9}>
             {/* Table Section */}
             <div
               style={{
-                height: "500px",
+                maxHeight: "61vh",
                 overflowY: "auto",
                 border: "1px solid #d3d3d3",
                 borderRadius: "10px",
+                scrollbarWidth: "none",
               }}
             >
-              <Table
-                style={{
-                  backgroundColor: "white",
-                  padding: "20px",
-                  flexGrow: 1,
-                }}
-              >
+              <style>
+                {`
+                          div::-webkit-scrollbar {
+                            display: none;
+                          }
+                        `}
+              </style>
+              <Table style={{ backgroundColor: "white", padding: "20px" }}>
                 <thead>
                   <tr>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -166,7 +180,7 @@ function Admin_view_all_course_instructors() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -178,7 +192,7 @@ function Admin_view_all_course_instructors() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -190,7 +204,7 @@ function Admin_view_all_course_instructors() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -202,7 +216,7 @@ function Admin_view_all_course_instructors() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
@@ -214,11 +228,12 @@ function Admin_view_all_course_instructors() {
                     </th>
                     <th
                       style={{
-                        padding: "12px 20px",
+                        padding: "15px 20px",
                         backgroundColor: "#C5E2F6",
                         color: "#3498db",
                         fontSize: "16px",
                         textAlign: "center",
+                        borderRight: "1px solid #d3d3d3",
                       }}
                     >
                       Actions
@@ -246,46 +261,39 @@ function Admin_view_all_course_instructors() {
             </div>
           </Grid.Col>
 
-          <Grid.Col span={3}>
-            <Paper shadow="xs" p="md">
-              {/* ADD CURRICULUM button as a link */}
-              <Link
-                to="/programme_curriculum/acad_admin_add_course_instructor"
-                style={{ textDecoration: "none" }}
-              >
+          {!isMobile && (
+            <Grid.Col span={3}>
+              {[
+                { label: "Name", field: "name" },
+                { label: "Instructor", field: "instructor" },
+                { label: "Year", field: "year" },
+              ].map((filter) => (
+                <TextInput
+                  key={filter.field}
+                  label={`${filter.label}:`}
+                  value={filters[filter.field]}
+                  onChange={(e) =>
+                    setFilters({
+                      ...filters,
+                      [filter.field]: e.target.value,
+                    })
+                  }
+                  placeholder={`Search by ${filter.label}`}
+                  mb={5}
+                />
+              ))}
+              <Link to="/programme_curriculum/acad_admin_add_course_instructor">
                 <Button
-                  variant="outline"
-                  fullWidth
-                  style={{ marginBottom: "20px" }}
+                  variant="filled"
+                  color="blue"
+                  radius="sm"
+                  style={{ height: "35px", marginTop: "10px" }}
                 >
-                  ADD INSTRUCTOR
+                  Add Course Instructor
                 </Button>
               </Link>
-
-              {/* Filters */}
-              <TextInput
-                label="Course Code"
-                value={searchName}
-                onChange={(event) => setSearchName(event.currentTarget.value)}
-                mb="sm"
-              />
-              <TextInput
-                label="Instructor Name"
-                value={searchVersion}
-                onChange={(event) =>
-                  setSearchVersion(event.currentTarget.value)
-                }
-                mb="sm"
-              />
-              <TextInput
-                label="Year"
-                value={searchVersion}
-                onChange={(event) =>
-                  setSearchVersion(event.currentTarget.value)
-                }
-              />
-            </Paper>
-          </Grid.Col>
+            </Grid.Col>
+          )}
         </Grid>
       </Container>
     </MantineProvider>
