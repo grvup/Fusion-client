@@ -2,14 +2,17 @@ import PropTypes from "prop-types";
 import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { Tabs, Button, Flex, Badge, Text } from "@mantine/core";
 import { useRef } from "react";
+import { useMediaQuery } from "@mantine/hooks";
 import { useDispatch } from "react-redux";
 import { setActiveTab_ } from "../redux/moduleslice";
 import classes from "../Modules/Dashboard/Dashboard.module.css";
 
 function ModuleTabs({ tabs, activeTab, setActiveTab, badges = [] }) {
+  const isMobile = useMediaQuery("(max-width: 750px)");
   const tabsListRef = useRef(null);
+  const tabsListContainerRef = useRef(null);
   const dispatch = useDispatch();
-
+  console.log(isMobile);
   const handleTabChange = (direction) => {
     const currentIndex = parseInt(activeTab, 10);
     const newIndex =
@@ -22,6 +25,10 @@ function ModuleTabs({ tabs, activeTab, setActiveTab, badges = [] }) {
       left: direction === "next" ? 50 : -50,
       behavior: "smooth",
     });
+    // tabsListContainerRef.current.scrollBy({
+    //   left: direction === "next" ? 50 : -50,
+    //   behavior: "smooth",
+    // });
   };
 
   const handleTabClick = (index) => {
@@ -31,7 +38,7 @@ function ModuleTabs({ tabs, activeTab, setActiveTab, badges = [] }) {
 
   return (
     <Flex justify="space-between" align="center">
-      <Flex align="center" gap="1rem">
+      <Flex align="center" gap={{ base: "0.2rem", sm: "0.1rem" }}>
         <Button
           onClick={() => handleTabChange("prev")}
           variant="default"
@@ -45,14 +52,24 @@ function ModuleTabs({ tabs, activeTab, setActiveTab, badges = [] }) {
         </Button>
         <div className={classes.tabsContainer} ref={tabsListRef}>
           <Tabs value={activeTab} onChange={(value) => handleTabClick(value)}>
-            <Tabs.List style={{ display: "flex", flexWrap: "nowrap" }}>
+            <Tabs.List
+              justify="flex-start"
+              nowrap
+              style={{
+                display: "flex",
+                width: isMobile ? "200px" : "320px",
+                flexWrap: "nowrap",
+                overflowX: isMobile ? "scroll" : "none",
+              }}
+              ref={tabsListContainerRef}
+            >
               {tabs.map((tab, index) => (
                 <Tabs.Tab
                   value={`${index}`}
                   key={index}
                   className={activeTab === `${index}` ? classes.activeTab : ""}
                 >
-                  <Flex gap="4px">
+                  <Flex gap="1px">
                     <Text>{tab.title}</Text>
                     {badges[index] > 0 && (
                       <Badge

@@ -33,6 +33,8 @@ function ValidateAuth() {
           roll_no,
         } = data;
 
+        console.log(data);
+
         dispatch(setUserName(name));
         dispatch(setRollNo(roll_no));
         dispatch(setRoles(designation_info));
