@@ -28,19 +28,32 @@ function AdminViewProgrammes() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("Authorization token not found");
+        const cachedData = localStorage.getItem("programmesCache");
+        const timestamp = localStorage.getItem("programmesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
+
+        if (cachedData && isCacheValid) {
+          const data = JSON.parse(cachedData);
+          setUgData(data.ug_programmes || []);
+          setPgData(data.pg_programmes || []);
+          setPhdData(data.phd_programmes || []);
+        } else {
+          const token = localStorage.getItem("authToken");
+          if (!token) throw new Error("Authorization token not found");
+
+          const data = await fetchAllProgrammes(token);
+          setUgData(data.ug_programmes || []);
+          setPgData(data.pg_programmes || []);
+          setPhdData(data.phd_programmes || []);
+
+          localStorage.setItem("programmesCache", JSON.stringify(data));
+          localStorage.setItem("programmesTimestamp", Date.now().toString());
         }
-
-        const data = await fetchAllProgrammes(token);
-
-        setUgData(data.ug_programmes || []);
-        setPgData(data.pg_programmes || []);
-        setPhdData(data.phd_programmes || []);
-      } catch (getError) {
-        console.error("Error fetching data: ", error);
-        setError(error);
+      } catch (err) {
+        console.error("Error fetching data: ", err);
+        setError(err);
       } finally {
         setLoading(false);
       }

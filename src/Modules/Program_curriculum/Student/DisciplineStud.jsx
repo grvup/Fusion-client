@@ -26,14 +26,28 @@ function DisciplineStud() {
   useEffect(() => {
     const loadDisciplines = async () => {
       try {
-        const data = await fetchDisciplinesData();
-        setDisciplines(data);
+        const cachedData = localStorage.getItem("disciplinesCache");
+        const timestamp = localStorage.getItem("disciplinesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
+
+        if (cachedData && isCacheValid) {
+          setDisciplines(JSON.parse(cachedData) || []);
+        } else {
+          const data = await fetchDisciplinesData();
+          setDisciplines(data);
+
+          localStorage.setItem("disciplinesCache", JSON.stringify(data));
+          localStorage.setItem("disciplinesTimestamp", Date.now().toString());
+        }
       } catch (err) {
         console.error("Error loading disciplines:", err);
       } finally {
         setLoading(false);
       }
     };
+
     loadDisciplines();
   }, []);
 

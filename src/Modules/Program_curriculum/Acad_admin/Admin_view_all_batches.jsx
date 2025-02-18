@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import axios from "axios"; // Assuming axios is used for API calls
 import { useMediaQuery } from "@mantine/hooks";
+import { Link } from "react-router-dom";
 
 function AdminViewAllBatches() {
   const [activeTab, setActiveTab] = useState("Batches");
@@ -28,18 +29,33 @@ function AdminViewAllBatches() {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const token = localStorage.getItem("authToken"); // Replace with actual method to get token
+        const cachedData = localStorage.getItem("batchesCache");
+        const timestamp = localStorage.getItem("batchesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
 
-        const response = await axios.get(
-          "http://127.0.0.1:8000/programme_curriculum/api/admin_batches/",
-          {
-            headers: {
-              Authorization: `Token ${token}`, // Add the Authorization header
+        if (cachedData && isCacheValid) {
+          const data = JSON.parse(cachedData);
+          setBatches(data.batches || []);
+          setFinishedBatches(data.finished_batches || []);
+        } else {
+          const token = localStorage.getItem("authToken");
+          if (!token) throw new Error("Authorization token not found");
+
+          const response = await axios.get(
+            "http://127.0.0.1:8000/programme_curriculum/api/admin_batches/",
+            {
+              headers: { Authorization: `Token ${token}` },
             },
-          },
-        ); // Replace with actual endpoint
-        setBatches(response.data.batches); // Assuming API returns {runningBatches, finishedBatches}
-        setFinishedBatches(response.data.finished_batches);
+          );
+
+          setBatches(response.data.batches || []);
+          setFinishedBatches(response.data.finished_batches || []);
+
+          localStorage.setItem("batchesCache", JSON.stringify(response.data));
+          localStorage.setItem("batchesTimestamp", Date.now().toString());
+        }
       } catch (error) {
         console.error("Error fetching batch data:", error);
       }
@@ -47,6 +63,7 @@ function AdminViewAllBatches() {
 
     fetchBatches();
   }, []);
+
   // console.log(batches)
   // Handle search input change
   const handleInputChange = (e) => {
@@ -128,8 +145,8 @@ function AdminViewAllBatches() {
                     onChange={handleInputChange}
                   />
                 ))}
-                <a
-                  href="/programme_curriculum/acad_admin_add_batch_form"
+                <Link
+                  to="/programme_curriculum/acad_admin_add_batch_form"
                   style={{ textDecoration: "none" }}
                 >
                   <Button
@@ -140,7 +157,7 @@ function AdminViewAllBatches() {
                   >
                     Add Batch
                   </Button>
-                </a>
+                </Link>
               </ScrollArea>
             </Grid.Col>
           )}
@@ -232,7 +249,7 @@ function AdminViewAllBatches() {
                           borderRight: "1px solid #d3d3d3",
                         }}
                       >
-                        Edit
+                        Actions
                       </th>
                     </tr>
                   </thead>
@@ -290,8 +307,8 @@ function AdminViewAllBatches() {
                               borderRight: "1px solid #d3d3d3",
                             }}
                           >
-                            <a
-                              href={`/programme_curriculum/view_curriculum?curriculum=${batch.id}`}
+                            <Link
+                              to={`/programme_curriculum/view_curriculum?curriculum=${batch.id}`}
                               className="course-link"
                               style={{
                                 color: "#3498db",
@@ -301,7 +318,7 @@ function AdminViewAllBatches() {
                             >
                               {batch.curriculum} &nbsp;v
                               {batch.curriculumVersion}
-                            </a>
+                            </Link>
                           </td>
                           <td
                             style={{
@@ -312,15 +329,15 @@ function AdminViewAllBatches() {
                               borderRight: "1px solid #d3d3d3",
                             }}
                           >
-                            <a
-                              href={`/programme_curriculum/admin_edit_batch_form?batch=${batch.name}`}
+                            <Link
+                              to={`/programme_curriculum/admin_edit_batch_form?batch=${batch.name}`}
                               className="course-link"
                               style={{ textDecoration: "none" }}
                             >
                               <Button variant="filled" color="green">
                                 Edit
                               </Button>
-                            </a>
+                            </Link>
                           </td>
                         </tr>
                       ))
@@ -462,14 +479,14 @@ function AdminViewAllBatches() {
                               borderRight: "1px solid #d3d3d3",
                             }}
                           >
-                            <a
-                              href={`/programme_curriculum/view_curriculum?curriculum=${batch.id}`}
+                            <Link
+                              to={`/programme_curriculum/view_curriculum?curriculum=${batch.id}`}
                               className="course-link"
                               style={{ textDecoration: "none" }}
                             >
                               {batch.curriculum} &nbsp;v
                               {batch.curriculumVersion}
-                            </a>
+                            </Link>
                           </td>
                           <td
                             style={{
@@ -480,15 +497,15 @@ function AdminViewAllBatches() {
                               borderRight: "1px solid #d3d3d3",
                             }}
                           >
-                            <a
-                              href={`/programme_curriculum/admin_edit_batch_form?batch=${batch.name}`}
+                            <Link
+                              to={`/programme_curriculum/admin_edit_batch_form?batch=${batch.name}`}
                               className="course-link"
                               style={{ textDecoration: "none" }}
                             >
                               <Button variant="filled" color="green">
                                 Edit
                               </Button>
-                            </a>
+                            </Link>
                           </td>
                         </tr>
                       ))
@@ -521,8 +538,8 @@ function AdminViewAllBatches() {
                     onChange={handleInputChange}
                   />
                 ))}
-                <a
-                  href="/programme_curriculum/acad_admin_add_batch_form"
+                <Link
+                  to="/programme_curriculum/acad_admin_add_batch_form"
                   style={{ textDecoration: "none" }}
                 >
                   <Button
@@ -533,7 +550,7 @@ function AdminViewAllBatches() {
                   >
                     Add Batch
                   </Button>
-                </a>
+                </Link>
               </ScrollArea>
             </Grid.Col>
           )}

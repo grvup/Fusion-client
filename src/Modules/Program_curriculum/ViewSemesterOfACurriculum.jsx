@@ -1,9 +1,9 @@
 import { Table } from "@mantine/core";
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./Acad_admin/Admin_view_semesters_of_a_curriculum.css";
 import { fetchSemestersOfCurriculumData } from "./api/api";
-
+/* eslint-disable jsx-a11y/control-has-associated-label */
 function ViewSemesterOfACurriculum() {
   // State to hold curriculum data
   const { id } = useParams();
@@ -30,7 +30,7 @@ function ViewSemesterOfACurriculum() {
 
   // Use the fetched curriculum data to populate the table
   return (
-    <div style={{ position: "relative" }}>
+    <div style={{ overflowX: "auto", maxWidth: "100%" }}>
       <h2>{curriculum.name} Table</h2>
 
       <Table
@@ -39,7 +39,7 @@ function ViewSemesterOfACurriculum() {
         style={{
           borderCollapse: "collapse",
           textAlign: "center",
-          width: "100%",
+          minWidth: "600px",
         }}
       >
         <thead>
@@ -72,14 +72,14 @@ function ViewSemesterOfACurriculum() {
             <td style={{ border: "1px solid black" }} />
             {curriculum.semesters.map((semester, index) => (
               <td key={index} style={{ border: "1px solid black" }}>
-                <a
-                  href={`/programme_curriculum/stud_semester_info/${semester.id}`}
+                <Link
+                  to={`/programme_curriculum/stud_semester_info/${semester.id}`}
                   style={{ textDecoration: "none" }}
                 >
-                  <strong style={{ color: "blue", fontSize: "0.85vw" }}>
+                  <strong style={{ color: "blue", fontSize: "15px" }}>
                     Semester {semester.semester_no}
                   </strong>
-                </a>
+                </Link>
               </td>
             ))}
           </tr>
@@ -95,12 +95,12 @@ function ViewSemesterOfACurriculum() {
                   slotRow[index].courses.length ? (
                     slotRow[index].courses.length === 1 ? (
                       // Show course details if there is only one course
-                      <a
-                        href={`/programme_curriculum/stud_course_slot_details/${slotRow[index].id}`}
+                      <Link
+                        to={`/programme_curriculum/stud_course_slot_details/${slotRow[index].id}`}
                         style={{ textDecoration: "none" }}
                       >
                         <p>
-                          <strong style={{ fontSize: "0.65vw" }}>
+                          <strong style={{ fontSize: "13px" }}>
                             {slotRow[index].courses[0].name}
                           </strong>
                           <br />
@@ -108,17 +108,17 @@ function ViewSemesterOfACurriculum() {
                           {slotRow[index].courses[0].tutorial_hours}, C:{" "}
                           {slotRow[index].courses[0].credit})
                         </p>
-                      </a>
+                      </Link>
                     ) : (
                       // Show only the slot name if there are multiple courses
-                      <a
-                        href={`/programme_curriculum/stud_course_slot_details/${slotRow[index].id}`}
+                      <Link
+                        to={`/programme_curriculum/stud_course_slot_details/${slotRow[index].id}`}
                         style={{ textDecoration: "none" }}
                       >
-                        <strong style={{ fontSize: "0.75vw" }}>
+                        <strong style={{ fontSize: "14px" }}>
                           {slotRow[index].name}
                         </strong>
-                      </a>
+                      </Link>
                     )
                   ) : (
                     <div />
@@ -129,7 +129,7 @@ function ViewSemesterOfACurriculum() {
           ))}
           <tr style={{ border: "1px solid black" }}>
             <td style={{ border: "1px solid black" }}>
-              <strong style={{ color: "blue", fontSize: "0.75vw" }}>
+              <strong style={{ color: "blue", fontSize: "14px" }}>
                 Start Date
               </strong>
             </td>
@@ -141,7 +141,7 @@ function ViewSemesterOfACurriculum() {
           </tr>
           <tr style={{ border: "1px solid black" }}>
             <td style={{ border: "1px solid black" }}>
-              <strong style={{ color: "blue", fontSize: "0.75vw" }}>
+              <strong style={{ color: "blue", fontSize: "14px" }}>
                 End Date
               </strong>
             </td>
@@ -153,7 +153,7 @@ function ViewSemesterOfACurriculum() {
           </tr>
           <tr style={{ border: "1px solid black" }}>
             <td style={{ border: "1px solid black" }}>
-              <strong style={{ color: "blue", fontSize: "0.75vw" }}>
+              <strong style={{ color: "blue", fontSize: "14px" }}>
                 Total Credits
               </strong>
             </td>
@@ -163,9 +163,9 @@ function ViewSemesterOfACurriculum() {
               </td>
             ))}
           </tr>
-          <tr style={{ border: "1px solid black", padding: "0.75vw 45%" }}>
+          <tr style={{ border: "1px solid black", padding: "14px 45%" }}>
             <td style={{ border: "1px solid black" }}>
-              <strong style={{ color: "blue", fontSize: "0.75vw" }}>
+              <strong style={{ color: "blue", fontSize: "14px" }}>
                 Instigated
               </strong>
             </td>
@@ -173,11 +173,11 @@ function ViewSemesterOfACurriculum() {
               <td key={index} style={{ border: "1px solid black" }}>
                 {semester.instigate_semester ? (
                   <div style={{ color: "green" }}>
-                    <i className="icon checkmark" /> Yes
+                    <i className="icon checkmark" aria-hidden="true" /> Yes
                   </div>
                 ) : (
                   <div style={{ color: "red" }}>
-                    <i className="attention icon" /> Not Yet
+                    <i className="attention icon" aria-hidden="true" /> Not Yet
                   </div>
                 )}
               </td>

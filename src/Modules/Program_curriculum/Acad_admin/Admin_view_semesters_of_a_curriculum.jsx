@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import "./Admin_view_semesters_of_a_curriculum.css";
 import { adminFetchCurriculumSemesters } from "../api/api";
+/* eslint-disable jsx-a11y/control-has-associated-label */
 
 function Admin_view_semesters_of_a_curriculum() {
   // Demo data (matches the example layout)

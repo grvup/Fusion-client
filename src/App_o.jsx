@@ -15,7 +15,7 @@ import ForgotPassword from "./pages/forgotPassword";
 // Academic and Helper
 import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
-import Examination from "./Modules/Examination/examination";
+
 import ProgrammeCurriculumRoutes from "./Modules/Program_curriculum/programmCurriculum";
 
 export default function App() {
@@ -54,7 +54,6 @@ export default function App() {
         <Route path="/profile" element={renderLayout(Profile)} />
         <Route path="/accounts/login" element={<LoginPage />} />
         <Route path="/reset-password" element={<ForgotPassword />} />
-        <Route path="/examination/*" element={<Examination />} />
       </Routes>
     </MantineProvider>
   );

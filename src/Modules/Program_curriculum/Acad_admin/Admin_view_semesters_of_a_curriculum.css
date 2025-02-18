@@ -26,19 +26,18 @@
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 15px;
+  padding: 10px;
   z-index: 1;
   width: 14vw;
   overflow-x: visible;
   opacity: 0;
-  max-height: 0;
   transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
   border-radius: 5px;
 }
 
 .options-dropdown.open {
   opacity: 1;
-  max-height: 24vw;
+  height: fit-content;
   transition: max-height 0.4s ease-in, opacity 0.4s ease-in;
 }
 
@@ -67,10 +66,11 @@
   border-radius: 4px;
   color: black;
   transition: background-color 0.3s ease;
+  background-color: #62b6cb;
 }
 
 .green-btn {
-  background-color: #bee9e8;
+  background-color: #62b6cb;
 }
 
 .blue-btn {
@@ -104,7 +104,7 @@
 }
 
 .add-instigate-semester-button {
-  background-color: #6a95ad;
+  background-color: #62b6cb;
   color: black;
   padding: 10px;
   border: none;
@@ -129,7 +129,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
   z-index: 2;
-  min-width: 15vw;
+  min-width: 150px;
   overflow-y: auto; /* Scroll if content overflows */
   transition: max-height 0.4s ease-out;
   border-radius: 5px;
@@ -158,7 +158,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
   z-index: 2;
-  min-width: 15vw;
+  min-width: 150px;
   overflow-y: auto; /* Scroll if content overflows */
   transition: max-height 0.4s ease-out;
   border-radius: 5px;

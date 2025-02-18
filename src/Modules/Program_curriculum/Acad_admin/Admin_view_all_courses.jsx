@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { fetchAllCourses } from "../api/api";
 
 function Admin_view_all_courses() {
@@ -26,16 +27,29 @@ function Admin_view_all_courses() {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const data = await fetchAllCourses(); // Fetch the courses data
-        setCourses(data); // Update the courses state
+        const cachedData = localStorage.getItem("coursesCache");
+        const timestamp = localStorage.getItem("coursesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
+
+        if (cachedData && isCacheValid) {
+          setCourses(JSON.parse(cachedData));
+        } else {
+          const data = await fetchAllCourses();
+          setCourses(data);
+
+          localStorage.setItem("coursesCache", JSON.stringify(data));
+          localStorage.setItem("coursesTimestamp", Date.now().toString());
+        }
       } catch (err) {
-        setError("Failed to load courses."); // Handle errors
+        setError("Failed to load courses.");
       } finally {
-        setLoading(false); // Stop the loader
+        setLoading(false);
       }
     };
 
-    loadCourses(); // Fetch courses on component mount
+    loadCourses();
   }, []);
 
   if (loading) {
@@ -114,7 +128,7 @@ function Admin_view_all_courses() {
                   placeholder="Search by Credits"
                   mb={5}
                 />
-                <a href="/programme_curriculum/acad_admin_add_course_proposal_form">
+                <Link to="/programme_curriculum/acad_admin_add_course_proposal_form">
                   <Button
                     variant="filled"
                     color="blue"
@@ -123,7 +137,7 @@ function Admin_view_all_courses() {
                   >
                     Add Course
                   </Button>
-                </a>
+                </Link>
               </ScrollArea>
             </Grid.Col>
           )}
@@ -230,8 +244,8 @@ function Admin_view_all_courses() {
                           borderRight: "1px solid #d3d3d3",
                         }}
                       >
-                        <a
-                          href={`/programme_curriculum/admin_course/${course.id}`}
+                        <Link
+                          to={`/programme_curriculum/admin_course/${course.id}`}
                           className="course-link"
                           style={{
                             color: "#3498db",
@@ -240,7 +254,7 @@ function Admin_view_all_courses() {
                           }}
                         >
                           {course.code}
-                        </a>
+                        </Link>
                       </td>
                       <td
                         style={{
@@ -284,13 +298,13 @@ function Admin_view_all_courses() {
                           borderRight: "1px solid #d3d3d3",
                         }}
                       >
-                        <a
-                          href={`/programme_curriculum/acad_admin_edit_course_form/${course.id}`}
+                        <Link
+                          to={`/programme_curriculum/acad_admin_edit_course_form/${course.id}`}
                         >
                           <Button variant="filled" color="green" radius="sm">
                             Edit
                           </Button>
-                        </a>
+                        </Link>
                       </td>
                     </tr>
                   ))}
@@ -329,7 +343,7 @@ function Admin_view_all_courses() {
                   placeholder="Search by Credits"
                   mb={5}
                 />
-                <a href="/programme_curriculum/acad_admin_add_course_proposal_form">
+                <Link to="/programme_curriculum/acad_admin_add_course_proposal_form">
                   <Button
                     variant="filled"
                     color="blue"
@@ -338,7 +352,7 @@ function Admin_view_all_courses() {
                   >
                     Add Course
                   </Button>
-                </a>
+                </Link>
               </ScrollArea>
             </Grid.Col>
           )}

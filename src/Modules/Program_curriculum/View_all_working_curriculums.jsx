@@ -9,6 +9,7 @@ import {
   Button,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { Link } from "react-router-dom";
 import { fetchWorkingCurriculumsData } from "./api/api";
 
 function ViewAllWorkingCurriculums() {
@@ -26,13 +27,27 @@ function ViewAllWorkingCurriculums() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("Authorization token is missing");
-        }
+        const cachedData = localStorage.getItem("curriculumsCache");
+        const timestamp = localStorage.getItem("curriculumsTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
 
-        const data = await fetchWorkingCurriculumsData(token);
-        setCurriculums(data.curriculums || []);
+        if (cachedData && isCacheValid) {
+          setCurriculums(JSON.parse(cachedData) || []);
+        } else {
+          const token = localStorage.getItem("authToken");
+          if (!token) throw new Error("Authorization token is missing");
+
+          const data = await fetchWorkingCurriculumsData(token);
+          setCurriculums(data.curriculums || []);
+
+          localStorage.setItem(
+            "curriculumsCache",
+            JSON.stringify(data.curriculums),
+          );
+          localStorage.setItem("curriculumsTimestamp", Date.now().toString());
+        }
       } catch (error) {
         console.error("Error fetching curriculums:", error);
       } finally {
@@ -66,12 +81,12 @@ function ViewAllWorkingCurriculums() {
       style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#E6F7FF" }}
     >
       <td style={cellStyle}>
-        <a
-          href={`/programme_curriculum/stud_curriculum_view/${curriculum.id}`}
+        <Link
+          to={`/programme_curriculum/stud_curriculum_view/${curriculum.id}`}
           style={{ color: "#3498db", textDecoration: "none" }}
         >
           {curriculum.name}
-        </a>
+        </Link>
       </td>
       <td style={cellStyle}>{curriculum.version}</td>
       <td style={cellStyle}>

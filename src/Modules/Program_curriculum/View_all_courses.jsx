@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { fetchAllCourses } from "./api/api";
 
 function View_all_courses() {
@@ -26,16 +27,30 @@ function View_all_courses() {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const data = await fetchAllCourses(); // Fetch the courses data
-        setCourses(data); // Update the courses state
+        const cachedData = localStorage.getItem("coursesCache");
+        const timestamp = localStorage.getItem("coursesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
+
+        if (cachedData && isCacheValid) {
+          setCourses(JSON.parse(cachedData) || []);
+        } else {
+          const data = await fetchAllCourses(); // Fetch courses data
+          setCourses(data || []);
+
+          localStorage.setItem("coursesCache", JSON.stringify(data));
+          localStorage.setItem("coursesTimestamp", Date.now().toString());
+        }
       } catch (err) {
-        setError("Failed to load courses."); // Handle errors
+        setError("Failed to load courses.");
+        console.error("Error loading courses:", err);
       } finally {
-        setLoading(false); // Stop the loader
+        setLoading(false);
       }
     };
 
-    loadCourses(); // Fetch courses on component mount
+    loadCourses();
   }, []);
 
   if (loading) {
@@ -195,8 +210,8 @@ function View_all_courses() {
                           borderRight: "1px solid #d3d3d3",
                         }}
                       >
-                        <a
-                          href={`/programme_curriculum/student_course/${course.id}`}
+                        <Link
+                          to={`/programme_curriculum/student_course/${course.id}`}
                           style={{
                             color: "#3498db",
                             textDecoration: "none",
@@ -205,7 +220,7 @@ function View_all_courses() {
                           className="course-link"
                         >
                           {course.code}
-                        </a>
+                        </Link>
                       </td>
                       <td
                         style={{

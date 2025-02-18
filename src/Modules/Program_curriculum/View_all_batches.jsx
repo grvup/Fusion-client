@@ -10,6 +10,7 @@ import {
   Grid,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { Link } from "react-router-dom";
 import { fetchBatchesData } from "./api/api";
 
 function Batches() {
@@ -28,9 +29,24 @@ function Batches() {
   useEffect(() => {
     const loadBatches = async () => {
       try {
-        const data = await fetchBatchesData();
-        setBatches(data.runningBatches);
-        setFinishedBatches(data.finishedBatches);
+        const cachedData = localStorage.getItem("batchesCache");
+        const timestamp = localStorage.getItem("batchesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
+
+        if (cachedData && isCacheValid) {
+          const data = JSON.parse(cachedData);
+          setBatches(data.runningBatches || []);
+          setFinishedBatches(data.finishedBatches || []);
+        } else {
+          const data = await fetchBatchesData();
+          setBatches(data.runningBatches || []);
+          setFinishedBatches(data.finishedBatches || []);
+
+          localStorage.setItem("batchesCache", JSON.stringify(data));
+          localStorage.setItem("batchesTimestamp", Date.now().toString());
+        }
       } catch (err) {
         console.error("Error loading batches:", err);
       }
@@ -206,8 +222,8 @@ function Batches() {
                           borderRight: "1px solid #d3d3d3",
                         }}
                       >
-                        <a
-                          href={`/programme_curriculum/stud_curriculum_view/${batch.id}`}
+                        <Link
+                          to={`/programme_curriculum/stud_curriculum_view/${batch.id}`}
                           style={{
                             color: "#3498db",
                             textDecoration: "none",
@@ -215,7 +231,7 @@ function Batches() {
                           }}
                         >
                           {batch.curriculum}
-                        </a>
+                        </Link>
                       </td>
                     </tr>
                   ))}
