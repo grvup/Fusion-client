@@ -13,6 +13,10 @@ import { useMediaQuery } from "@mantine/hooks";
 // import { fetchAllCourseInstructors } from "../api/api";
 
 function Admin_view_all_course_instructors() {
+
+  const [searchName, setSearchName] = useState("");
+  const [searchVersion, setSearchVersion] = useState("");
+  
   const [filters, setFilters] = useState({
     name: "",
     instructor: "",

@@ -26,13 +26,24 @@ function DisciplineAcad() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("Authorization token not found");
-        }
+        const cachedData = localStorage.getItem("disciplinesCache");
+        const timestamp = localStorage.getItem("disciplinesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
 
-        const data = await fetchDisciplinesData(token);
-        setDisciplines(data);
+        if (cachedData && isCacheValid) {
+          setDisciplines(JSON.parse(cachedData));
+        } else {
+          const token = localStorage.getItem("authToken");
+          if (!token) throw new Error("Authorization token not found");
+
+          const data = await fetchDisciplinesData(token);
+          setDisciplines(data);
+
+          localStorage.setItem("disciplinesCache", JSON.stringify(data));
+          localStorage.setItem("disciplinesTimestamp", Date.now().toString());
+        }
       } catch (error) {
         console.error("Error fetching disciplines: ", error);
       } finally {
@@ -225,13 +236,13 @@ function DisciplineAcad() {
                             borderRight: "1px solid #d3d3d3",
                           }}
                         >
-                          <a
-                            href={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${item.name}`}
+                          <Link
+                            to={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${item.name}`}
                           >
                             <Button variant="filled" color="green" radius="sm">
                               Edit
                             </Button>
-                          </a>
+                          </Link>
                         </td>
                       </tr>
                     ))

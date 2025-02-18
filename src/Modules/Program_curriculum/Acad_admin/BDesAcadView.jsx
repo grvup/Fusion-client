@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Copy } from "@phosphor-icons/react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
+  MantineProvider,
+  Flex,
   Table,
   ScrollArea,
   Container,
   Button,
   Grid,
-  Paper,
   TextInput,
-  Text,
 } from "@mantine/core";
 import axios from "axios";
+import { useMediaQuery } from "@mantine/hooks";
 
 const CURRICULUM_DATA = {
   info: {
@@ -51,7 +52,7 @@ const CURRICULUM_DATA = {
 
 function BDesAcadView() {
   const location = useLocation();
-
+  const isMobile = useMediaQuery("(max-width: 768px)");
   // Create an instance of URLSearchParams to parse query parameters
   const queryParams = new URLSearchParams(location.search);
 
@@ -76,7 +77,7 @@ function BDesAcadView() {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
 
         const response = await axios.get(
-          `http://127.0.0.1:8000/programme_curriculum/api/admin_curriculums/${programmeId}`, // Use backticks for template literal
+          `http://127.0.0.1:8000/programme_curriculum/api/curriculums/${programmeId}`, // Use backticks for template literal
           {
             headers: {
               Authorization: `Token ${token}`, // Add the Authorization header
@@ -88,7 +89,7 @@ function BDesAcadView() {
         setWorkingCurriculums(response.data.working_curriculums);
         setPastCurriculums(response.data.past_curriculums);
         // setLoading(false);
-        console.log(response.data);
+        console.log("response data: ", response.data);
       } catch (FetchError) {
         console.error("Error fetching data: ", error);
         setError("Failed to load data");
@@ -104,89 +105,90 @@ function BDesAcadView() {
   const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
 
   const renderInfo = () => (
-    <div style={{ marginBottom: "20px", display: "flex" }}>
-      <Table
-        highlightOnHover
-        verticalSpacing="sm"
-        style={{
-          border: "2px solid #1e90ff",
-          borderCollapse: "collapse",
-          width: "65vw",
-          marginTop: "20px", // Margin for the table
-        }}
-      >
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+        scrollbarWidth: "none",
+      }}
+    >
+      <style>
+        {`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}
+      </style>
+      <Table style={{ backgroundColor: "white", padding: "20px" }}>
         <tbody>
-          <tr
-            style={{
-              backgroundColor: "#15ABFF54",
-              borderBottom: "1px solid #1e90ff",
-            }}
-          >
+          <tr>
             <td
               colSpan="2"
               style={{
-                fontWeight: "bold",
-                padding: "5px",
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
                 textAlign: "center",
-                fontSize: "20px",
+                fontWeight: "bold",
               }}
             >
               {program ? program.name : ""}
             </td>
           </tr>
 
-          <tr
-            style={{
-              backgroundColor: "#fff",
-              borderBottom: "1px solid #1e90ff",
-            }}
-          >
+          <tr>
             <td
               style={{
                 fontWeight: "bold",
-                padding: "10px",
+                backgroundColor: "#FFFFFF",
+                color: "#3498db",
+                padding: "15px 20px",
                 textAlign: "left",
-                borderRight: "1px solid #1e90ff",
+                borderRight: "1px solid #d3d3d3",
               }}
             >
               Programme Name
             </td>
-            <td style={{ padding: "10px" }}>{program ? program.name : ""}</td>
+            <td style={{ padding: "20px 20px", backgroundColor: "#FFFFFF" }}>
+              {program ? program.name : ""}
+            </td>
           </tr>
 
-          <tr
-            style={{
-              backgroundColor: "#15ABFF1C",
-              borderBottom: "1px solid #1e90ff",
-            }}
-          >
+          <tr>
             <td
               style={{
                 fontWeight: "bold",
-                padding: "10px",
+                backgroundColor: "#E6F7FF",
+                color: "#3498db",
+                padding: "15px 20px",
                 textAlign: "left",
-                borderRight: "1px solid #1e90ff",
+                borderRight: "1px solid #d3d3d3",
               }}
             >
               Programme Category
             </td>
-            <td style={{ padding: "10px" }}>
+            <td style={{ padding: "20px 20px", backgroundColor: "#E6F7FF" }}>
               {program ? program.category : ""}
             </td>
           </tr>
 
-          <tr style={{ backgroundColor: "#fff" }}>
+          <tr>
             <td
               style={{
                 fontWeight: "bold",
-                padding: "10px",
+                backgroundColor: "#FFFFFF",
+                color: "#3498db",
+                padding: "15px 20px",
                 textAlign: "left",
-                borderRight: "1px solid #1e90ff",
+                borderRight: "1px solid #d3d3d3",
               }}
             >
               Programme Begin Year
             </td>
-            <td style={{ padding: "10px" }}>
+            <td style={{ padding: "20px 20px", backgroundColor: "#FFFFFF" }}>
               {CURRICULUM_DATA.info.programBeginYear}
             </td>
           </tr>
@@ -196,104 +198,132 @@ function BDesAcadView() {
   );
 
   const renderWorkingCurriculums = () => (
-    <div style={{ marginTop: "20px", display: "flex" }}>
-      <ScrollArea style={{ flex: 1 }}>
-        <Table
-          highlightOnHover
-          verticalSpacing="sm"
-          style={{
-            border: "2px solid #1e90ff",
-            borderCollapse: "collapse",
-            width: "65vw",
-          }}
-        >
-          <thead>
-            <tr
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+        scrollbarWidth: "none",
+      }}
+    >
+      <style>
+        {`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}
+      </style>
+      <Table style={{ backgroundColor: "white", padding: "20px" }}>
+        <thead>
+          <tr
+            style={{
+              backgroundColor: "#15ABFF54",
+              borderBottom: "1px solid #d3d3d3",
+            }}
+          >
+            <th
               style={{
-                backgroundColor: "#15ABFF54",
-                borderBottom: "1px solid #1e90ff",
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
               }}
             >
-              <th
+              Name
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Version
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Batch
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              No. of Semesters
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {workingCurriculums.length > 0 ? (
+            workingCurriculums.map((curr, idx) => (
+              <tr
+                key={idx}
                 style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
+                  backgroundColor: idx % 2 === 0 ? "#FFFFFF" : "#E6F7FF",
                 }}
               >
-                Name
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                Version
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                Batch
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                No. of Semesters
-              </th>
-              <th style={{ padding: "10px", textAlign: "center" }}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {workingCurriculums.length > 0 ? (
-              workingCurriculums[0].map((curr, idx) => (
-                <tr
-                  key={idx}
+                <td
                   style={{
-                    backgroundColor: idx % 2 === 0 ? "#fff" : "#15ABFF1C",
-                    transition: "background-color 0.3s",
-                    borderBottom: "1px solid #1e90ff",
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
                   }}
                 >
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
+                  <Link
+                    to={`/programme_curriculum/view_curriculum?curriculum=${curr.id}`}
+                    style={{ color: "#3498db", textDecoration: "none" }}
                   >
-                    <a
-                      href={`/programme_curriculum/view_curriculum?curriculum=${curr.id}`}
-                      style={{ textDecoration: "none" }}
-                    >
-                      {curr.name}
-                    </a>
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.version}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {/* {curr.batch.map((b, i) => (
+                    {curr.name}
+                  </Link>
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
+                  }}
+                >
+                  {curr.version}
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
+                  {/* {curr.batch.map((b, i) => (
                       <React.Fragment key={i}>
                         <span
                           style={{
@@ -307,143 +337,159 @@ function BDesAcadView() {
                         )}
                       </React.Fragment>
                     ))} */}
-                    {curr.batch}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.no_of_semester}
-                  </td>
-                  <td style={{ padding: "10px", textAlign: "center" }}>
-                    <a
-                      href={`/programme_curriculum/admin_edit_curriculum_form?curriculum=
-                        ${curr.name}`}
-                    >
-                      <Button
-                        style={{
-                          backgroundColor: "#28a745",
-                          color: "white",
-                          padding: "5px 10px",
-                        }}
-                      >
-                        EDIT
-                      </Button>
-                    </a>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
+                  {curr.batch}
+                </td>
                 <td
-                  colSpan="5"
-                  style={{ textAlign: "center", padding: "10px" }}
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
+                  }}
                 >
-                  No results found
+                  {curr.no_of_semester}
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
+                  }}
+                >
+                  <Link
+                    to={`/programme_curriculum/admin_edit_curriculum_form?curriculum=
+                        ${curr.name}`}
+                  >
+                    <Button variant="filled" color="green" radius="sm">
+                      Edit
+                    </Button>
+                  </Link>
                 </td>
               </tr>
-            )}
-          </tbody>
-        </Table>
-      </ScrollArea>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="5"
+                style={{ textAlign: "center", padding: "15px 20px" }}
+              >
+                No results found
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     </div>
   );
 
   const renderObsoleteCurriculums = () => (
-    <div style={{ marginTop: "20px", display: "flex" }}>
-      <ScrollArea style={{ flex: 1 }}>
-        <Table
-          highlightOnHover
-          verticalSpacing="sm"
-          style={{
-            border: "2px solid #1e90ff",
-            borderCollapse: "collapse",
-            width: "65vw",
-          }}
-        >
-          <thead>
-            <tr
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+        scrollbarWidth: "none",
+      }}
+    >
+      <style>
+        {`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}
+      </style>
+      <Table style={{ backgroundColor: "white", padding: "20px" }}>
+        <thead>
+          <tr
+            style={{
+              backgroundColor: "#15ABFF54",
+              borderBottom: "1px solid #d3d3d3",
+            }}
+          >
+            <th
               style={{
-                backgroundColor: "#15ABFF54",
-                borderBottom: "1px solid #1e90ff",
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
               }}
             >
-              <th
+              Name
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Version
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Batch
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              No. of Semesters
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {pastCurriculums.length > 0 ? (
+            pastCurriculums.map((curr, idx) => (
+              <tr
+                key={idx}
                 style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
+                  backgroundColor: idx % 2 === 0 ? "#FFFFFF" : "#E6F7FF",
                 }}
               >
-                Name
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                Version
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                Batch
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                No. of Semesters
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {pastCurriculums.length > 0 ? (
-              pastCurriculums.map((curr, idx) => (
-                <tr
-                  key={idx}
+                <td
                   style={{
-                    backgroundColor: idx % 2 === 0 ? "#fff" : "#15ABFF1C",
-                    transition: "background-color 0.3s",
-                    borderBottom: "1px solid #1e90ff",
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
                   }}
                 >
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.name}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.version}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.batch.map((b, i) => (
+                  {curr.name}
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
+                  {curr.version}
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    display: "flex",
+                    textAlign: "center",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
+                  {/* {curr.batch.map((b, i) => (
                       <React.Fragment key={i}>
                         <span
                           style={{
@@ -458,142 +504,211 @@ function BDesAcadView() {
                           <span style={{ margin: "0 10px" }}>|</span>
                         )}
                       </React.Fragment>
-                    ))}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.semesters}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
+                    ))} */}
+                  {curr.batch}
+                </td>
                 <td
-                  colSpan="4"
-                  style={{ textAlign: "center", padding: "10px" }}
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
                 >
-                  No results found
+                  {curr.semesters}
                 </td>
               </tr>
-            )}
-          </tbody>
-        </Table>
-      </ScrollArea>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="4"
+                style={{ textAlign: "center", padding: "15px 20px" }}
+              >
+                No results found
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     </div>
   );
 
   // Single Filter Section
   const renderFilterSection = () => (
-    <Paper
-      shadow="xs"
-      p="md"
-      style={{ marginTop: "20px", margin: "1vw 0vw 0 1.5vw", width: "20vw" }}
-    >
-      <Button
+    <ScrollArea>
+      {/* <Button
         variant="filled"
         style={{ width: "100%", padding: "0.25vw", margin: "0 0 1vw 0" }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         OPTIONS
-      </Button>
+      </Button> */}
 
       {/* Options visible on hover */}
-      {isHovered && (
-        <div
-          className={`options-dropdowns ${isHovered ? "open" : ""}`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <div>
-            <h4 className="section-title">CURRICULUM</h4>
-            <a
-              href="/programme_curriculum/acad_admin_add_curriculum_form"
-              style={{ textDecoration: "none" }}
+
+      <div
+        className={`options-dropdowns ${isHovered ? "open" : ""}`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        overflow
+      >
+        <div>
+          <p
+            style={{
+              marginBottom: "-7px",
+              fontSize: "14px",
+              fontWeight: "600",
+            }}
+          >
+            Curriculum Options:
+          </p>
+
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "5px",
+              marginTop: "10px",
+            }}
+          >
+            <Link
+              to="/programme_curriculum/acad_admin_add_curriculum_form"
+              style={{
+                textDecoration: "none",
+                flex: "1 1 auto",
+                maxWidth: "141px",
+              }}
             >
-              <button className="dropdown-btns green-btns">
-                ADD CURRICULUM
-              </button>
-            </a>
+              <Button
+                className="dropdown-btns green-btns"
+                variant="filled"
+                style={{ width: "100%" }}
+              >
+                Add Curriculum
+              </Button>
+            </Link>
+
             <div
+              style={{
+                position: "relative",
+                flex: "1 1 auto",
+                minWidth: "150px",
+              }}
               onMouseEnter={() => setIsAddCourseSlotHovered(true)}
               onMouseLeave={() => setIsAddCourseSlotHovered(false)}
             >
-              <button className="add-course-slot-button">
-                REPLICATE CURRICULUM
-              </button>
+              <Button
+                variant="filled"
+                style={{ width: "100%", maxWidth: "170px" }}
+              >
+                Replicate Curriculum
+              </Button>
 
-              {/* Semester options visible on hover */}
               {isAddCourseSlotHovered && (
-                <div className="semester-dropdowns">
+                <div
+                  className="semester-dropdowns"
+                  style={{
+                    fontSize: "14px",
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    background: "#fff",
+                    boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
+                    borderRadius: "5px",
+                    zIndex: 10,
+                    padding: "8px",
+                    width: "100%",
+                    maxWidth: "170px",
+                  }}
+                >
                   {CURRICULUM_DATA.workingCurriculums.map((curr, index) => (
-                    <a
-                      href={`/programme_curriculum/acad_admin_replicate_curriculum?curriculum=
-                        ${curr.name}`}
+                    <Link
+                      key={index}
+                      to={`/programme_curriculum/acad_admin_replicate_curriculum?curriculum=${curr.name}`}
                       style={{ textDecoration: "none" }}
                     >
-                      <div className="semester-options" key={index}>
+                      <div
+                        className="semester-options"
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "5px 10px",
+                          borderBottom: "1px solid #ddd",
+                          cursor: "pointer",
+                        }}
+                      >
                         <div>
-                          <text>{curr.name}</text>
-                          &nbsp;v
-                          <text>{curr.version}</text>
+                          <span>{curr.name}</span> v<span>{curr.version}</span>
                         </div>
-                        <div>
-                          <Copy size={20} color="#000" weight="bold" />
-                        </div>
+                        <Copy size={20} color="#000" weight="bold" />
                       </div>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
             </div>
           </div>
-          <div>
-            <h4 style={{ margin: "0.5vh 0" }}>Programe</h4>
-            <a
-              href="/programme_curriculum/admin_edit_programme_form"
-              style={{ textDecoration: "none" }}
-            >
-              <button className="dropdown-btns blue-btns">
-                EDIT PROGRAMME
-              </button>
-            </a>
-
-            {/* <button className="dropdown-btn black-btn">LINK BATCH</button> */}
-          </div>
         </div>
-      )}
 
-      <Text weight={700} mb={10}>
-        FILTER SEARCH
-      </Text>
+        <div>
+          <p
+            style={{
+              marginTop: "4px",
+              marginBottom: "-7px",
+              fontSize: "14px",
+              fontWeight: "600",
+            }}
+          >
+            Programe Options:
+          </p>
+          <Link
+            to="/programme_curriculum/admin_edit_programme_form"
+            style={{ textDecoration: "none" }}
+          >
+            <Button
+              className="dropdown-btns blue-btns"
+              variant="filled"
+              style={{
+                marginTop: "10px",
+                width: "100%",
+                maxWidth: "141px",
+                marginBottom: "10px",
+              }}
+            >
+              Edit Programme
+            </Button>
+          </Link>
+          <TextInput
+            label="Name:"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            placeholder="Search by Name"
+            mb={5}
+          />
 
-      <TextInput
-        label="Name contains:"
-        value={searchName}
-        onChange={(e) => setSearchName(e.target.value)}
-        placeholder="Search by Name"
-        mb={10}
-      />
+          <TextInput
+            label="Version:"
+            value={searchVersion}
+            onChange={(e) => setSearchVersion(e.target.value)}
+            placeholder="Search by Version"
+            mb={5}
+          />
 
-      <TextInput
-        label="Version"
-        value={searchVersion}
-        onChange={(e) => setSearchVersion(e.target.value)}
-        placeholder="Search by Version"
-        mb={10}
-      />
-    </Paper>
+          {/* <button className="dropdown-btn black-btn">LINK BATCH</button> */}
+        </div>
+      </div>
+    </ScrollArea>
   );
 
   return (
-    <Container fluid style={{ margin: "2vh 0 0 0" }}>
-      <Grid gutter="lg">
-        <Grid.Col span={12}>
+    <MantineProvider
+      theme={{ colorScheme: "light" }}
+      withGlobalStyles
+      withNormalizeCSS
+    >
+      <Container style={{ padding: "20px", maxWidth: "100%" }}>
+        <Flex justify="flex-start" align="center" mb={10}>
           <Button
             onClick={() => setActiveTab("info")}
             variant={activeTab === "info" ? "filled" : "outline"}
@@ -611,111 +726,38 @@ function BDesAcadView() {
           <Button
             onClick={() => setActiveTab("obsolete")}
             variant={activeTab === "obsolete" ? "filled" : "outline"}
+            style={{ marginRight: "10px" }}
           >
             Obsolete Curriculums
           </Button>
-        </Grid.Col>
-
-        <Grid.Col span={12}>
-          {/* Render Filter Section Conditionally */}
-          <div style={{ display: "flex" }}>
+        </Flex>
+        <hr />
+        <Grid>
+          {isMobile && (
+            <Grid.Col span={12}>
+              {(activeTab === "working" || activeTab === "obsolete") &&
+                renderFilterSection()}
+            </Grid.Col>
+          )}
+          <Grid.Col span={isMobile ? 12 : 9}>
+            {/* Render Filter Section Conditionally */}
+            {/* <div style={{ display: "flex" }}> */}
             <div>
               {activeTab === "info" && renderInfo()}
               {activeTab === "working" && renderWorkingCurriculums()}
               {activeTab === "obsolete" && renderObsoleteCurriculums()}
             </div>
-            <div>
+            {/* </div> */}
+          </Grid.Col>
+          {!isMobile && (
+            <Grid.Col span={3}>
               {(activeTab === "working" || activeTab === "obsolete") &&
                 renderFilterSection()}
-            </div>
-          </div>
-        </Grid.Col>
-      </Grid>
-      <style>
-        {`
-            .options-dropdowns {
-              position: absolute;
-              top: 38.5vh;
-              right: 2.5vw;
-              background-color: white;
-              border: 1px solid #ddd;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-              padding: 15px;
-              z-index: 1;
-              width: 18vw;
-              overflow-x: visible;
-              opacity: 0;
-              max-height: 0;
-              transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
-              border-radius: 5px;
-            }
-            
-            .options-dropdowns.open {
-              opacity: 1;
-              max-height: 24vw;
-              transition: max-height 0.4s ease-in, opacity 0.4s ease-in;
-            }
-
-            .semester-dropdowns {
-              position: absolute;
-              right: 16.5vw;
-              top: 17vh;
-              background-color: white;
-              border: 1px solid #ddd;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-              padding: 10px;
-              z-index: 2;
-              width: 18vw;
-              /* max-height: 150px;  */
-              overflow-y: auto; /* Scroll if content overflows */
-              /* overflow-x: visible; */
-              transition: max-height 0.4s ease-out;
-              border-radius: 5px;
-            }
-            
-            .semester-options {
-              /* position: absolute; */
-              display: flex;
-              justify-content: space-between;
-              padding: 5px;
-              cursor: pointer;
-              border-bottom: 1px solid #ddd;
-              overflow-x: visible;
-              z-index: 2;
-            }
-            
-            .semester-options:hover {
-              background-color: #f1f1f1;
-            }
-            .dropdown-btns {
-              display: block;
-              width: 100%;
-              padding: 10px;
-              margin-bottom: 10px;
-              font-size: 14px;
-              border: none;
-              cursor: pointer;
-              border-radius: 4px;
-              color: black;
-              transition: background-color 0.3s ease;
-            }
-            
-            .green-btns {
-              background-color: #bee9e8;
-            }
-            
-            .blue-btns{
-              background-color: #62b6cb;
-            }
-            
-            .black-btns {
-              background-color: #6a95ad;
-            }
-            
-            
-            `}
-      </style>
-    </Container>
+            </Grid.Col>
+          )}
+        </Grid>
+      </Container>
+    </MantineProvider>
   );
 }
 

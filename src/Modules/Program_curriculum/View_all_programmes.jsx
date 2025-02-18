@@ -11,6 +11,7 @@ import {
   ScrollArea,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { Link } from "react-router-dom";
 import { fetchAllProgrammes } from "./api/api";
 
 function ViewAllProgrammes() {
@@ -27,10 +28,26 @@ function ViewAllProgrammes() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await fetchAllProgrammes();
-        setUgData(data.ug_programmes);
-        setPgData(data.pg_programmes);
-        setPhdData(data.phd_programmes);
+        const cachedData = localStorage.getItem("programmesCache");
+        const timestamp = localStorage.getItem("programmesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
+
+        if (cachedData && isCacheValid) {
+          const data = JSON.parse(cachedData);
+          setUgData(data.ug_programmes || []);
+          setPgData(data.pg_programmes || []);
+          setPhdData(data.phd_programmes || []);
+        } else {
+          const data = await fetchAllProgrammes();
+          setUgData(data.ug_programmes || []);
+          setPgData(data.pg_programmes || []);
+          setPhdData(data.phd_programmes || []);
+
+          localStorage.setItem("programmesCache", JSON.stringify(data));
+          localStorage.setItem("programmesTimestamp", Date.now().toString());
+        }
       } catch (fetchError) {
         console.error("Error fetching data:", fetchError);
         setError("Failed to load data");
@@ -68,12 +85,12 @@ function ViewAllProgrammes() {
             borderRight: "1px solid #d3d3d3",
           }}
         >
-          <a
-            href={`/programme_curriculum/curriculums/${element.id}`}
+          <Link
+            to={`/programme_curriculum/curriculums/${element.id}`}
             style={{ color: "#3498db", textDecoration: "none" }}
           >
             {element.name}
-          </a>
+          </Link>
         </td>
         <td
           style={{

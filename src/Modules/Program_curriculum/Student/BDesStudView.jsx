@@ -26,8 +26,22 @@ function BDesStudView() {
   useEffect(() => {
     const loadCurriculumData = async () => {
       try {
-        const data = await fetchCurriculumData(id);
-        setCurriculumData(data);
+        const cacheKey = `curriculumCache_${id}`;
+        const cachedData = localStorage.getItem(cacheKey);
+        const timestamp = localStorage.getItem(`${cacheKey}_timestamp`);
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
+
+        if (cachedData && isCacheValid) {
+          setCurriculumData(JSON.parse(cachedData) || {});
+        } else {
+          const data = await fetchCurriculumData(id);
+          setCurriculumData(data || {});
+
+          localStorage.setItem(cacheKey, JSON.stringify(data));
+          localStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
+        }
       } catch (error) {
         console.error("Error loading curriculum data:", error);
       } finally {

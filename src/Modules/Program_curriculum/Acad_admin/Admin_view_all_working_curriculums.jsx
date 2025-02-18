@@ -8,6 +8,7 @@ import {
   Button,
   TextInput,
   Grid,
+  ScrollArea,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { fetchWorkingCurriculumsData } from "../api/api";
@@ -26,14 +27,25 @@ function Admin_view_all_working_curriculums() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("Authorization token not found");
-        }
+        const cachedData = localStorage.getItem("curriculumsCache");
+        const timestamp = localStorage.getItem("curriculumsTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000; // 10 min cache
 
-        const data = await fetchWorkingCurriculumsData(token);
-        setCurriculums(data.curriculums);
-        // console.log(data);
+        if (cachedData && isCacheValid) {
+          setCurriculums(JSON.parse(cachedData));
+        } else {
+          const token = localStorage.getItem("authToken");
+          if (!token) throw new Error("Authorization token not found");
+
+          const data = await fetchWorkingCurriculumsData(token);
+          setCurriculums(data.curriculums);
+          localStorage.setItem(
+            "curriculumsCache",
+            JSON.stringify(data.curriculums),
+          );
+          localStorage.setItem("curriculumsTimestamp", Date.now().toString());
+        }
       } catch (error) {
         console.error("Error fetching curriculums: ", error);
       } finally {
@@ -124,26 +136,38 @@ function Admin_view_all_working_curriculums() {
         <Grid>
           {isMobile && (
             <Grid.Col span={12}>
-              {[
-                { label: "Name", field: "name" },
-                { label: "Version", field: "version" },
-                { label: "Batch", field: "batch" },
-                { label: "No. of Semesters", field: "semesters" },
-              ].map((filter) => (
-                <TextInput
-                  key={filter.field}
-                  label={`${filter.label}:`}
-                  value={filters[filter.field]}
-                  onChange={(e) =>
-                    setFilters({
-                      ...filters,
-                      [filter.field]: e.target.value,
-                    })
-                  }
-                  placeholder={`Search by ${filter.label}`}
-                  mb={5}
-                />
-              ))}
+              <ScrollArea>
+                {[
+                  { label: "Name", field: "name" },
+                  { label: "Version", field: "version" },
+                  { label: "Batch", field: "batch" },
+                  { label: "No. of Semesters", field: "semesters" },
+                ].map((filter) => (
+                  <TextInput
+                    key={filter.field}
+                    label={`${filter.label}:`}
+                    value={filters[filter.field]}
+                    onChange={(e) =>
+                      setFilters({
+                        ...filters,
+                        [filter.field]: e.target.value,
+                      })
+                    }
+                    placeholder={`Search by ${filter.label}`}
+                    mb={5}
+                  />
+                ))}
+                <Link to="/programme_curriculum/acad_admin_add_curriculum_form">
+                  <Button
+                    variant="filled"
+                    color="blue"
+                    radius="sm"
+                    style={{ height: "35px", marginTop: "10px" }}
+                  >
+                    Add Curriculum
+                  </Button>
+                </Link>
+              </ScrollArea>
             </Grid.Col>
           )}
           <Grid.Col span={isMobile ? 12 : 9}>
@@ -252,26 +276,38 @@ function Admin_view_all_working_curriculums() {
 
           {!isMobile && (
             <Grid.Col span={3}>
-              {[
-                { label: "Name", field: "name" },
-                { label: "Version", field: "version" },
-                { label: "Batch", field: "batch" },
-                { label: "No. of Semesters", field: "semesters" },
-              ].map((filter) => (
-                <TextInput
-                  key={filter.field}
-                  label={`${filter.label}:`}
-                  value={filters[filter.field]}
-                  onChange={(e) =>
-                    setFilters({
-                      ...filters,
-                      [filter.field]: e.target.value,
-                    })
-                  }
-                  placeholder={`Search by ${filter.label}`}
-                  mb={5}
-                />
-              ))}
+              <ScrollArea>
+                {[
+                  { label: "Name", field: "name" },
+                  { label: "Version", field: "version" },
+                  { label: "Batch", field: "batch" },
+                  { label: "No. of Semesters", field: "semesters" },
+                ].map((filter) => (
+                  <TextInput
+                    key={filter.field}
+                    label={`${filter.label}:`}
+                    value={filters[filter.field]}
+                    onChange={(e) =>
+                      setFilters({
+                        ...filters,
+                        [filter.field]: e.target.value,
+                      })
+                    }
+                    placeholder={`Search by ${filter.label}`}
+                    mb={5}
+                  />
+                ))}
+                <Link to="/programme_curriculum/acad_admin_add_curriculum_form">
+                  <Button
+                    variant="filled"
+                    color="blue"
+                    radius="sm"
+                    style={{ height: "35px", marginTop: "10px" }}
+                  >
+                    Add Curriculum
+                  </Button>
+                </Link>
+              </ScrollArea>
             </Grid.Col>
           )}
         </Grid>
