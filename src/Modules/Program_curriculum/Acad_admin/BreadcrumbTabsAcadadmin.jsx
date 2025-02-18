@@ -21,6 +21,10 @@ function BreadcrumbTabsAcadadmin() {
     { title: "Discipline", url: "/programme_curriculum/acad_discipline_view" },
     { title: "Batches", url: "/programme_curriculum/admin_batches" },
     { title: "Courses", url: "/programme_curriculum/admin_courses" },
+    {
+      title: "Course Instructor",
+      url: "/programme_curriculum/admin_course_instructor",
+    },
   ];
 
   // Initialize with checking for exact match, defaulting to "0" if no match
@@ -46,6 +50,7 @@ function BreadcrumbTabsAcadadmin() {
     const currentIndex = parseInt(activeTab, 10);
     const newIndex = direction === "prev" ? currentIndex - 1 : currentIndex + 1;
 
+    // Ensure index is within bounds
     if (newIndex >= 0 && newIndex < breadcrumbItems.length) {
       navigate(breadcrumbItems[newIndex].url);
     }
