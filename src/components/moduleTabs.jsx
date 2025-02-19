@@ -8,11 +8,11 @@ import { setActiveTab_ } from "../redux/moduleslice";
 import classes from "../Modules/Dashboard/Dashboard.module.css";
 
 function ModuleTabs({ tabs, activeTab, setActiveTab, badges = [] }) {
-  const isMobile = useMediaQuery("(max-width: 750px)");
+  const isMobile = useMediaQuery("(max-width: 500px)");
   const tabsListRef = useRef(null);
   const tabsListContainerRef = useRef(null);
   const dispatch = useDispatch();
-  console.log(isMobile);
+
   const handleTabChange = (direction) => {
     const currentIndex = parseInt(activeTab, 10);
     const newIndex =
@@ -38,7 +38,7 @@ function ModuleTabs({ tabs, activeTab, setActiveTab, badges = [] }) {
 
   return (
     <Flex justify="space-between" align="center">
-      <Flex align="center" gap={{ base: "0.2rem", sm: "0.1rem" }}>
+      <Flex align="center" gap={{ base: "0.2rem", sm: "0.4rem" }}>
         <Button
           onClick={() => handleTabChange("prev")}
           variant="default"
@@ -53,11 +53,11 @@ function ModuleTabs({ tabs, activeTab, setActiveTab, badges = [] }) {
         <div className={classes.tabsContainer} ref={tabsListRef}>
           <Tabs value={activeTab} onChange={(value) => handleTabClick(value)}>
             <Tabs.List
+              w={{ xxs: "200px", xs: "275px", sm: "100%" }}
               justify="flex-start"
-              nowrap
+              nowrap="true"
               style={{
                 display: "flex",
-                width: isMobile ? "200px" : "320px",
                 flexWrap: "nowrap",
                 overflowX: isMobile ? "scroll" : "none",
               }}
@@ -67,7 +67,11 @@ function ModuleTabs({ tabs, activeTab, setActiveTab, badges = [] }) {
                 <Tabs.Tab
                   value={`${index}`}
                   key={index}
-                  className={activeTab === `${index}` ? classes.activeTab : ""}
+                  className={
+                    activeTab === `${index}`
+                      ? classes.fusionActiveRecentTab
+                      : ""
+                  }
                 >
                   <Flex gap="4px">
                     <Text>{tab.title}</Text>

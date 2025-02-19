@@ -17,7 +17,7 @@ function CustomBreadcrumbs({ breadCrumbs }) {
   );
 
   const items = breadCrumbs || items1;
-  console.log(items);
+
   return (
     <Breadcrumbs
       separator={

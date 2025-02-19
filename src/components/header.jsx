@@ -84,7 +84,10 @@ function Header({ opened, toggleSidebar }) {
           },
         },
       );
-      dispatch(setPfNo(null));
+
+      if (localStorage.getItem("pfNo") != null) {
+        dispatch(setPfNo(null));
+      }
       localStorage.removeItem("authToken");
       navigate("/accounts/login");
       // queryclient.invalidateQueries();
@@ -95,23 +98,28 @@ function Header({ opened, toggleSidebar }) {
   };
 
   return (
-    <Box
+    <Flex
       bg="#F5F7F8"
       justify="space-between"
       align="center"
       pl="sm"
       h="64px" // Height has already been set in layout.jsx but had to set the height here as well for properly aligning the avatar
     >
-      <Flex justify={{ base: "space-between" }} align="center" h="100%">
-        <Box>
-          <Burger
-            opened={opened}
-            onClick={toggleSidebar}
-            hiddenFrom="sm"
-            size="sm"
-          />
-        </Box>
-        <Text fz="h2" visibleFrom="md">
+      <Box>
+        <Burger
+          opened={opened}
+          onClick={toggleSidebar}
+          hiddenFrom="sm"
+          size="sm"
+        />
+      </Box>
+      <Flex
+        justify={{ base: "space-between" }}
+        align="center"
+        h="100%"
+        w="100%"
+      >
+        <Text fz={{ base: "h2", xs: "h3" }} visibleFrom="sm">
           FUSION - IIITDMJ's ERP Portal
         </Text>
         <Flex
@@ -138,7 +146,7 @@ function Header({ opened, toggleSidebar }) {
           <Popover
             opened={popoverOpened}
             onChange={setPopoverOpened}
-            width={340}
+            width={{ xxs: "320px", xs: "340px" }}
             position="bottom-end"
             withArrow
             shadow="xl"
@@ -157,24 +165,30 @@ function Header({ opened, toggleSidebar }) {
               style={{
                 border: "1px solid #f0f0f0",
               }}
-              w={400}
+              width={{ xxs: "320px", xs: "340px" }}
             >
               <Group spacing="xs">
                 <Avatar size="xl" radius="xl" src={avatarImage} />
                 <Stack gap={8}>
-                  <Text size="lg" fz={24} fw={700}>
+                  <Text size="lg" fz={{ xxs: 18, xs: 24 }} fw={700}>
                     {username?.length > 18
                       ? `${username.slice(0, 18)}...`
                       : username}
                   </Text>
 
-                  <Group spacing="xs">
+                  <Flex gap="xs" direction={{ xxs: "column", xs: "row" }}>
                     <Button
                       rightSection={<User size={16} />}
                       variant="light"
                       color="blue"
                       size="xs"
-                      onClick={() => navigate("/facultyprofessionalprofile")}
+                      onClick={() =>
+                        navigate(
+                          role === "student"
+                            ? "/profile"
+                            : "/facultyprofessionalprofile",
+                        )
+                      }
                     >
                       Profile
                     </Button>
@@ -187,14 +201,14 @@ function Header({ opened, toggleSidebar }) {
                     >
                       Log out
                     </Button>
-                  </Group>
+                  </Flex>
                 </Stack>
               </Group>
             </Popover.Dropdown>
           </Popover>
         </Flex>
       </Flex>
-    </Box>
+    </Flex>
   );
 }
 

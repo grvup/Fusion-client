@@ -267,7 +267,12 @@ function Dashboard() {
   return (
     <>
       <CustomBreadcrumbs />
-      <Flex justify="space-between" align="center" mt="lg">
+      <Flex
+        justify="space-between"
+        align={{ base: "start", sm: "center" }}
+        mt="lg"
+        direction={{ base: "column", sm: "row" }}
+      >
         {/* <Flex
           justify="flex-start"
           align="center"
@@ -338,7 +343,14 @@ function Dashboard() {
           badges={badges}
         />
 
-        <Flex align="center" mt="md" rowGap="1rem" columnGap="4rem" wrap="wrap">
+        <Flex
+          w={{ base: "40%", sm: "auto" }}
+          align="center"
+          mt="md"
+          rowGap="1rem"
+          columnGap="4rem"
+          wrap="wrap"
+        >
           <Select
             classNames={{
               option: classes.selectoptions,

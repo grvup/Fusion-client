@@ -153,7 +153,12 @@ const Modules = [
 ];
 
 const otherItems = [
-  { label: "Profile", icon: <ProfileIcon size={18} /> },
+  {
+    label: "Profile",
+    id: "profile",
+    icon: <ProfileIcon size={18} />,
+    url: "/profile",
+  },
   { label: "Settings", icon: <SettingsIcon size={18} /> },
   { label: "Help", icon: <HelpIcon size={18} /> },
 ];
@@ -184,7 +189,13 @@ function SidebarContent({ isCollapsed, toggleSidebar }) {
 
   return (
     <>
-      <Flex gap={32} align="center" h={64} justify="center">
+      <Flex
+        gap={32}
+        align="center"
+        h={64}
+        justify="center"
+        w={{ xxs: "300px" }}
+      >
         {!isCollapsed && (
           <img src={IIITLOGO} alt="IIIT Logo" style={{ maxWidth: "150px" }} />
         )}
@@ -265,6 +276,7 @@ function SidebarContent({ isCollapsed, toggleSidebar }) {
               }
               onMouseEnter={() => setHover(item.label)}
               onMouseLeave={() => setHover(null)}
+              onClick={() => handleModuleClick(item)}
             >
               {!isCollapsed && item.label}
             </Button>
