@@ -9,20 +9,22 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useNavigate } from "react-router-dom";
-import { fetchAllProgrammes } from "../api/api";
+import { useNavigate, useParams } from "react-router-dom";
+import { fetchDisciplinesData, fetchAllProgrammes } from "../api/api";
 
-function Admin_add_discipline_form() {
+function Admin_edit_discipline_form() {
   const form = useForm({
     initialValues: {
       disciplineName: "",
       acronym: "",
-      linkedProgramme: "",
+      linkedProgrammes: [], // Initialize with an empty array
     },
   });
 
   const navigate = useNavigate();
-  const [loading, setLoading] = React.useState(false);
+  const { id } = useParams();
+  const [loading, setLoading] = useState(false);
+  const [discipline, setDiscipline] = useState(null);
   const [programmes, setProgrammes] = useState([]);
 
   useEffect(() => {
@@ -32,98 +34,118 @@ function Admin_add_discipline_form() {
         if (!token) {
           throw new Error("Authorization token not found");
         }
-        const response = await fetchAllProgrammes(token);
-        console.log(response);
 
+        // Fetch programmes data
+        const response = await fetchAllProgrammes(token);
         const programmeData = [
           ...response.ug_programmes,
           ...response.pg_programmes,
           ...response.phd_programmes,
         ];
-        console.log(programmeData);
 
         // Filter programmes that are not connected to a discipline
         const filteredProgrammes = programmeData.filter(
-          (programme) => !programme.discipline__name, // Keep programmes where discipline__name is falsy
+          (programme) => !programme.discipline__name,
         );
 
-        // Now map the filtered data
+        // Map the filtered data
         const programmeList = filteredProgrammes.map((programme) => ({
           name: `${programme.name} ${programme.programme_begin_year}`,
           id: `${programme.id}`,
         }));
 
-        setProgrammes(programmeList);
-        console.log("Fin data: ", programmeList); // Log the final filtered and mapped data
-      } catch (fetchError) {
-        console.error("Error fetching data:", fetchError);
+        // Fetch discipline data
+        const disciplines = await fetchDisciplinesData(token);
+        const dis = disciplines.find((d) => d.id === Number(id));
+        setDiscipline(dis);
+
+        // Merge programmes and mark pre-selected ones
+        if (dis) {
+          const mergedProgrammes = [
+            ...programmeList,
+            ...dis.programmes.map((p) => ({ name: p.name, id: `${p.id}` })),
+          ];
+
+          // Remove duplicates
+          const uniqueProgrammes = Array.from(
+            new Set(mergedProgrammes.map((p) => p.id)),
+          ).map((programmeId) =>
+            mergedProgrammes.find((p) => p.id === programmeId),
+          );
+
+          setProgrammes(uniqueProgrammes);
+
+          // Initialize form values with discipline data
+          form.setValues({
+            disciplineName: dis.name,
+            acronym: dis.acronym,
+            linkedProgrammes: dis.programmes.map((p) => `${p.id}`), // Pre-select linked programmes
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [id]);
+
   const handleSubmit = async (values) => {
-    const apiUrl =
-      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_discipline/";
+    console.log("Submitted values are: ", values);
 
-    console.log("Form Values:", values);
+    const apiUrl = `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_discipline/${id}/`;
 
+    // Transform the values into the required structure
     const payload = {
-      name: values.disciplineName,
-      acronym: values.acronym,
-      programmes: values.linkedProgrammes,
+      name: values.disciplineName, // Map disciplineName to name
+      acronym: values.acronym, // Map acronym directly
+      programmes: values.linkedProgrammes, // Map linkedProgrammes to programmes
     };
+
     console.log("Payload: ", payload);
 
     try {
-      setLoading(true);
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Authorization token not found");
+      }
+
       const response = await fetch(apiUrl, {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(payload),
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert("Discipline added successfully!");
         console.log("Response Data:", data);
+        alert("Discipline updated successfully!");
         navigate("/programme_curriculum/acad_discipline_view");
       } else {
         const errorText = await response.text();
         console.error("Error:", errorText);
-        alert("Failed to add programme.");
+        alert("Failed to update discipline.");
       }
     } catch (error) {
       console.error("Network Error:", error);
       alert("An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
-
-  // const breadcrumbItems = [
-  //   { title: "Program and Curriculum", href: "#" },
-  //   { title: "Curriculums", href: "#" },
-  //   { title: "Discipline Form", href: "#" },
-  // ].map((item, index) => (
-  //   <Anchor href={item.href} key={index}>
-  //     {item.title}
-  //   </Anchor>
-  // ));
 
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs> */}
-
-      {/* Options Section */}
-      {/* <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group> */}
+      {(() => {
+        console.log("Discipline Data: ", discipline);
+        console.log("Programme Data: ", programmes);
+        return null;
+      })()}
 
       <Container
         fluid
@@ -158,7 +180,7 @@ function Admin_add_discipline_form() {
             >
               <Stack spacing="lg">
                 <Text size="xl" weight={700} align="center">
-                  Discipline Form
+                  Edit Discipline Form
                 </Text>
 
                 <TextInput
@@ -224,27 +246,8 @@ function Admin_add_discipline_form() {
               </Group>
             </form>
           </div>
-
-          {/* Right Panel Buttons */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            {/* <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <Button className="right-btn-discipline">Add Discipline</Button>
-              <Button className="right-btn-discipline">
-                Add Another Batch
-              </Button>
-              <Button className="right-btn-discipline">Add Course</Button>
-            </Group> */}
-          </div>
         </div>
       </Container>
-
       <style>{`
         .right-btn-discipline {
           width: 15vw;
@@ -254,4 +257,4 @@ function Admin_add_discipline_form() {
   );
 }
 
-export default Admin_add_discipline_form;
+export default Admin_edit_discipline_form;

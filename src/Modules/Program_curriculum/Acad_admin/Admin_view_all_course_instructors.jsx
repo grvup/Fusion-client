@@ -10,13 +10,12 @@ import {
   Grid,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-// import { fetchAllCourseInstructors } from "../api/api";
+import { adminFetchCourseInstructorData } from "../api/api";
 
 function Admin_view_all_course_instructors() {
+  // const [searchName, setSearchName] = useState("");
+  // const [searchVersion, setSearchVersion] = useState("");
 
-  const [searchName, setSearchName] = useState("");
-  const [searchVersion, setSearchVersion] = useState("");
-  
   const [filters, setFilters] = useState({
     name: "",
     instructor: "",
@@ -34,9 +33,9 @@ function Admin_view_all_course_instructors() {
           throw new Error("Authorization token not found");
         }
 
-        // const data = await fetchAllCourseInstructors(token);
-        // setInstructors(data.instructors);
-        // console.log(data);
+        const data = await adminFetchCourseInstructorData();
+        console.log(data);
+        setInstructors(data);
       } catch (error) {
         console.error("Error fetching instructors: ", error);
       } finally {
@@ -48,12 +47,20 @@ function Admin_view_all_course_instructors() {
   }, []);
 
   // Filtered data based on search inputs
-  const filteredData = instructors.filter(
-    (item) =>
-      item.name.toLowerCase().includes(filters.name.toLowerCase()) &&
-      item.instructor.toString().includes(filters.instructor.toLowerCase()) &&
-      item.year.toLowerCase().includes(filters.year),
-  );
+  const filteredData = instructors.filter((item) => {
+    // Ensure `instructor_id_id` and `year` exist and are not null/undefined
+    const instructorId = item.instructor_id_id || ""; // Default to empty string if undefined
+    const year = item.year || ""; // Default to empty string if undefined
+
+    // Convert to string and lowercase for comparison
+    return (
+      instructorId
+        .toString()
+        .toLowerCase()
+        .includes(filters.instructor.toLowerCase()) &&
+      year.toString().toLowerCase().includes(filters.year.toLowerCase())
+    );
+  });
   const cellStyle = {
     padding: "15px 20px",
     textAlign: "center",
@@ -106,6 +113,10 @@ function Admin_view_all_course_instructors() {
       withGlobalStyles
       withNormalizeCSS
     >
+      {(() => {
+        console.log("The data is: ", instructors);
+        return null; // Returning null because we don't want anything to be displayed
+      })()}
       <Container
         style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
       >

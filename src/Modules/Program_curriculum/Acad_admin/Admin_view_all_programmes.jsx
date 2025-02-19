@@ -6,12 +6,8 @@ import {
   Container,
   Button,
   Text,
-  Grid,
-  TextInput,
-  ScrollArea,
 } from "@mantine/core";
 import { Link } from "react-router-dom";
-import { useMediaQuery } from "@mantine/hooks";
 import { fetchAllProgrammes } from "../api/api";
 
 function AdminViewProgrammes() {
@@ -21,9 +17,6 @@ function AdminViewProgrammes() {
   const [phdData, setPhdData] = useState([]); // State to store PhD programs
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
-  const [programmeFilter, setProgrammeFilter] = useState("");
-  const [disciplineFilter, setDisciplineFilter] = useState("");
-  const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,25 +54,15 @@ function AdminViewProgrammes() {
 
     fetchData();
   }, []);
-
-  const applyFilters = (data) => {
-    return data.filter(
-      (item) =>
-        item.name.toLowerCase().includes(programmeFilter.toLowerCase()) &&
-        item.discipline__name
-          .toLowerCase()
-          .includes(disciplineFilter.toLowerCase()),
-    );
-  };
+  console.log(ugData);
 
   // Function to render the table
   const renderTable = (data) => {
-    const filteredData = applyFilters(data);
-    return filteredData.map((element, index) => (
+    return data.map((element, index) => (
       <tr
         key={element.programme}
         style={{
-          backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff",
+          backgroundColor: index % 2 === 0 ? "#E6F7FF" : "#ffffff",
         }}
       >
         <td
@@ -87,8 +70,8 @@ function AdminViewProgrammes() {
             padding: "15px 20px",
             textAlign: "center",
             color: "#3498db",
-            width: "25%",
             borderRight: "1px solid #d3d3d3",
+            width: "25%",
           }}
         >
           <Link
@@ -103,10 +86,9 @@ function AdminViewProgrammes() {
         <td
           style={{
             padding: "15px 20px",
-            textAlign: "center",
-            color: "black",
-            width: "50%",
+            textAlign: "left",
             borderRight: "1px solid #d3d3d3",
+            width: "50%",
           }}
         >
           {element.discipline__name}
@@ -115,18 +97,14 @@ function AdminViewProgrammes() {
           style={{
             padding: "15px 20px",
             textAlign: "center",
-            color: "#3498db",
             width: "25%",
-            borderRight: "1px solid #d3d3d3",
           }}
         >
           <Link
-            to={`/programme_curriculum/admin_edit_programme_form?programme=${encodeURIComponent(
-              element.programme,
-            )}`}
+            to={`/programme_curriculum/admin_edit_programme_form/${element.id}`}
           >
-            <Button variant="filled" color="green" radius="sm">
-              Edit
+            <Button variant="filled" color="green" radius="md">
+              EDIT
             </Button>
           </Link>
         </td>
@@ -151,13 +129,11 @@ function AdminViewProgrammes() {
   }
 
   return (
-    <MantineProvider
-      theme={{ colorScheme: "light" }}
-      withGlobalStyles
-      withNormalizeCSS
-    >
-      <Container style={{ padding: "20px", maxWidth: "100%" }}>
-        <Flex justify="flex-start" align="center" mb={10}>
+    <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles>
+      <Container
+        style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
+      >
+        <Flex mb={20}>
           <Button
             variant={activeSection === "ug" ? "filled" : "outline"}
             onClick={() => setActiveSection("ug")}
@@ -179,242 +155,169 @@ function AdminViewProgrammes() {
             PhD: Doctor of Philosophy
           </Button>
         </Flex>
-        <hr />
 
         {/* Table Section */}
-        <Grid>
-          {isMobile && (
-            <Grid.Col span={12}>
-              <ScrollArea>
-                <TextInput
-                  label="Programme:"
-                  placeholder="Search by Programme"
-                  value={programmeFilter}
-                  onChange={(e) => setProgrammeFilter(e.target.value)}
-                />
-                <TextInput
-                  label="Discipline:"
-                  placeholder="Search by Discipline"
-                  value={disciplineFilter}
-                  onChange={(e) => setDisciplineFilter(e.target.value)}
-                />
-                <Link to="/programme_curriculum/acad_admin_add_programme_form">
-                  <Button
-                    variant="filled"
-                    color="blue"
-                    radius="sm"
-                    style={{ height: "35px", marginTop: "10px" }}
-                  >
-                    Add Programme
-                  </Button>
-                </Link>
-              </ScrollArea>
-            </Grid.Col>
-          )}
-          <Grid.Col span={isMobile ? 12 : 9}>
-            <div
-              style={{
-                maxHeight: "61vh",
-                overflowY: "auto",
-                border: "1px solid #d3d3d3",
-                borderRadius: "10px",
-                scrollbarWidth: "none",
-              }}
+        <Flex justify="space-between" align="flex-start" mb={20}>
+          <div style={{ flexGrow: 1 }}>
+            {/* Conditional Rendering of Tables based on Active Section */}
+            {activeSection === "ug" && (
+              <Table
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: "10px",
+                  border: "1px solid #d3d3d3",
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "25%",
+                      }}
+                    >
+                      Programme
+                    </th>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "50%",
+                      }}
+                    >
+                      Discipline
+                    </th>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "25%",
+                      }}
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>{renderTable(ugData)}</tbody>
+              </Table>
+            )}
+            {activeSection === "pg" && (
+              <Table
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: "10px",
+                  border: "1px solid #d3d3d3",
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "25%",
+                      }}
+                    >
+                      Programme
+                    </th>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "50%",
+                      }}
+                    >
+                      Discipline
+                    </th>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "25%",
+                      }}
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>{renderTable(pgData)}</tbody>
+              </Table>
+            )}
+            {activeSection === "phd" && (
+              <Table
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: "10px",
+                  border: "1px solid #d3d3d3",
+                }}
+              >
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "25%",
+                      }}
+                    >
+                      Programme
+                    </th>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "50%",
+                      }}
+                    >
+                      Discipline
+                    </th>
+                    <th
+                      style={{
+                        padding: "12px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        textAlign: "center",
+                        width: "25%",
+                      }}
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>{renderTable(phdData)}</tbody>
+              </Table>
+            )}
+          </div>
+
+          {/* Add Programme Button */}
+          <Link to="/programme_curriculum/acad_admin_add_programme_form">
+            <Button
+              variant="filled"
+              color="blue"
+              radius="md"
+              style={{ marginLeft: "20px", height: "45px" }}
             >
-              <style>
-                {`
-                  div::-webkit-scrollbar {
-                    display: none;
-                  }
-                `}
-              </style>
-              {/* Conditional Rendering of Tables based on Active Section */}
-              {activeSection === "ug" && (
-                <Table
-                  style={{
-                    backgroundColor: "white",
-                    padding: "20px",
-                    flexGrow: 1,
-                  }}
-                >
-                  <thead>
-                    <tr>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Programme
-                      </th>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Discipline
-                      </th>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>{renderTable(ugData)}</tbody>
-                </Table>
-              )}
-              {activeSection === "pg" && (
-                <Table
-                  style={{
-                    backgroundColor: "white",
-                    padding: "20px",
-                    flexGrow: 1,
-                  }}
-                >
-                  <thead>
-                    <tr>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Programme
-                      </th>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Discipline
-                      </th>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>{renderTable(pgData)}</tbody>
-                </Table>
-              )}
-              {activeSection === "phd" && (
-                <Table
-                  style={{
-                    backgroundColor: "white",
-                    padding: "20px",
-                    flexGrow: 1,
-                  }}
-                >
-                  <thead>
-                    <tr>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Programme
-                      </th>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Discipline
-                      </th>
-                      <th
-                        style={{
-                          padding: "15px 20px",
-                          backgroundColor: "#C5E2F6",
-                          color: "#3498db",
-                          fontSize: "16px",
-                          textAlign: "center",
-                          borderRight: "1px solid #d3d3d3",
-                        }}
-                      >
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>{renderTable(phdData)}</tbody>
-                </Table>
-              )}
-            </div>
-          </Grid.Col>
-          {!isMobile && (
-            <Grid.Col span={3}>
-              <ScrollArea>
-                <TextInput
-                  label="Programme:"
-                  placeholder="Search by Programme"
-                  value={programmeFilter}
-                  onChange={(e) => setProgrammeFilter(e.target.value)}
-                  mt={5}
-                />
-                <TextInput
-                  label="Discipline:"
-                  placeholder="Search by Discipline"
-                  value={disciplineFilter}
-                  onChange={(e) => setDisciplineFilter(e.target.value)}
-                  mt={5}
-                />
-                <Link to="/programme_curriculum/acad_admin_add_programme_form">
-                  <Button
-                    variant="filled"
-                    color="blue"
-                    radius="sm"
-                    style={{ height: "35px", marginTop: "10px" }}
-                  >
-                    Add Programme
-                  </Button>
-                </Link>
-              </ScrollArea>
-            </Grid.Col>
-          )}
-        </Grid>
+              ADD PROGRAMME
+            </Button>
+          </Link>
+        </Flex>
       </Container>
     </MantineProvider>
   );

@@ -256,33 +256,26 @@ export const adminFetchCurriculumSemesters = async (curriculumId, token) => {
   }
 };
 
-// export const AdminFetchCurriculumData = async (programmeId, token) => {
-//   const response = await axios.get(
-//     `${BASE_URL}/programme_curriculum/api/admin_curriculums/${programmeId}`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     },
-//   );
-//   return response.data; // Return the data part of the response
-// };
-
 export const adminFetchCurriculumData = async (id) => {
   try {
-    // const token = localStorage.getItem("authToken"); // Uncomment if authentication is needed
     const response = await axios.get(
       `${BASE_URL}/programme_curriculum/api/curriculums/${id}`,
-      // Uncomment if authentication is needed
-      // {
-      //   headers: {
-      //     Authorization: `Token ${token}`,
-      //   },
-      // }
     );
     return response.data;
   } catch (error) {
     console.error("Error fetching curriculum data: ", error);
+    throw error;
+  }
+};
+
+export const adminFetchCourseInstructorData = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_instructor/`,
+    );
+    return response.data.course_instructors;
+  } catch (error) {
+    console.error("Error fetching course instructor data: ", error);
     throw error;
   }
 };
