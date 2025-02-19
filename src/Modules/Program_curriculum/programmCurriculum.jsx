@@ -48,6 +48,8 @@ import InstigateForm from "./Acad_admin/Instigate_form";
 import AdminEditProgrammeForm from "./Acad_admin/Admin_edit_programme_form";
 import AdminEditCurriculumForm from "./Acad_admin/Admin_edit_curriculum_form";
 import AdminEditCourseSlotForm from "./Acad_admin/Admin_edit_course_slot_form";
+import AdminEditDisciplineForm from "./Acad_admin/Admin_edit_discipline_form";
+import AdminEditCourseForm from "./Acad_admin/Admin_edit_course_form";
 
 // breadcrumb
 // import BreadCrumbs from "./BreadCrumbsPorgrammeCurriculum";
@@ -63,7 +65,7 @@ export default function ProgrammeCurriculumRoutes() {
       ? BreadcrumbTabs
       : role === "Professor"
         ? BreadcrumbTabsFaculty
-        : role === "acadadmin"
+        : role === "acadadmin" || role === "studentacadadmin"
           ? BreadcrumbTabsAcadadmin
           : () => null;
   return (
@@ -433,7 +435,7 @@ export default function ProgrammeCurriculumRoutes() {
         />
 
         <Route
-          path="/admin_edit_programme_form"
+          path="/admin_edit_programme_form/:id"
           element={
             <Layout>
               <NavTab />
@@ -478,11 +480,11 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
-          path="/acad_admin_edit_discipline_form"
+          path="/acad_admin_edit_discipline_form/:id"
           element={
             <Layout>
-              <NavTab />
-              <AdminAddDisciplineForm />
+              <BreadcrumbTabsAcadadmin />
+              <AdminEditDisciplineForm />
             </Layout>
           }
         />
@@ -499,8 +501,8 @@ export default function ProgrammeCurriculumRoutes() {
           path="/acad_admin_edit_course_form/:id"
           element={
             <Layout>
-              <NavTab />
-              <AdminAddCourseProposalForm />
+              <BreadcrumbTabsAcadadmin />
+              <AdminEditCourseForm />
             </Layout>
           }
         />

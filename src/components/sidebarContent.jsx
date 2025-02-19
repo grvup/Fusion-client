@@ -65,7 +65,7 @@ function SidebarContent({ isCollapsed, toggleSidebar }) {
       id: "program_and_curriculum",
       icon: <CurriculumIcon size={18} />,
       url:
-        role === "acadadmin"
+        role === "acadadmin" || role === "studentacadadmin"
           ? "/programme_curriculum/acad_view_all_programme"
           : role === "student"
             ? "/programme_curriculum/view_all_programmes"

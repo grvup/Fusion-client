@@ -12,11 +12,15 @@ import {
   MultiSelect,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
-import { fetchDisciplinesData, fetchAllCourses } from "../api/api";
+import {
+  fetchDisciplinesData,
+  fetchAllCourses,
+  fetchCourseDetails,
+} from "../api/api";
 
-function Admin_add_course_proposal_form() {
+function Admin_edit_course_form() {
   const form = useForm({
     initialValues: {
       courseName: "",
@@ -44,8 +48,10 @@ function Admin_add_course_proposal_form() {
   });
 
   const navigate = useNavigate();
+  const { id } = useParams();
   const [disciplines, setDisciplines] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [course, setCourse] = useState([]);
 
   useEffect(() => {
     const fetchDisciplines = async () => {
@@ -68,11 +74,11 @@ function Admin_add_course_proposal_form() {
     const fetchCourses = async () => {
       try {
         const response = await fetchAllCourses();
-        // console.log("Courses data:", response);
+        console.log("Courses data:", response);
 
-        const courseList = response.map((course) => ({
-          name: `${course.name} (${course.code})`,
-          id: course.id,
+        const courseList = response.map((c) => ({
+          name: `${c.name} (${c.code})`,
+          id: c.id,
         }));
         setCourses(courseList);
       } catch (error) {
@@ -80,9 +86,44 @@ function Admin_add_course_proposal_form() {
       }
     };
 
+    const loadCourseDetails = async () => {
+      try {
+        const data = await fetchCourseDetails(id);
+        console.log(data);
+        setCourse(data);
+        form.setValues({
+          courseName: course.name,
+          courseCode: course.code,
+          courseCredit: course.credit,
+          courseVersion: course.version,
+          lectureHours: course.lecture_hours,
+          tutorialHours: course.tutorial_hours,
+          practicalHours: course.pratical_hours,
+          discussionHours: course.discussion_hours,
+          projectHours: course.project_hours,
+          discipline: course.disciplines,
+          preRequisites: course.pre_requisits,
+          preRequisiteCourse: course.pre_requisit_courses,
+          syllabus: course.syllabus,
+          references: course.ref_books,
+          quiz1: course.percent_quiz_1,
+          midsem: course.percent_midsem,
+          quiz2: course.percent_quiz_2,
+          endsem: course.percent_endsem,
+          project: course.percent_project,
+          labEvaluation: course.percent_lab_evaluation,
+          attendance: course.percent_course_attendance,
+          maxSeats: course.max_seats,
+        });
+      } catch (err) {
+        console.error("Error fetching course details: ", err);
+      }
+    };
+
     fetchDisciplines();
     fetchCourses();
-  }, []);
+    loadCourseDetails();
+  }, [id]);
 
   const handleSubmit = async (values) => {
     const apiUrl =
@@ -111,7 +152,7 @@ function Admin_add_course_proposal_form() {
       disciplines: values.discipline,
       pre_requisit_courses: values.preRequisiteCourse,
       pre_requisits: values.preRequisites,
-      max_seats: values.maxSeats,
+      maxSeats: values.maxSeats,
     };
     console.log("Payload: ", payload);
     try {
@@ -414,6 +455,7 @@ function Admin_add_course_proposal_form() {
                     }}
                     step={1}
                   />
+
                   <NumberInput
                     label="Discussion Hours"
                     placeholder="0"
@@ -505,10 +547,10 @@ function Admin_add_course_proposal_form() {
                 <MultiSelect
                   label="Pre-requisite Course"
                   placeholder="Select Course"
-                  data={courses.map((course) => ({
-                    label: course.name,
-                    value: course.id.toString(),
-                    ...course,
+                  data={courses.map((c) => ({
+                    label: c.name,
+                    value: c.id.toString(),
+                    ...c,
                   }))}
                   value={
                     Array.isArray(form.values.preRequisiteCourse)
@@ -680,4 +722,4 @@ function Admin_add_course_proposal_form() {
   );
 }
 
-export default Admin_add_course_proposal_form;
+export default Admin_edit_course_form;
