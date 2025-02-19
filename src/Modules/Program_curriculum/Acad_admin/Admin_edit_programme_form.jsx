@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
-  Breadcrumbs,
-  Anchor,
+  TextInput,
   Select,
   NumberInput,
   Button,
@@ -11,46 +10,94 @@ import {
   Container,
   Stack,
 } from "@mantine/core";
+import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
+import { fetchCurriculumData } from "../api/api";
 
-function Admin_edit_programme_form({ initialProgrammeData }) {
+function Admin_edit_programme_form() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [programmeData, setProgrammeData] = useState([]);
+
+  useEffect(() => {
+    const fetchProgrammeData = async () => {
+      try {
+        console.log(id);
+        const response = await fetchCurriculumData(id);
+        const data = {
+          id: response.program.id,
+          name: response.program.name,
+          begin_year: response.program.programme_begin_year,
+          category: response.program.category,
+        };
+        setProgrammeData(data);
+        console.log(response);
+        // console.log("The programme data is: ", programmeData);
+      } catch (error) {
+        console.log("Error fetching data");
+      }
+    };
+    fetchProgrammeData();
+  }, [id]);
+
   const form = useForm({
     initialValues: {
-      category: initialProgrammeData?.category || "",
-      programmeName: initialProgrammeData?.programmeName || "",
-      year: initialProgrammeData?.year || 2024,
+      category: programmeData.category,
+      programmeName: programmeData.name,
+      year: programmeData.begin_year,
     },
   });
 
   useEffect(() => {
-    if (initialProgrammeData) {
+    if (programmeData) {
       form.setValues({
-        category: initialProgrammeData.category,
-        programmeName: initialProgrammeData.programmeName,
-        year: initialProgrammeData.year,
+        category: programmeData.category,
+        programmeName: programmeData.name,
+        year: programmeData.begin_year,
       });
     }
-  }, [initialProgrammeData]);
+  }, [programmeData]);
 
-  const handleSubmit = (values) => {
-    console.log("Edited Programme Data Submitted:", values);
+  const handleSubmit = async (values) => {
+    try {
+      const submitData = {
+        category: values.category,
+        name: values.programmeName,
+        programme_begin_year: values.year,
+        id: programmeData.id,
+      };
+      console.log("Edited Programme Data Submitted:", submitData);
+      const response = await fetch(
+        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_programme/${id}/`,
+        {
+          method: "POST",
+          body: JSON.stringify(submitData),
+        },
+      );
+      const result = await response.json();
+      if (response.ok) {
+        alert("Programme updated successfully!");
+        console.log(response);
+        navigate("/programme_curriculum/acad_view_all_programme");
+      } else {
+        throw new Error(result.status);
+      }
+    } catch (error) {
+      console.log(error.status);
+      // alert(error.message);
+    }
     // Add API call or logic for submitting the updated programme data
   };
-
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "Edit Curriculum Form", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
 
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
+      {(() => {
+        console.log("The programme data is: ", programmeData);
+        return null; // Returning null because we don't want anything to be displayed
+      })()}
+
       {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs> */}
 
       {/* Options Section */}
@@ -107,13 +154,15 @@ function Admin_edit_programme_form({ initialProgrammeData }) {
                   required
                 />
 
-                <Select
+                <TextInput
                   label="Programme Name"
                   placeholder="Enter Programme Name"
-                  data={[]} // Provide options here if needed
                   value={form.values.programmeName}
-                  onChange={(value) =>
-                    form.setFieldValue("programmeName", value)
+                  onChange={(event) =>
+                    form.setFieldValue(
+                      "programmeName",
+                      event.currentTarget.value,
+                    )
                   }
                   required
                 />
@@ -168,7 +217,7 @@ function Admin_edit_programme_form({ initialProgrammeData }) {
 }
 
 Admin_edit_programme_form.propTypes = {
-  initialProgrammeData: PropTypes.shape({
+  programmeData: PropTypes.shape({
     category: PropTypes.string,
     programmeName: PropTypes.string,
     year: PropTypes.number,

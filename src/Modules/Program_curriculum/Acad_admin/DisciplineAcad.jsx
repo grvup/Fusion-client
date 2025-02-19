@@ -236,13 +236,13 @@ function DisciplineAcad() {
                             borderRight: "1px solid #d3d3d3",
                           }}
                         >
-                          <Link
-                            to={`/programme_curriculum/acad_admin_edit_discipline_form?discipline=${item.name}`}
+                          <a
+                            href={`/programme_curriculum/acad_admin_edit_discipline_form/${item.id}`}
                           >
                             <Button variant="filled" color="green" radius="sm">
                               Edit
                             </Button>
-                          </Link>
+                          </a>
                         </td>
                       </tr>
                     ))

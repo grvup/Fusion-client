@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Table, Card, Text, Grid } from "@mantine/core";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchCourseDetails } from "../api/api";
 
 function CourseDetail() {
@@ -8,6 +8,7 @@ function CourseDetail() {
   const [courseDetails, setCourseDetails] = useState(null); // State to hold the course data
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const navigate = useNavigate();
 
   // Fetch course data from the backend
   useEffect(() => {
@@ -366,7 +367,16 @@ function CourseDetail() {
             </Button>
           </Grid.Col>
           <Grid.Col span={11}>
-            <Button fullWidth variant="filled" color="green">
+            <Button
+              fullWidth
+              variant="filled"
+              color="green"
+              onClick={() =>
+                navigate(
+                  "/programme_curriculum/acad_admin_add_course_proposal_form",
+                )
+              }
+            >
               ADD COURSE
             </Button>
           </Grid.Col>

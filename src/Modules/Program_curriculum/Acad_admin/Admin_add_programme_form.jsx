@@ -50,7 +50,7 @@ function Admin_add_programme_form() {
         console.log("Response Data:", data);
         navigate("/programme_curriculum/acad_view_all_programme");
       } else {
-        const errorText = await response.text(); // Fallback to plain text
+        const errorText = await response.text();
         console.error("Error:", errorText);
         alert("Failed to add programme.");
       }
