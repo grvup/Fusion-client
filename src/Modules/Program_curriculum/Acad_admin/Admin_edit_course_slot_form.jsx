@@ -1,7 +1,5 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import {
-  Breadcrumbs,
-  Anchor,
   Select,
   NumberInput,
   Textarea,
@@ -11,65 +9,204 @@ import {
   Text,
   Container,
   Stack,
+  MultiSelect,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import {
+  fetchAllCourses,
+  fetchCourseSlotTypeChoices,
+  fetchSemesterDetails,
+  fetchCourslotData,
+} from "../api/api";
 
-function Admin_edit_course_slot_form({ existingData = {} }) {
-  // Dummy data to be used if existingData is not provided
-  const dummyData = {
-    semester: "CSE UG Curriculum v1.0, sem - 1",
-    courseSlotName: "Dummy Slot",
-    type: "Lecture",
-    information: "This is a dummy information for the course slot.",
-    courses: "CS101, CS102",
-    duration: 2,
-    minLimit: 5,
-    maxLimit: 100,
-  };
+function Admin_edit_course_slot_form() {
+  const { courseslotid } = useParams(); // Get the course slot ID from the URL
+  console.log(courseslotid);
+  const [courses, setCourses] = useState([]);
+  const [selectedCourses, setSelectedCourses] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchValue, setSearchValue] = useState("");
+  const [semesterid, setSemesterid] = useState("");
+  const [curriculumid, setCurriculumid] = useState("");
+  const [semesterOptions, setSemesterOptions] = useState([]);
+  const [initialData, setInitialData] = useState(null);
+  console.log(searchValue);
+  console.log(initialData);
 
   const form = useForm({
     initialValues: {
-      semester: existingData.semester || dummyData.semester,
-      courseSlotName: existingData.courseSlotName || dummyData.courseSlotName,
-      type: existingData.type || dummyData.type,
-      information: existingData.information || dummyData.information,
-      courses: existingData.courses || dummyData.courses,
-      duration: existingData.duration || dummyData.duration,
-      minLimit: existingData.minLimit || dummyData.minLimit,
-      maxLimit: existingData.maxLimit || dummyData.maxLimit,
+      semester: "",
+      courseSlotName: "",
+      type: "",
+      information: "",
+      courses: [],
+      duration: 1,
+      minLimit: 0,
+      maxLimit: 1000,
+    },
+    validate: {
+      courseSlotName: (value) =>
+        !value ? "Course slot name is required" : null,
+      type: (value) => (!value ? "Type is required" : null),
     },
   });
 
-  const handleSubmit = (values) => {
-    console.log("Updated Course Slot Data:", values);
-    // Logic to update the course slot in the backend can be implemented here.
+  useEffect(() => {
+    const loadCourseSlotChoices = async () => {
+      try {
+        const data = await fetchCourseSlotTypeChoices();
+        const formattedOptions = data.choices.map((choice) => ({
+          value: choice.value,
+          label: choice.label,
+        }));
+        setOptions(formattedOptions);
+      } catch (err) {
+        setError("Failed to load course slot type choices.");
+      }
+    };
+
+    const loadCourses = async () => {
+      try {
+        const data = await fetchAllCourses();
+        setCourses(data);
+      } catch (err) {
+        setError("Failed to load courses.");
+      }
+    };
+
+    const loadCourseSlotDetails = async () => {
+      try {
+        const data = await fetchCourslotData(courseslotid);
+        console.log(data);
+        setInitialData(data);
+        setSemesterid(data.semester);
+        setCurriculumid(data.curriculum_id);
+        form.setValues({
+          semester: data.semester,
+          courseSlotName: data.name,
+          type: data.type,
+          information: data.course_slot_info,
+          courses: data.courses.map((course) => course.toString()),
+          duration: data.duration,
+          minLimit: data.min_registration_limit,
+          maxLimit: data.max_registration_limit,
+        });
+        setSelectedCourses(data.courses.map((course) => course.toString()));
+        // handleCourseSelect(data.courses.map((course) => course));
+      } catch (err) {
+        setError("Failed to load course slot details.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCourseSlotChoices();
+    loadCourses();
+    loadCourseSlotDetails();
+  }, [courseslotid]);
+  console.log(form.values);
+  // const [searchParams] = useSearchParams();
+  // const semesterid = searchParams.get("semesterid");
+  // const curriculumid = searchParams.get("curriculumid");
+
+  useEffect(() => {
+    const loadSemesterDetails = async () => {
+      try {
+        if (semesterid && curriculumid) {
+          const data = await fetchSemesterDetails(curriculumid, semesterid);
+          const formattedOptions = data.semesters.map((semester) => ({
+            value: semester.semester_id.toString(),
+            label: `${data.curriculum_name} v${data.curriculum_version} Sem-${semester.semester_number}`,
+          }));
+          setSemesterOptions(formattedOptions);
+          if (semesterid) {
+            form.setFieldValue("semester", semesterid.toString());
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching semester details:", err);
+      }
+    };
+
+    loadSemesterDetails();
+  }, [semesterid, curriculumid]);
+
+  const handleCourseSelect = (selectedId) => {
+    console.log("Selected courses:", selectedId);
+    // console.log(selectedId);
+    form.setFieldValue("courses", selectedId);
+    // form.setFieldValue("courses", (prevCourses) => {
+    //   // prevCourses is the previous value of the "courses" field
+    //   console.log("Previous courses:", prevCourses);
+
+    //   // Perform any logic you need with prevCourses and selectedId
+    //   const updatedCourses = [...prevCourses, ...selectedId]; // Example: Merge previous and new selected IDs
+
+    //   console.log("Updated courses:", updatedCourses);
+    //   return updatedCourses;
+    // });
+
+    console.log("Updated courses:", selectedId);
   };
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  // useEffect(() => {
+  //   handleCourseSelect(form.values.courses.map((course) => course.toString()));
+  // }, [form.values.courses[0]]);
+
+  const filteredCourses = courses.filter(
+    (course) => !selectedCourses.includes(course.id),
+  );
+
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    try {
+      const formData = {
+        semester: values.semester,
+        name: values.courseSlotName,
+        type: values.type,
+        course_slot_info: values.information,
+        courses: values.courses,
+        duration: values.duration,
+        min_registration_limit: values.minLimit,
+        max_registration_limit: values.maxLimit,
+      };
+      const token = localStorage.getItem("authToken");
+      const response = await axios.put(
+        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_courseslot/${courseslotid}/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        window.location.href = `/programme_curriculum/view_curriculum/?curriculum=${curriculumid}`;
+      }
+    } catch (err) {
+      console.error("Error updating course slot:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs> */}
-
-      {/* Options Section */}
-      {/* <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group> */}
-
       <Container
         fluid
         style={{
@@ -90,7 +227,6 @@ function Admin_edit_course_slot_form({ existingData = {} }) {
             flex: 4,
           }}
         >
-          {/* Form Section */}
           <div style={{ flex: 4 }}>
             <form
               onSubmit={form.onSubmit(handleSubmit)}
@@ -109,7 +245,7 @@ function Admin_edit_course_slot_form({ existingData = {} }) {
                 <Select
                   label="For Semester"
                   placeholder="Select Semester"
-                  data={["CSE UG Curriculum v1.0, sem - 1"]}
+                  data={semesterOptions}
                   value={form.values.semester}
                   onChange={(value) => form.setFieldValue("semester", value)}
                   required
@@ -130,11 +266,14 @@ function Admin_edit_course_slot_form({ existingData = {} }) {
 
                 <Select
                   label="Type"
-                  placeholder="Select Type"
-                  data={["Lecture", "Lab"]}
+                  placeholder={loading ? "Loading..." : "Select Type"}
+                  data={options}
                   value={form.values.type}
                   onChange={(value) => form.setFieldValue("type", value)}
                   required
+                  disabled={loading || error !== null}
+                  searchable
+                  onSearchChange={setSearchValue}
                 />
 
                 <Textarea
@@ -148,13 +287,17 @@ function Admin_edit_course_slot_form({ existingData = {} }) {
                   required
                 />
 
-                <TextInput
+                <MultiSelect
                   label="Courses"
-                  placeholder="Enter course codes"
-                  value={form.values.courses}
-                  onChange={(event) =>
-                    form.setFieldValue("courses", event.currentTarget.value)
-                  }
+                  placeholder="Search and select courses"
+                  data={filteredCourses.map((course) => ({
+                    value: `${course.id}`,
+                    label: `${course.code} - ${course.name} (${course.version})`,
+                  }))}
+                  value={form.values.courses.map((course) => course)}
+                  onChange={handleCourseSelect}
+                  searchable
+                  nothingFound="No courses available"
                   required
                 />
 
@@ -193,47 +336,10 @@ function Admin_edit_course_slot_form({ existingData = {} }) {
               </Group>
             </form>
           </div>
-
-          {/* Right Panel Buttons */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            {/* <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <Button className="right-btn-course-slot">Add Curriculum</Button>
-              <Button className="right-btn-course-slot">
-                Add Another Slot
-              </Button>
-              <Button className="right-btn-course-slot">Add Discipline</Button>
-            </Group> */}
-          </div>
         </div>
       </Container>
-
-      <style>{`
-        .right-btn-course-slot {
-          width: 15vw;
-        }
-      `}</style>
     </div>
   );
 }
-
-Admin_edit_course_slot_form.propTypes = {
-  existingData: {
-    semester: "CSE UG Curriculum v1.0, sem - 1",
-    courseSlotName: "Dummy Slot",
-    type: "Lecture",
-    information: "This is a dummy information for the course slot.",
-    courses: "CS101, CS102",
-    duration: 2,
-    minLimit: 5,
-    maxLimit: 100,
-  },
-};
 
 export default Admin_edit_course_slot_form;

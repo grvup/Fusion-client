@@ -1,7 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Breadcrumbs,
-  Anchor,
   TextInput,
   Select,
   Checkbox,
@@ -11,193 +9,211 @@ import {
   Text,
   Container,
   Stack,
+  Notification,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import axios from "axios";
+import { fetchAllProgrammes } from "../api/api";
 
-function Admin_add_curriculum_form() {
-  const form = useForm({
-    initialValues: {
-      curriculumName: "",
-      programme: "",
-      workingCurriculum: false,
-      versionNo: 1.0,
-      numSemesters: 1,
-      numCredits: 0,
-    },
+function AdminAddCurriculumForm() {
+  const [formData, setFormData] = useState({
+    curriculumName: "",
+    programme: "",
+    workingCurriculum: false,
+    versionNo: 1.0,
+    numSemesters: 1,
+    numCredits: 0,
   });
+  const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState(null);
 
-  const handleSubmit = (values) => {
-    console.log(values);
+  const [ugData, setUgData] = useState([]);
+  const [pgData, setPgData] = useState([]);
+  const [phdData, setPhdData] = useState([]);
+  const [loadingPrograms, setLoadingPrograms] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchPrograms = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Retrieve the auth token
+        if (!token) throw new Error("Authorization token not found");
+
+        const response = await fetchAllProgrammes(token);
+        console.log(response);
+
+        setUgData(response.ug_programmes || []);
+        setPgData(response.pg_programmes || []);
+        setPhdData(response.phd_programmes || []);
+      } catch (err) {
+        console.error("Error fetching programs:", err);
+        setError("Failed to load programs. Please try again.");
+      } finally {
+        setLoadingPrograms(false);
+      }
+    };
+
+    fetchPrograms();
+  }, []);
+
+  const handleChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "Add Curriculum Form", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setNotification(null);
+
+    const payload = {
+      curriculum_name: formData.curriculumName,
+      programme: formData.programme,
+      working_curriculum: formData.workingCurriculum,
+      version_no: formData.versionNo,
+      no_of_semester: formData.numSemesters,
+      num_credits: formData.numCredits,
+    };
+
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Authorization token is required");
+      }
+      console.log(token);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/programme_curriculum/api/admin_add_curriculum/",
+        payload,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      setNotification({
+        message: response.data.message || "Curriculum added successfully!",
+        color: "green",
+      });
+      setFormData({
+        curriculumName: "",
+        programme: "",
+        workingCurriculum: false,
+        versionNo: 1.0,
+        numSemesters: 1,
+        numCredits: 0,
+      });
+    } catch (err) {
+      setNotification({
+        message: err.response?.data?.message || "Failed to add curriculum.",
+        color: "red",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const programOptions = [
+    ...ugData.map((prog) => ({
+      value: `${prog.id}`,
+      label: `UG - ${prog.name}`,
+    })),
+    ...pgData.map((prog) => ({
+      value: `${prog.id}`,
+      label: `PG - ${prog.name}`,
+    })),
+    ...phdData.map((prog) => ({
+      value: `${prog.id}`,
+      label: `PhD - ${prog.name}`,
+    })),
+  ];
 
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-    >
-      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs> */}
-
-      {/* Options Section */}
-      {/* <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group> */}
-
-      <Container
-        fluid
-        style={{
-          display: "flex",
-          justifyContent: "left",
-          alignItems: "left",
-          width: "100%",
-          margin: "0 0 0 -3.2vw",
-        }}
+    <Container size="lg" style={{ marginTop: "2rem" }}>
+      <Text
+        size="xl"
+        weight={700}
+        align="center"
+        style={{ marginBottom: "2rem" }}
       >
-        <div
-          style={{
-            maxWidth: "290vw",
-            width: "100%",
-            display: "flex",
-            gap: "2rem",
-            padding: "2rem",
-            flex: 4,
-          }}
+        Add Curriculum Form
+      </Text>
+
+      {notification && (
+        <Notification
+          color={notification.color}
+          onClose={() => setNotification(null)}
         >
-          {/* Form Section */}
-          <div style={{ flex: 4 }}>
-            <form
-              onSubmit={form.onSubmit(handleSubmit)}
-              style={{
-                backgroundColor: "#fff",
-                padding: "2rem",
-                borderRadius: "8px",
-                boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-              }}
-            >
-              <Stack spacing="lg">
-                <Text size="xl" weight={700} align="center">
-                  Curriculum Form
-                </Text>
+          {notification.message}
+        </Notification>
+      )}
 
-                <TextInput
-                  label="Curriculum Name"
-                  placeholder="Enter new curriculum name"
-                  value={form.values.curriculumName}
-                  onChange={(event) =>
-                    form.setFieldValue(
-                      "curriculumName",
-                      event.currentTarget.value,
-                    )
-                  }
-                  required
-                />
+      <form
+        onSubmit={handleSubmit}
+        style={{ maxWidth: "500px", margin: "auto" }}
+      >
+        <Stack spacing="lg">
+          <TextInput
+            label="Curriculum Name"
+            placeholder="Enter curriculum name"
+            value={formData.curriculumName}
+            onChange={(e) => handleChange("curriculumName", e.target.value)}
+            required
+          />
 
-                <Select
-                  label="Select for which Programme"
-                  placeholder="-- Select Programme --"
-                  data={[
-                    "UG-Btech-CSE",
-                    "UG-Btech-ECE",
-                    "UG-Btech-ME",
-                    "UG-Btech-SM",
-                    "PhD-CSE",
-                  ]}
-                  value={form.values.programme}
-                  onChange={(value) => form.setFieldValue("programme", value)}
-                  required
-                />
+          <Select
+            label="Programme"
+            placeholder="Select a programme"
+            data={loadingPrograms ? [] : programOptions}
+            value={formData.programme}
+            onChange={(value) => handleChange("programme", value)}
+            required
+            disabled={loadingPrograms}
+            error={error}
+          />
 
-                <Checkbox
-                  label="Working Curriculum"
-                  checked={form.values.workingCurriculum}
-                  onChange={(event) =>
-                    form.setFieldValue(
-                      "workingCurriculum",
-                      event.currentTarget.checked,
-                    )
-                  }
-                />
-
-                <NumberInput
-                  label="Curriculum Version No"
-                  value={form.values.versionNo}
-                  onChange={(value) => form.setFieldValue("versionNo", value)}
-                  required
-                />
-
-                <NumberInput
-                  label="Number of Semesters"
-                  value={form.values.numSemesters}
-                  onChange={(value) =>
-                    form.setFieldValue("numSemesters", value)
-                  }
-                  required
-                />
-
-                <NumberInput
-                  label="Number of Credits"
-                  value={form.values.numCredits}
-                  onChange={(value) => form.setFieldValue("numCredits", value)}
-                  required
-                />
-              </Stack>
-
-              <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
-                  Cancel
-                </Button>
-                <Button type="submit" className="submit-btn">
-                  Submit
-                </Button>
-              </Group>
-            </form>
-          </div>
-
-          {/* Right Panel Buttons */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a href="/programme_curriculum/acad_admin_add_programme_form">
-                <Button className="right-btn-curriculum">Add Programme</Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_batch_form">
-                <Button className="right-btn-curriculum">Add Batch</Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_discipline_form">
-                <Button className="right-btn-curriculum">Add Discipline</Button>
-              </a>
-            </Group>
-          </div>
-        </div>
-      </Container>
-
-      <style>
-        {`
-            .right-btn-curriculum{
-            width:15vw
+          <Checkbox
+            label="Working Curriculum"
+            checked={formData.workingCurriculum}
+            onChange={(e) =>
+              handleChange("workingCurriculum", e.target.checked)
             }
-          `}
-      </style>
-    </div>
+          />
+
+          <NumberInput
+            label="Curriculum Version No"
+            value={formData.versionNo}
+            onChange={(value) => handleChange("versionNo", value)}
+            required
+            min={0.1}
+            precision={1}
+          />
+
+          <NumberInput
+            label="Number of Semesters"
+            value={formData.numSemesters}
+            onChange={(value) => handleChange("numSemesters", value)}
+            required
+            min={1}
+          />
+
+          <NumberInput
+            label="Number of Credits"
+            value={formData.numCredits}
+            onChange={(value) => handleChange("numCredits", value)}
+            required
+            min={0}
+          />
+        </Stack>
+
+        <Group position="right" mt="lg">
+          <Button variant="outline" onClick={() => setFormData({})}>
+            Cancel
+          </Button>
+          <Button type="submit" loading={loading}>
+            Submit
+          </Button>
+        </Group>
+      </form>
+    </Container>
   );
 }
 
-export default Admin_add_curriculum_form;
+export default AdminAddCurriculumForm;

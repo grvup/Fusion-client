@@ -279,3 +279,159 @@ export const adminFetchCourseInstructorData = async () => {
     throw error;
   }
 };
+
+export const fetchCourseSlotTypeChoices = async () => {
+  try {
+    // const token = localStorage.getItem("authToken"); // Uncomment if authentication is needed
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_get_course_slot_type/`,
+      // Uncomment if authentication is needed
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching curriculum data: ", error);
+    throw error;
+  }
+};
+export const fetchSemesterDetails = async (curriculumId, semesterId) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_get_semesterDetails/?semester_id=${semesterId}&curriculum_id=${curriculumId}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+
+    // Extracting curriculum details from response
+    return response.data;
+    // response.data;
+
+    // Formatting the string as "CSE UG Curriculum v1.0, sem - 1"
+    // return `${curriculum_name} v${curriculum_version}, sem - ${semester_number}`;
+  } catch (error) {
+    console.error("Error fetching curriculum data: ", error);
+    throw error;
+  }
+};
+
+export const fetchProgram = async (programmeId) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_get_program/${programmeId}/`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching program data: ", error);
+    throw error;
+  }
+};
+
+export const fetchCourslotData = async (courseslotid) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_edit_courseslot/${courseslotid}/`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+
+    return response.data.courseslot;
+  } catch (error) {
+    console.error("Error fetching program data: ", error);
+    throw error;
+  }
+};
+
+export const fetchBatchName = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_get_batch_name/`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching program data: ", error);
+    throw error;
+  }
+};
+
+export const fetchDisciplines = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_get_disciplines/`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching program data: ", error);
+    throw error;
+  }
+};
+
+export const fetchGetUnlinkedCurriculum = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_get_unlinked_curriculam/`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching program data: ", error);
+    throw error;
+  }
+};
+export const fetchBatchData = async (batch_id) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_edit_batch/${batch_id}/`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching program data: ", error);
+    throw error;
+  }
+};

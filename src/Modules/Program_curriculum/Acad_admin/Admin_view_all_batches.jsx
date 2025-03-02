@@ -257,6 +257,8 @@ function AdminViewAllBatches() {
                     {Array.isArray(filteredBatches) &&
                     filteredBatches.length > 0 ? (
                       filteredBatches.map((batch, index) => (
+                        // {Array.isArray(batches) && batches.length > 0 ? (
+                        //   batches.map((batch, index) => (
                         <tr
                           key={index}
                           className="courses-table-row"
@@ -330,7 +332,7 @@ function AdminViewAllBatches() {
                             }}
                           >
                             <Link
-                              to={`/programme_curriculum/admin_edit_batch_form?batch=${batch.name}`}
+                              to={`/programme_curriculum/admin_edit_batch_form?batch=${batch.batch_id}`}
                               className="course-link"
                               style={{ textDecoration: "none" }}
                             >
@@ -498,7 +500,7 @@ function AdminViewAllBatches() {
                             }}
                           >
                             <Link
-                              to={`/programme_curriculum/admin_edit_batch_form?batch=${batch.name}`}
+                              to={`/programme_curriculum/admin_edit_batch_form?batch=${batch.batch_id}`}
                               className="course-link"
                               style={{ textDecoration: "none" }}
                             >

@@ -1,7 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Breadcrumbs,
-  Anchor,
   Select,
   NumberInput,
   Checkbox,
@@ -12,9 +10,25 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import PropTypes from "prop-types";
+import axios from "axios";
+import { useNavigate, useSearchParams } from "react-router-dom"; // For handling URL parameters and navigation
+import {
+  fetchDisciplines,
+  fetchBatchName,
+  fetchGetUnlinkedCurriculum,
+  fetchBatchData, // Add this function to fetch batch data by ID
+} from "../api/api";
 
-function Admin_edit_batch_form({ batchData }) {
+function Admin_edit_batch_form() {
+  const [searchParams] = useSearchParams();
+  const batchId = searchParams.get("batch"); // Get the batch ID from the URL
+  const navigate = useNavigate(); // For navigation after form submission
+  const [batchNames, setBatchNames] = useState([]); // State for batch names
+  const [disciplines, setDisciplines] = useState([]); // State for disciplines
+  const [unlinkedCurriculums, setUnlinkedCurriculums] = useState([]); // State for unlinked curriculums
+  const [loading, setLoading] = useState(true); // State for loading
+  const [error, setError] = useState(null); // State for error handling
+
   const form = useForm({
     initialValues: {
       batchName: "",
@@ -25,48 +39,97 @@ function Admin_edit_batch_form({ batchData }) {
     },
   });
 
-  // Prepopulate the form with existing batch data when editing
+  // Fetch batch names, disciplines, unlinked curriculums, and existing batch data on component mount
   useEffect(() => {
-    if (batchData) {
-      form.setValues({
-        batchName: batchData.batchName || "",
-        discipline: batchData.discipline || "",
-        batchYear: batchData.batchYear || 2024,
-        disciplineBatch: batchData.disciplineBatch || "",
-        runningBatch: batchData.runningBatch || false,
-      });
-    }
-  }, [batchData]);
+    const loadData = async () => {
+      try {
+        // Fetch batch names
+        const batchData = await fetchBatchName();
+        setBatchNames(batchData.choices);
 
-  const handleSubmit = (values) => {
-    // Handle the update logic here
-    console.log("Updated Batch Details:", values);
+        // Fetch disciplines
+        const disciplineData = await fetchDisciplines();
+        setDisciplines(disciplineData);
+
+        // Fetch unlinked curriculums
+        const unlinkedCurriculumData = await fetchGetUnlinkedCurriculum();
+        setUnlinkedCurriculums(unlinkedCurriculumData);
+        console.log(unlinkedCurriculums);
+        // Fetch existing batch data
+        const existingBatchData = await fetchBatchData(batchId);
+        console.log(existingBatchData.curriculum);
+        setUnlinkedCurriculums((prevUnlinkedCurriculums) => [
+          ...prevUnlinkedCurriculums, // Spread the previous state
+          ...existingBatchData.curriculum.map((curriculum) => curriculum), // Append the new curriculum
+        ]); // Add the existing curriculum to the unlinked curriculums list
+        console.log(unlinkedCurriculums);
+        form.setValues({
+          batchName: existingBatchData.batch.name,
+          discipline: existingBatchData.batch.discipline.toString(),
+          batchYear: existingBatchData.batch.year,
+          disciplineBatch: existingBatchData.batch.curriculum_id
+            ? existingBatchData.batch.curriculum_id.toString()
+            : "",
+          runningBatch: existingBatchData.batch.running_batch,
+        });
+      } catch (err) {
+        setError("Failed to load data."); // Handle errors
+      } finally {
+        setLoading(false); // Stop the loader
+      }
+    };
+
+    loadData(); // Fetch data on component mount
+  }, [batchId]);
+  console.log(unlinkedCurriculums);
+
+  const handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Authorization token is required");
+      }
+      const payload = {
+        batch_name: form.values.batchName,
+        discipline: form.values.discipline,
+        batchYear: form.values.batchYear,
+        disciplineBatch: form.values.disciplineBatch || "", // Send empty string if no curriculum is selected
+        runningBatch: form.values.runningBatch,
+      };
+      console.log(payload);
+      const response = await axios.put(
+        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_batch/${batchId}/`, // Use PUT request for editing
+        payload,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      console.log(response);
+      if (response.data.message) {
+        alert("Batch updated successfully!");
+        navigate("/programme_curriculum/admin_batches/"); // Redirect to batches page
+      } else {
+        throw new Error(response.data.message || "Failed to update batch");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text color="red">{error}</Text>;
+  }
 
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
-
-      <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group> */}
-
       <Container
         fluid
         style={{
@@ -103,27 +166,24 @@ function Admin_edit_batch_form({ batchData }) {
                   Edit Batch Form
                 </Text>
 
+                {/* Batch Name Dropdown */}
                 <Select
                   label="Batch Name"
                   placeholder="-- Select Batch Name --"
-                  data={["Btech", "Mtech", "Bdes", "Mdes", "Phd"]}
+                  data={batchNames}
                   value={form.values.batchName}
                   onChange={(value) => form.setFieldValue("batchName", value)}
                   required
                 />
 
+                {/* Discipline Dropdown */}
                 <Select
                   label="Select Discipline"
                   placeholder="-- Select Discipline --"
-                  data={[
-                    "Computer Science and Engineering",
-                    "Electronics and Communication Engineering",
-                    "Mechanical Engineering",
-                    "Smart Manufacturing",
-                    "Design DES",
-                    "Natural Science",
-                    "Humanities",
-                  ]}
+                  data={disciplines.map((discipline) => ({
+                    value: discipline.id.toString(),
+                    label: discipline.name,
+                  }))}
                   value={form.values.discipline}
                   onChange={(value) => form.setFieldValue("discipline", value)}
                   required
@@ -131,29 +191,22 @@ function Admin_edit_batch_form({ batchData }) {
 
                 <NumberInput
                   label="Batch Year"
-                  defaultValue={2024}
                   value={form.values.batchYear}
                   onChange={(value) => form.setFieldValue("batchYear", value)}
                   required
                 />
 
                 <Select
-                  label="Select Discipline for Batch Students"
-                  placeholder="-- Select Discipline for Batch Students --"
-                  data={[
-                    "CSE UG Curriculum v1.0",
-                    "ECE UG Curriculum v1.0",
-                    "ME UG Curriculum v1.0",
-                    "SM UG Curriculum v1.0",
-                    "Design UG Curriculum v1.0",
-                    "Natural Science PG Curriculum v1.0",
-                    "Humanities UG Curriculum v1.0",
-                  ]}
+                  label="Select Curriculum for Batch"
+                  placeholder="-- Select Curriculum for Batch Students --"
+                  data={unlinkedCurriculums.map((curriculum) => ({
+                    value: curriculum.id.toString(),
+                    label: curriculum.name,
+                  }))}
                   value={form.values.disciplineBatch}
                   onChange={(value) =>
                     form.setFieldValue("disciplineBatch", value)
                   }
-                  required
                 />
 
                 <Checkbox
@@ -169,7 +222,13 @@ function Admin_edit_batch_form({ batchData }) {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
+                <Button
+                  variant="outline"
+                  className="cancel-btn"
+                  onClick={() =>
+                    navigate("/programme_curriculum/admin_batches/")
+                  }
+                >
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn">
@@ -220,15 +279,5 @@ function Admin_edit_batch_form({ batchData }) {
     </div>
   );
 }
-
-Admin_edit_batch_form.propTypes = {
-  batchData: PropTypes.shape({
-    batchName: PropTypes.string,
-    discipline: PropTypes.string,
-    batchYear: PropTypes.number,
-    disciplineBatch: PropTypes.string,
-    runningBatch: PropTypes.bool,
-  }),
-};
 
 export default Admin_edit_batch_form;

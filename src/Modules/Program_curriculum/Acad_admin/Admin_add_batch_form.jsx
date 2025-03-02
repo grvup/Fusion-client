@@ -1,7 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Breadcrumbs,
-  Anchor,
   Select,
   NumberInput,
   Checkbox,
@@ -12,8 +10,20 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import axios from "axios";
+import {
+  fetchDisciplines,
+  fetchBatchName,
+  fetchGetUnlinkedCurriculum,
+} from "../api/api";
 
 function Admin_add_batch_form() {
+  const [batchNames, setBatchNames] = useState([]); // State for batch names
+  const [disciplines, setDisciplines] = useState([]); // State for disciplines
+  const [unlinkedCurriculums, setUnlinkedCurriculums] = useState([]); // State for unlinked curriculums
+  const [loading, setLoading] = useState(true); // State for loading
+  const [error, setError] = useState(null); // State for error handling
+
   const form = useForm({
     initialValues: {
       batchName: "",
@@ -23,36 +33,86 @@ function Admin_add_batch_form() {
       runningBatch: false,
     },
   });
+  console.log(form.values);
 
-  const handleSubmit = (values) => {
-    console.log(values);
+  // Fetch batch names and disciplines on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Fetch batch names
+        const batchData = await fetchBatchName();
+        setBatchNames(batchData.choices); // Use the 'choices' array from the API response
+
+        // Fetch disciplines
+        const disciplineData = await fetchDisciplines();
+        setDisciplines(disciplineData);
+
+        const unlinkedCurriculumData = await fetchGetUnlinkedCurriculum();
+        setUnlinkedCurriculums(unlinkedCurriculumData);
+      } catch (err) {
+        setError("Failed to load data."); // Handle errors
+      } finally {
+        setLoading(false); // Stop the loader
+      }
+    };
+
+    loadData(); // Fetch data on component mount
+  }, []);
+
+  const handleSubmit = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Authorization token is required");
+      }
+      const payload = {
+        batch_name: form.values.batchName,
+        discipline: form.values.discipline,
+        batchYear: form.values.batchYear,
+        disciplineBatch: form.values.disciplineBatch,
+        runningBatch: form.values.runningBatch,
+      };
+      console.log(payload);
+      const response = await axios.post(
+        "http://127.0.0.1:8000/programme_curriculum/api/admin_add_batch/",
+        payload,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      console.log(response);
+      if (response.data.message) {
+        alert("Batch added successfully!");
+        window.location.href = "/programme_curriculum/admin_batches/"; // Redirect to batches page
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to add batch");
+      }
+    } catch (err) {
+      setError(err.message);
+    }
   };
+  // // Function to get CSRF token from cookies
+  // const getCookie = (name) => {
+  //   const value = `; ${document.cookie}`;
+  //   const parts = value.split(`; ${name}=`);
+  //   if (parts.length === 2) return parts.pop().split(";").shift();
+  // };
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text color="red">{error}</Text>;
+  }
 
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs> */}
-
-      {/* Options Section */}
-      {/* <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group> */}
-
       <Container
         fluid
         style={{
@@ -89,27 +149,24 @@ function Admin_add_batch_form() {
                   Batch Form
                 </Text>
 
+                {/* Batch Name Dropdown */}
                 <Select
                   label="Batch Name"
                   placeholder="-- Select Batch Name --"
-                  data={["Btech", "Mtech", "Bdes", "Mdes", "Phd"]}
+                  data={batchNames} // Use the batchNames state directly
                   value={form.values.batchName}
                   onChange={(value) => form.setFieldValue("batchName", value)}
                   required
                 />
 
+                {/* Discipline Dropdown */}
                 <Select
                   label="Select Discipline"
                   placeholder="-- Select Discipline --"
-                  data={[
-                    "Computer Science and Engineering",
-                    "Electronics and Communication Engineering",
-                    "Mechanical Engineering",
-                    "Smart Manufacturing",
-                    "Design DES",
-                    "Natural Science",
-                    "Humanities",
-                  ]}
+                  data={disciplines.map((discipline) => ({
+                    value: discipline.id.toString(),
+                    label: discipline.name,
+                  }))}
                   value={form.values.discipline}
                   onChange={(value) => form.setFieldValue("discipline", value)}
                   required
@@ -124,17 +181,12 @@ function Admin_add_batch_form() {
                 />
 
                 <Select
-                  label="Select Discipline for Batch Students"
-                  placeholder="-- Select Discipline for Batch Students --"
-                  data={[
-                    "CSE UG Curriculum v1.0",
-                    "ECE UG Curriculum v1.0",
-                    "ME UG Curriculum v1.0",
-                    "SM UG Curriculum v1.0",
-                    "Design UG Curriculum v1.0",
-                    "Natural Science PG Curriculum v1.0",
-                    "Humanities UG Curriculum v1.0",
-                  ]}
+                  label="Select Curriculum for Batch"
+                  placeholder="-- Select Curriculum for Batch Students --"
+                  data={unlinkedCurriculums.map((curriculum) => ({
+                    value: curriculum.id.toString(), // Convert the ID to a string
+                    label: curriculum.name, // Use the curriculum name as the label
+                  }))}
                   value={form.values.disciplineBatch}
                   onChange={(value) =>
                     form.setFieldValue("disciplineBatch", value)

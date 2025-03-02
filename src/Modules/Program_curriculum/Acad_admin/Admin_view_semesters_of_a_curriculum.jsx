@@ -59,9 +59,13 @@ function Admin_view_semesters_of_a_curriculum() {
   // console.log(semesterWiseSlots)
   const semester_credits = semesters.map((semester) => semester.credits);
   // console.log(semester_credits)
-  const semesterscnt = semesters.map(
-    (semester) => `Semester ${semester.semester_no}`,
-  );
+  // const semesterscnt = semesters.map(
+  //   (semester) => `Semester ${semester.semester_no}`,
+  // );
+  const semesterscnt = semesters.map((semester) => ({
+    label: `Semester ${semester.semester_no}`, // Display label
+    value: `${semester.id}`, // Semester ID
+  }));
   const maxSlots = Math.max(
     ...Object.values(semesterWiseSlots).map((slots) => slots.length),
   );
@@ -89,7 +93,7 @@ function Admin_view_semesters_of_a_curriculum() {
             <h4 className="section-title">CURRICULUM</h4>
             <a
               href={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${
-                curriculum.id
+                curriculumId
               }`}
               style={{ textDecoration: "none" }}
             >
@@ -112,12 +116,12 @@ function Admin_view_semesters_of_a_curriculum() {
                   {semesterscnt.map((semester, index) => (
                     <a
                       href={`/programme_curriculum/acad_admin_instigate_form?semester=${
-                        semester
+                        semester.value
                       }`}
                       style={{ textDecoration: "none" }}
                     >
                       <div key={index} className="instigate-semester-option">
-                        <text>{semester}</text>
+                        <text>{semester.label}</text>
                         <ActionIcon variant="light">
                           <Bell size={20} />
                         </ActionIcon>
@@ -143,12 +147,12 @@ function Admin_view_semesters_of_a_curriculum() {
                   {semesterscnt.map((semester, index) => (
                     <a
                       href={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${
-                        semester
+                        semester.value
                       }`}
                       style={{ textDecoration: "none" }}
                     >
                       <div key={index} className="semester-option">
-                        <text>{semester}</text>
+                        <text>{semester.label}</text>
                         <text>+</text>
                       </div>
                     </a>

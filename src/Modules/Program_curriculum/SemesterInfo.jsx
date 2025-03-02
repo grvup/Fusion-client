@@ -197,8 +197,7 @@ export default function SemesterInfo() {
           <tr>
             <td colSpan="4" style={{ textAlign: "right", padding: "10px" }}>
               <a
-                href={`/programme_curriculum/admin_edit_course_slot_form?courseslot=
-                  ${slot.id}`}
+                href={`/programme_curriculum/admin_edit_course_slot_form/${slot.id}`}
               >
                 <Button
                   variant="solid"
