@@ -73,24 +73,13 @@ function Admin_view_all_course_instructors() {
       key={element.id}
       style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#E6F7FF" }}
     >
+      <td style={cellStyle}>{element.course_code}</td>
+      <td style={cellStyle}>{element.course_name}</td>
+      <td style={cellStyle}>{element.course_version}</td>
       <td style={cellStyle}>
-        {/* Instructor name as a link */}
-        <Link
-          to={`/programme_curriculum/view_curriculum?curriculum=${element.id}`}
-          style={{ color: "#3498db", textDecoration: "underline" }}
-        >
-          {element.name}
-        </Link>
+        {element.faculty_first_name} {element.faculty_last_name}
       </td>
-      <td style={cellStyle}>{element.version}</td>
-      <td style={cellStyle}>
-        {element.batch && element.batch.length > 0 ? (
-          element.batch.map((b, i) => <div key={i}>{b}</div>)
-        ) : (
-          <div>No batches available</div>
-        )}
-      </td>
-      <td style={cellStyle}>{element.semesters}</td>
+      <td style={cellStyle}>{element.year}</td>
       <td
         style={{
           padding: "15px 20px",
@@ -99,8 +88,8 @@ function Admin_view_all_course_instructors() {
       >
         {/* Edit button as a link */}
         <Link to="/programme_curriculum/admin_edit_curriculum_form">
-          <Button variant="filled" color="green" radius="md">
-            EDIT
+          <Button variant="filled" color="green" radius="sm">
+            Edit
           </Button>
         </Link>
       </td>
@@ -120,12 +109,12 @@ function Admin_view_all_course_instructors() {
       <Container
         style={{ padding: "20px", minHeight: "100vh", maxWidth: "100%" }}
       >
-        <Flex justify="flex-start" align="center" mb={20}>
+        <Flex justify="flex-start" align="center" mb={10}>
           <Button variant="filled" style={{ marginRight: "10px" }}>
             Instructors
           </Button>
         </Flex>
-
+        <hr />
         <Grid>
           {isMobile && (
             <Grid.Col span={12}>

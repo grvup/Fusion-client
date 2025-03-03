@@ -62,10 +62,13 @@ function ViewAllProgrammes() {
   const applyFilters = (data) => {
     return data.filter(
       (item) =>
-        item.name.toLowerCase().includes(programmeFilter.toLowerCase()) &&
-        item.discipline__name
-          .toLowerCase()
-          .includes(disciplineFilter.toLowerCase()),
+        (item.name ? item.name.toLowerCase() : "").includes(
+          programmeFilter.toLowerCase(),
+        ) &&
+        (item.discipline__name
+          ? item.discipline__name.toLowerCase()
+          : ""
+        ).includes(disciplineFilter.toLowerCase()),
     );
   };
 
