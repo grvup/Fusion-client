@@ -66,14 +66,6 @@ export default function App() {
             </Layout>
           }
         />
-        <Route
-          path="/complaints"
-          element={
-            <Layout>
-              <ComplaintSystem />
-            </Layout>
-          }
-        />
         <Route path="/accounts/login" element={<LoginPage />} />
         <Route path="/reset-password" element={<ForgotPassword />} />
       </Routes>
