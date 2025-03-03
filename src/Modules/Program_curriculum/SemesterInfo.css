@@ -1,0 +1,226 @@
+
+
+/* Styling the Tabs */
+.semester-tabs {
+    display: flex;
+    justify-content: flex-start;
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.semester-tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.semester-tab.active {
+    border-bottom: 2px solid #007bff;
+    color: #007bff;
+}
+
+.semester-tab:hover {
+    color: #007bff;
+}
+
+/* Table Styles for Semester Info */
+.semester-table {
+    width: 80%; /* Shortened the width of the table */
+    margin-top: 20px;
+    border-collapse: collapse;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: inline-table; /* Keep table inline */
+}
+
+.semester-table th,
+.semester-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.semester-table th {
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: bold;
+}
+
+.semester-table td {
+    color: #555;
+}
+
+.semester-table tr:hover {
+    background-color: #f0f8ff;
+}
+
+/* Button Container */
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    align-items: flex-start; /* Align buttons vertically to the top */
+}
+
+/* Buttons */
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s, opacity 0.3s, transform 0.2s;
+    margin-left: 10px; /* Add some space between buttons */
+}
+
+.button.instigate-semester {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.button.add-course-slot {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+/* Enhanced Hover Effects for Buttons */
+.button:hover {
+    opacity: 0.8; /* Slightly reduce opacity */
+    transform: scale(1.05); /* Slightly enlarge the button */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2); /* Add shadow */
+}
+
+/* Status Chip */
+.status-chip {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    display: inline-block;
+}
+
+.status-not-yet {
+    background-color: #fff4e5;
+    color: #ff9100;
+}
+
+.status-active {
+    background-color: #e8f5e9;
+    color: #43a047;
+}
+
+/* Course Slots Styling */
+.semester-course-slots {
+    margin-top: 20px;
+}
+
+.course-slot {
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-table {
+    width: 80%; /* Shortened the width of the course table */
+    border-collapse: collapse;
+    margin-top: 10px;
+    display: inline-table; /* Keep table inline */
+}
+
+.course-table th,
+.course-table td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.course-table th {
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.course-table td {
+    color: #555;
+    font-size: 14px;
+}
+
+.course-table tr:hover {
+    background-color: #f0f8ff;
+}
+
+/* Edit and Remove Buttons */
+.edit-button,
+.remove-button {
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.edit-button {
+    background-color: #4caf50;
+    color: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.remove-button {
+    background-color: #f44336;
+    color: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Hover Effects for Edit and Remove Buttons */
+.edit-button:hover,
+.remove-button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px) scale(1.05); /* Slightly raise and enlarge */
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2); /* Increase shadow */
+}
+
+/* Active Button Effect */
+.edit-button:active,
+.remove-button:active {
+    transform: translateY(0) scale(1); /* Reset to original size */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.breadcrumbs span {
+    margin-right: 10px;
+}
+
+.breadcrumbs span:not(:last-child)::after {
+    content: ">";
+    margin-left: 10px;
+}
+
+/* Program Options */
+.program-options {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+.program-options p {
+    display: inline;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.program-options .active {
+    font-weight: bold;
+    color: #007bff; /* Highlight color for active option */
+    text-decoration: underline;
+}

@@ -1,0 +1,220 @@
+/* CourseSlotDetails.css */
+
+.course-slot-container {
+    
+    margin: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    width: 65vw;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.course-slot-content {
+    margin-top: 20px;
+}
+
+.slot-description {
+    margin-top: 20px;
+}
+
+.course-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.course-info-table td, .course-info-table th {
+    border: 1px solid #ddd;
+    padding: 12px;
+}
+
+.course-info-table h2, .course-info-table h3, .course-info-table h4 {
+    margin: 0;
+}
+
+.course-info-table td {
+    font-size: 16px;
+}
+
+.course-info-table .course-slot-row td {
+    font-weight: bold;
+}
+
+.course-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+
+}
+
+.course-list-table td, .course-list-table th {
+    border: 1px solid #ddd;
+    padding: 12px;
+}
+
+.table-header {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.edit-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover {
+    background-color: #0056b3;
+}
+
+.no-courses {
+    text-align: center;
+    color: #888;
+    margin-top: 20px;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.edit-course-slot-btn, .remove-course-slot-btn, .add-course-slot-btn {
+    padding: 10px 15px;
+    border: none;
+    color: white;
+    background-color: #28a745;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.remove-course-slot-btn {
+    background-color: #dc3545;
+}
+
+.edit-course-slot-btn:hover, .remove-course-slot-btn:hover, .add-course-slot-btn:hover {
+    background-color: #218838;
+}
+
+.remove-course-slot-btn:hover {
+    background-color: #c82333;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+}
+
+.modal-content h2 {
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.confirm-remove-btn, .cancel-btn {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+}
+
+.confirm-remove-btn:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+/* Button styles for the new container */
+
+.button-container {
+    display: flex;
+    /* justify-content: space-between; */
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    /* background-color: #f9f9f9; */
+    border-radius: 8px;
+    text-align: center;
+    width: 15vw;
+    margin: 0.5vh 0;
+}
+
+.edit-course-slot-btn,
+.remove-course-slot-btn,
+.add-course-slot-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-course-slot-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.remove-course-slot-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.add-course-slot-btn {
+    background-color: #2196F3;
+    color: white;
+}
+
+.edit-course-slot-btn:hover {
+    background-color: #45a049;
+}
+
+.remove-course-slot-btn:hover {
+    background-color: #e53935;
+}
+
+.add-course-slot-btn:hover {
+    background-color: #1e88e5;
+}

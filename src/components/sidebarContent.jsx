@@ -39,131 +39,143 @@ import { useSelector, useDispatch } from "react-redux";
 import IIITLOGO from "../assets/IIITJ_logo.webp";
 import { setCurrentModule } from "../redux/moduleslice";
 
-const Modules = [
-  {
-    label: "Home",
-    id: "home",
-    icon: <HomeIcon size={18} />,
-    url: "/dashboard",
-  },
-  // { label: "Course Management", id:"course_management", icon: <OtherIcon size={18} />, url: "/" },
-  {
-    label: "Academics",
-    id: "course_registration",
-    icon: <AcademicsIcon size={18} />,
-    url: "/academics",
-  },
-  {
-    label: "Program & Curriculum",
-    id: "program_and_curriculum",
-    icon: <CurriculumIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Mess Management",
-    id: "mess_management",
-    icon: <MessIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Visitor's Hostel",
-    id: "visitor_hostel",
-    icon: <GuestIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "HealthCare Center",
-    id: "phc",
-    icon: <HealthIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "File Tracking",
-    id: "fts",
-    icon: <FileTrackingIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Scholarship Portal",
-    id: "spacs",
-    icon: <ScholarshipIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Complaint System",
-    id: "complaint_management",
-    icon: <ComplaintIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Placement Cell",
-    id: "placement_cell",
-    icon: <PlacementIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Department Portal",
-    id: "department",
-    icon: <DepartmentIcon size={18} />,
-    url: "/",
-  },
-  { label: "Research", id: "rspc", icon: <ResearchIcon size={18} />, url: "/" },
-  {
-    label: "Purchase and Store",
-    id: "purchase_and_store",
-    icon: <StoreIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Human Resource",
-    id: "hr",
-    icon: <HumanResourceIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Examination",
-    id: "examinations",
-    icon: <ExamIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Gymkhana",
-    id: "gymkhana",
-    icon: <GymkhanaIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Institute Work Departments",
-    id: "iwd",
-    icon: <IWDIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Hostel Management",
-    id: "hostel_management",
-    icon: <HostelIcon size={18} />,
-    url: "/",
-  },
-  {
-    label: "Other Academic Procedure",
-    id: "other_academics",
-    icon: <OtherAcademicIcon size={18} />,
-    url: "/",
-  },
-];
-
-const otherItems = [
-  {
-    label: "Profile",
-    id: "profile",
-    icon: <ProfileIcon size={18} />,
-    url: "/profile",
-  },
-  { label: "Settings", icon: <SettingsIcon size={18} /> },
-  { label: "Help", icon: <HelpIcon size={18} /> },
-];
-
 function SidebarContent({ isCollapsed, toggleSidebar }) {
+  const role = useSelector((state) => state.user.role);
+
+  const Modules = [
+    {
+      label: "Home",
+      id: "home",
+      icon: <HomeIcon size={18} />,
+      url: "/dashboard",
+    },
+    // { label: "Course Management", id:"course_management", icon: <OtherIcon size={18} />, url: "/" },
+    {
+      label: "Academics",
+      id: "course_registration",
+      icon: <AcademicsIcon size={18} />,
+      url: "/academics",
+    },
+    {
+      label: "Program & Curriculum",
+      id: "program_and_curriculum",
+      icon: <CurriculumIcon size={18} />,
+      url:
+        role === "acadadmin" || role === "studentacadadmin"
+          ? "/programme_curriculum/acad_view_all_programme"
+          : role === "student"
+            ? "/programme_curriculum/view_all_programmes"
+            : "/programme_curriculum/faculty_view_all_programmes",
+    },
+    {
+      label: "Mess Management",
+      id: "mess_management",
+      icon: <MessIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Visitor's Hostel",
+      id: "visitor_hostel",
+      icon: <GuestIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "HealthCare Center",
+      id: "phc",
+      icon: <HealthIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "File Tracking",
+      id: "fts",
+      icon: <FileTrackingIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Scholarship Portal",
+      id: "spacs",
+      icon: <ScholarshipIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Complaint System",
+      id: "complaint_management",
+      icon: <ComplaintIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Placement Cell",
+      id: "placement_cell",
+      icon: <PlacementIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Department Portal",
+      id: "department",
+      icon: <DepartmentIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Research",
+      id: "rspc",
+      icon: <ResearchIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Purchase and Store",
+      id: "purchase_and_store",
+      icon: <StoreIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Human Resource",
+      id: "hr",
+      icon: <HumanResourceIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Examination",
+      id: "examinations",
+      icon: <ExamIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Gymkhana",
+      id: "gymkhana",
+      icon: <GymkhanaIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Institute Work Departments",
+      id: "iwd",
+      icon: <IWDIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Hostel Management",
+      id: "hostel_management",
+      icon: <HostelIcon size={18} />,
+      url: "/",
+    },
+    {
+      label: "Other Academic Procedure",
+      id: "other_academics",
+      icon: <OtherAcademicIcon size={18} />,
+      url: "/",
+    },
+  ];
+
+  const otherItems = [
+    {
+      label: "Profile",
+      id: "profile",
+      icon: <ProfileIcon size={18} />,
+      url: "/profile",
+    },
+    { label: "Settings", icon: <SettingsIcon size={18} /> },
+    { label: "Help", icon: <HelpIcon size={18} /> },
+  ];
+
   const dispatch = useDispatch();
   const [hover, setHover] = useState(null);
   const [selected, setSelected] = useState(null);

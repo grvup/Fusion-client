@@ -1,0 +1,319 @@
+/* Button Styles */
+.options-button {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1;
+  transition: background-color 0.5s;
+  width: 14vw;
+}
+
+.options-button:hover {
+  background-color: #0056b3;
+}
+
+/* Dropdown Styles */
+.options-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0px;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1;
+  width: 14vw;
+  overflow-x: visible;
+  opacity: 0;
+  transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
+  border-radius: 5px;
+}
+
+.options-dropdown.open {
+  opacity: 1;
+  height: fit-content;
+  transition: max-height 0.4s ease-in, opacity 0.4s ease-in;
+}
+
+/* Section Styling */
+.dropdown-section {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  color: #333;
+}
+
+/* Button inside dropdown styling */
+.dropdown-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  color: black;
+  transition: background-color 0.3s ease;
+  background-color: #62b6cb;
+}
+
+.green-btn {
+  background-color: #62b6cb;
+}
+
+.blue-btn {
+  background-color: #62b6cb;
+}
+
+.black-btn {
+  background-color: #6a95ad;
+}
+
+/* Hover effects for dropdown buttons */
+.dropdown-btn:hover {
+  opacity: 0.9;
+}
+
+/* Add Course Slot and Semester Dropdown */
+.add-course-slot-button {
+  background-color: #62b6cb;
+  color: black;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  font-size: 14px;    
+}
+
+.add-course-slot-button:hover {
+  background-color: #007bff;
+}
+
+.add-instigate-semester-button {
+  background-color: #62b6cb;
+  color: black;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.add-instigate-semester-button:hover {
+  background-color: #007bff;
+}
+
+.semester-dropdown {
+  position: absolute;
+  right: 13.2vw;
+  top: 170px;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 2;
+  min-width: 150px;
+  overflow-y: auto; /* Scroll if content overflows */
+  transition: max-height 0.4s ease-out;
+  border-radius: 5px;
+}
+
+.semester-option {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  overflow-x: visible;
+  z-index: 2;
+}
+
+.semester-option:hover {
+  background-color: #f1f1f1;
+}
+
+.instigate-semester-dropdown {
+  position: absolute;
+  right: 13.2vw;
+  top: 118px;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 2;
+  min-width: 150px;
+  overflow-y: auto; /* Scroll if content overflows */
+  transition: max-height 0.4s ease-out;
+  border-radius: 5px;
+}
+
+.instigate-semester-option {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  overflow-x: visible;
+  z-index: 2;
+}
+
+.instigate-semester-option:hover {
+  background-color: #f1f1f1;
+}
+
+/* Breadcrumbs Styling */
+.breadcrumbs {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.breadcrumbs > span {
+  margin-right: 5px;
+  font-size: 0.8vw;
+  font-weight: bold;
+}
+
+.breadcrumbs > span::after {
+  content: ">";
+  margin-left: 5px;
+}
+
+.breadcrumbs > span:last-child::after {
+  content: ""; /* Remove the '>' from the last breadcrumb */
+}
+
+/* Program Options Bar Styling */
+.program-options {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 0;
+  font-size: 0.8vw;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.program-options > p {
+  margin: 0;
+  color: #666;
+  cursor: pointer;
+}
+
+.program-options > p:hover {
+  color: #000;
+  text-decoration: underline;
+}
+
+/* Active option styling (Programmes) */
+.program-options .active {
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+}
+
+.program-options > p::after {
+  content: "|";
+  margin-left: 10px;
+  color: #ddd;
+}
+
+.program-options > p:last-child::after {
+  content: ""; /* Remove the '|' from the last item */
+}
+
+/* Improved Table Styles */
+.table-container {
+  position: relative; /* Allow positioning of the button */
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse; /* Collapse borders for cleaner look */
+  margin-top: 20px; /* Space above the table */
+  font-size: 0.9vw; /* Responsive font size */
+}
+
+.table-container th, .table-container td {
+  padding: 10px; /* Cell padding */
+  text-align: center; /* Centered text */
+  border: 1px solid #ddd; /* Light border for a clean look */
+}
+
+.table-container thead th {
+  background-color: #f5f5f5; /* Light background for header */
+  color: #333; /* Dark text for better readability */
+  font-weight: bold; /* Bold font for header */
+}
+
+.table-container tbody td {
+  background-color: #ffffff; /* White background for body */
+  color: #333; /* Dark text for body */
+}
+
+.table-container tr:nth-child(even) {
+  background-color: #f9f9f9; /* Alternating row colors */
+}
+
+.table-container tr:hover {
+  background-color: #f1f1f1; /* Hover effect for table rows */
+}
+
+.table-container td strong {
+  color: #007bff; /* Highlight strong text */
+}
+
+.table-container h2, .table-container h4 {
+  margin: 0; /* Reset margin */
+  font-size: 1vw; /* Responsive font size */
+  color: #007bff; /* Color for headings */
+  text-align: center; /* Centered headings */
+}
+
+.table-container p {
+  margin: 0.5vw 0; /* Small margin for paragraphs */
+}
+
+.table-container td p {
+  font-size: 0.8vw; /* Smaller font for content inside cells */
+}
+
+.table-container td div {
+  padding: 5px; /* Padding for divs inside cells */
+}
+
+/* Adjusting table header alignment */
+.table-container th:first-child, .table-container td:first-child {
+  text-align: left; /* Left align first column */
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .table-container table {
+      font-size: 1.2vw; /* Larger font size on smaller screens */
+  }
+
+  .table-container th, .table-container td {
+      padding: 8px; /* Smaller padding for mobile */
+  }
+
+  .table-container h2, .table-container h4 {
+      font-size: 1.5vw; /* Adjust heading size for mobile */
+  }
+}
