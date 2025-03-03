@@ -137,7 +137,7 @@ function SidebarContent({ isCollapsed, toggleSidebar }) {
       label: "Examination",
       id: "examinations",
       icon: <ExamIcon size={18} />,
-      url: "/",
+      url: "/examination",
     },
     {
       label: "Gymkhana",
