@@ -74,6 +74,7 @@
 
 .form-container{
   width: 100%;
+  overflow-x: scroll;
 }
 
 .tabs {

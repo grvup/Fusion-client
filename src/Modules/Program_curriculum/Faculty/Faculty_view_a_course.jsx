@@ -1,14 +1,5 @@
+import { Button, Card, Grid, Table, Text } from "@mantine/core";
 import React from "react";
-import {
-  Button,
-  Table,
-  Card,
-  Text,
-  Grid,
-  Breadcrumbs,
-  Anchor,
-  Group,
-} from "@mantine/core";
 
 function CourseDetail() {
   const courseDetails = {
@@ -42,30 +33,12 @@ function CourseDetail() {
       "Object-Oriented Programming in Java by Alan Turing",
     ],
   };
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+
   return (
     <div
       className="course-detail-container"
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
-
-      <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group>
-
       {/* Course Details Card */}
       <div style={{ display: "flex" }}>
         <Card shadow="sm" padding="lg" className="course-card">

@@ -168,6 +168,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_course_view"
           element={
             <Layout>
+              <NavTab />
               <FacultyViewACourse />
             </Layout>
           }

@@ -112,19 +112,8 @@ function Admin_view_a_courses() {
 
   return (
     <div>
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Courses</span>
-      </nav>
-
       {/* Options Section */}
       <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>disciplines</p>
-        <p>batches</p>
-
         <div className="top-actions">
           {/* <Button className="add-course-btn">ADD COURSE</Button> */}
           {/* <Button className="search-btn" onClick={() => setShowSearch(!showSearch)}>
@@ -140,7 +129,7 @@ function Admin_view_a_courses() {
         </div>
       </div>
 
-      <h4>Courses</h4>
+      <h4 style={{ marginLeft: "2rem" }}>Courses</h4>
       <div className={`courses-container ${showSearch ? "search-active" : ""}`}>
         <div className="courses-table-section">
           <ScrollArea className="courses-scroll-area">

@@ -43,19 +43,7 @@ function InwardFile() {
 
   return (
     <div>
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Curriculums</span>
-        <span>CSE UG Curriculum</span>
-      </nav>
-
       <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>disciplines</p>
-        <p>InwardFiles</p>
-
         <div className="top-actions">
           {/* <Button variant="filled" color="blue">
             Add Batch

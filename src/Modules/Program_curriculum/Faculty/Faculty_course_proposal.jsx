@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Faculty_course_proposal.css";
 import { Button } from "@mantine/core";
-
+// import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import PropTypes from "prop-types";
 
 function FormSection({ activeTab, setActiveTab, title, formType }) {
@@ -63,22 +63,10 @@ function Admin_course_proposal_form() {
   };
 
   return (
-    <div className="admin-course-proposal-container">
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Curriculums</span>
-        <span>CSE UG Curriculum</span>
-      </nav>
-
-      {/* Options Section */}
-      <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>Disciplines</p>
-        <p>Batches</p>
-      </div>
-
+    <div
+      className="admin-course-proposal-container"
+      style={{ marginTop: "40px" }}
+    >
       {/* Section Switch Buttons */}
       <Button
         onClick={() => handleFormSwitch("new-forms")}
