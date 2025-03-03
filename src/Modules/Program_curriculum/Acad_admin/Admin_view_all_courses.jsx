@@ -27,20 +27,23 @@ function Admin_view_all_courses() {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const cachedData = localStorage.getItem("coursesCache");
-        const timestamp = localStorage.getItem("coursesTimestamp");
+        const cachedData = localStorage.getItem("AdminCoursesCache");
+        const timestamp = localStorage.getItem("AdminCoursesTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        const cachedDatachange = localStorage.getItem(
+          "AdminCoursesCachechange",
+        );
         // 10 min cache
-
-        if (cachedData && isCacheValid) {
+        if (cachedData && isCacheValid && cachedDatachange === "true") {
           setCourses(JSON.parse(cachedData));
+          localStorage.setItem("AdminCoursesCachechange", "false");
         } else {
           const data = await fetchAllCourses();
           setCourses(data);
 
-          localStorage.setItem("coursesCache", JSON.stringify(data));
-          localStorage.setItem("coursesTimestamp", Date.now().toString());
+          localStorage.setItem("AdminCoursesCache", JSON.stringify(data));
+          localStorage.setItem("AdminCoursesTimestamp", Date.now().toString());
         }
       } catch (err) {
         setError("Failed to load courses.");

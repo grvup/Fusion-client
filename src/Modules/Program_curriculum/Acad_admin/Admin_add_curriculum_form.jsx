@@ -60,6 +60,7 @@ function AdminAddCurriculumForm() {
   };
 
   const handleSubmit = async (e) => {
+    localStorage.setItem("AdminCurriculumsCachechange", "true");
     e.preventDefault();
     setLoading(true);
     setNotification(null);

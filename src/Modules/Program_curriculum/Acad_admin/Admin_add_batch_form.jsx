@@ -61,6 +61,7 @@ function Admin_add_batch_form() {
 
   const handleSubmit = async () => {
     try {
+      localStorage.setItem("AdminBatchesCachechange", "true");
       const token = localStorage.getItem("authToken");
       if (!token) {
         throw new Error("Authorization token is required");

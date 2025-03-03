@@ -29,16 +29,19 @@ function AdminViewAllBatches() {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const cachedData = localStorage.getItem("batchesCache");
-        const timestamp = localStorage.getItem("batchesTimestamp");
+        const cachedData = localStorage.getItem("AdminBatchesCache");
+        const timestamp = localStorage.getItem("AdminBatchesTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        const cachedDatachange = localStorage.getItem(
+          "AdminBatchesCachechange",
+        );
         // 10 min cache
-
-        if (cachedData && isCacheValid) {
+        if (cachedData && isCacheValid && cachedDatachange === "true") {
           const data = JSON.parse(cachedData);
           setBatches(data.batches || []);
           setFinishedBatches(data.finished_batches || []);
+          localStorage.setItem("AdminBatchesCachechange", "false");
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
@@ -53,8 +56,11 @@ function AdminViewAllBatches() {
           setBatches(response.data.batches || []);
           setFinishedBatches(response.data.finished_batches || []);
 
-          localStorage.setItem("batchesCache", JSON.stringify(response.data));
-          localStorage.setItem("batchesTimestamp", Date.now().toString());
+          localStorage.setItem(
+            "AdminBatchesCache",
+            JSON.stringify(response.data),
+          );
+          localStorage.setItem("AdminBatchesTimestamp", Date.now().toString());
         }
       } catch (error) {
         console.error("Error fetching batch data:", error);

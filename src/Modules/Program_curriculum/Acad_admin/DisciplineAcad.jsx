@@ -26,14 +26,17 @@ function DisciplineAcad() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const cachedData = localStorage.getItem("disciplinesCache");
-        const timestamp = localStorage.getItem("disciplinesTimestamp");
+        const cachedData = localStorage.getItem("DisciplineAcad");
+        const timestamp = localStorage.getItem("DisciplineAcadTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
         // 10 min cache
-
-        if (cachedData && isCacheValid) {
+        const cachedDatachange = localStorage.getItem(
+          "AdminDisciplineCachechange",
+        );
+        if (cachedData && isCacheValid && cachedDatachange === "true") {
           setDisciplines(JSON.parse(cachedData));
+          localStorage.setItem("AdminDisciplineCachechange", "false");
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
@@ -41,8 +44,11 @@ function DisciplineAcad() {
           const data = await fetchDisciplinesData(token);
           setDisciplines(data);
 
-          localStorage.setItem("disciplinesCache", JSON.stringify(data));
-          localStorage.setItem("disciplinesTimestamp", Date.now().toString());
+          localStorage.setItem("DisciplineAcad", JSON.stringify(data));
+          localStorage.setItem(
+            "DisciplineAcadTimestamp",
+            Date.now().toString(),
+          );
         }
       } catch (error) {
         console.error("Error fetching disciplines: ", error);

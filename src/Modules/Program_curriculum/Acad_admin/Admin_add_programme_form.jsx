@@ -46,7 +46,7 @@ function Admin_add_programme_form() {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("programmesCachechange", true);
+        localStorage.setItem("AdminProgrammesCachechange", "true");
         alert("Programme added successfully!");
         console.log("Response Data:", data);
         navigate("/programme_curriculum/acad_view_all_programme");

@@ -27,13 +27,16 @@ function Admin_view_all_working_curriculums() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const cachedData = localStorage.getItem("curriculumsCache");
-        const timestamp = localStorage.getItem("curriculumsTimestamp");
+        const cachedData = localStorage.getItem("AdminCurriculumsCache");
+        const timestamp = localStorage.getItem("AdminCurriculumsTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000; // 10 min cache
-
-        if (cachedData && isCacheValid) {
+        const cachedDatachange = localStorage.getItem(
+          "AdminCurriculumsCachechange",
+        );
+        if (cachedData && isCacheValid && cachedDatachange === "true") {
           setCurriculums(JSON.parse(cachedData));
+          localStorage.setItem("AdminCurriculumsCachechange", "false");
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
@@ -41,10 +44,13 @@ function Admin_view_all_working_curriculums() {
           const data = await fetchWorkingCurriculumsData(token);
           setCurriculums(data.curriculums);
           localStorage.setItem(
-            "curriculumsCache",
+            "AdminCurriculumsCache",
             JSON.stringify(data.curriculums),
           );
-          localStorage.setItem("curriculumsTimestamp", Date.now().toString());
+          localStorage.setItem(
+            "AdminCurriculumsTimestamp",
+            Date.now().toString(),
+          );
         }
       } catch (error) {
         console.error("Error fetching curriculums: ", error);
