@@ -111,9 +111,12 @@ function Admin_view_a_courses() {
   // }
 
   return (
-    <div>
+    <div style={{ padding: "20px", paddingTop: "10px" }}>
       {/* Options Section */}
-      <div className="program-options">
+      <div className="program-options" style={{ borderBottom: "none" }}>
+        <Button variant="filled" style={{ marginRight: "10px" }}>
+          Courses
+        </Button>
         <div className="top-actions">
           {/* <Button className="add-course-btn">ADD COURSE</Button> */}
           {/* <Button className="search-btn" onClick={() => setShowSearch(!showSearch)}>
@@ -129,17 +132,12 @@ function Admin_view_a_courses() {
         </div>
       </div>
 
-      <h4 style={{ marginLeft: "2rem" }}>Courses</h4>
+      <hr />
+
       <div className={`courses-container ${showSearch ? "search-active" : ""}`}>
         <div className="courses-table-section">
           <ScrollArea className="courses-scroll-area">
-            <Card
-              shadow="sm"
-              padding="lg"
-              radius="md"
-              withBorder
-              className="courses-card-container"
-            >
+            <div radius="md" className="courses-card-container">
               <Table highlightOnHover striped className="courses-table">
                 <thead className="courses-table-header">
                   <tr>
@@ -175,15 +173,15 @@ function Admin_view_a_courses() {
                   ))}
                 </tbody>
               </Table>
-            </Card>
+            </div>
           </ScrollArea>
         </div>
 
         {showSearch && (
           <div className="courses-search-section">
             <Card
-              shadow="sm"
-              padding="lg"
+              // shadow="sm"
+              // padding="lg"
               radius="md"
               withBorder
               className="courses-search-card"
@@ -291,12 +289,6 @@ function Admin_view_a_courses() {
           gap: 10px; /* Adds space between buttons */
         }
 
-        // .course-link {
-        //   color: #007bff;
-        //   text-decoration: none;
-        //   font-weight: bold;
-        // }
-
         .course-link:hover {
           text-decoration: underline;
           color: #0056b3;
@@ -316,27 +308,79 @@ function Admin_view_a_courses() {
         .courses-table {
           width: 100%;
           border-collapse: collapse;
-          table-layout: fixed;
+          border: 1px solid #d3d3d3;
         }
 
         .courses-table-header {
-          background-color: #b0e0ff;
-          color: black;
-          border: 2px solid #007bff;
-        }
-
-        .courses-table-row:hover {
-          background-color: #f0f8ff;
-        }
-
-        .courses-table td, .courses-table th {
-          border: 1px solid #007bff;
-          padding: 10px;
-          text-align: left;
+          background-color: #C5E2F6;
         }
 
         .courses-table th {
-          font-weight: bold;
+          padding: 15px 20px;
+          color: #3498db;
+          font-size: 16px;
+          text-align: center;
+          border-right: 1px solid #d3d3d3;
+          font-weight: normal;
+        }
+
+        .courses-table th:last-child {
+          border-right: none;
+        }
+
+        .courses-table td {
+          padding: 15px 20px;
+          text-align: center;
+          color: black;
+          border-right: 1px solid #d3d3d3;
+        }
+
+        .courses-table td:last-child {
+          border-right: none;
+        }
+
+        .courses-table-row:nth-child(even) {
+          background-color: #15ABFF1C;
+        }
+
+        .courses-table-row:nth-child(odd) {
+          background-color: #fff;
+        }
+
+        .course-link {
+          color: #3498db;
+          text-decoration: none;
+          font-size: 14px;
+        }
+
+        .courses-table-section {
+          flex: 3;
+          border: 1px solid #d3d3d3;
+          border-radius: 10px;
+          height: calc(100vh - 150px);
+          overflow: hidden;
+        }
+
+        .courses-scroll-area {
+          background-color: white;
+          height: 100%;
+          // padding: 20px;
+          overflow-y: auto;
+        }
+
+        .courses-card-container {
+          height: 100%;
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .courses-scroll-area::-webkit-scrollbar {
+          display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .courses-scroll-area {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
         }
 
         .courses-edit-button {
@@ -371,12 +415,6 @@ function Admin_view_a_courses() {
           margin-bottom: 5px;
         }
 
-        .courses-scroll-area {
-          flex-grow: 1;
-          height: calc(100vh - 60px); /* Full height minus the space for the top actions (adjust accordingly) */
-          overflow-y: auto;
-        }
-
         .breadcrumbs {
     font-size: 14px;
     margin-bottom: 10px;
@@ -405,7 +443,8 @@ function Admin_view_a_courses() {
     gap: 20px;
     padding: 10px 0;
     font-size: 0.8vw;
-    border-bottom: 1px solid #e0e0e0;
+    border: none;
+    box-shadow: none;
   }
   
   .program-options > p {

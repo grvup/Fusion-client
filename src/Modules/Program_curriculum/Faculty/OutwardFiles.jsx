@@ -44,7 +44,7 @@ function OutwardFile() {
 
   return (
     <div>
-      <div className="program-options">
+      <div className="program-options" style={{ border: "none" }}>
         <div className="top-actions">
           {/* <Button variant="filled" color="blue">
             Add Batch
@@ -298,6 +298,7 @@ function OutwardFile() {
           display: flex;
           flex-direction: column;
           transition: all 0.3s ease-in-out;
+          overflow-x: scroll;
         }
 
         .full-width {

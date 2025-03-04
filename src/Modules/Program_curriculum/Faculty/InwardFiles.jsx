@@ -298,6 +298,7 @@ function InwardFile() {
           display: flex;
           flex-direction: column;
           transition: all 0.3s ease-in-out;
+          overflow-x: scroll;
         }
 
         .full-width {
