@@ -122,6 +122,7 @@ function Admin_edit_discipline_form() {
       });
 
       if (response.ok) {
+        localStorage.setItem("AdminDisciplineCachechange", "true");
         const data = await response.json();
         console.log("Response Data:", data);
         alert("Discipline updated successfully!");

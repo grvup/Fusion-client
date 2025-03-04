@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import axios from "axios";
-import { useNavigate, useSearchParams } from "react-router-dom"; // For handling URL parameters and navigation
+import { Link, useNavigate, useSearchParams } from "react-router-dom"; // For handling URL parameters and navigation
 import {
   fetchDisciplines,
   fetchBatchName,
@@ -85,6 +85,7 @@ function Admin_edit_batch_form() {
 
   const handleSubmit = async () => {
     try {
+      localStorage.setItem("AdminBatchesCachechange", "true");
       const token = localStorage.getItem("authToken");
       if (!token) {
         throw new Error("Authorization token is required");
@@ -248,24 +249,24 @@ function Admin_edit_batch_form() {
             }}
           >
             <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a
-                href="/programme_curriculum/acad_admin_add_curriculum_form"
+              <Link
+                to="/programme_curriculum/acad_admin_add_curriculum_form"
                 style={{ textDecoration: "none" }}
               >
                 <Button className="right-btn-batch">Add Curriculum</Button>
-              </a>
-              <a
-                href="/programme_curriculum/acad_admin_add_batch_form"
+              </Link>
+              <Link
+                to="/programme_curriculum/acad_admin_add_batch_form"
                 style={{ textDecoration: "none" }}
               >
                 <Button className="right-btn-batch">Add Another Batch</Button>
-              </a>
-              <a
-                href="/programme_curriculum/acad_admin_add_discipline_form"
+              </Link>
+              <Link
+                to="/programme_curriculum/acad_admin_add_discipline_form"
                 style={{ textDecoration: "none" }}
               >
                 <Button className="right-btn-batch">Add Discipline</Button>
-              </a>
+              </Link>
             </Group>
           </div>
         </div>

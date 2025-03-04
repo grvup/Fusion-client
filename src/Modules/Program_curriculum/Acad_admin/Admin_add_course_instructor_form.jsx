@@ -29,6 +29,7 @@ function Admin_add_course_instructor() {
   });
 
   const handleSubmit = (values) => {
+    localStorage.setItem("AdminInstructorsCacheChange", "true");
     console.log(values);
   };
 
@@ -204,7 +205,7 @@ function Admin_add_course_instructor() {
                       ) : (
                         <Button
                           component="a"
-                          href={URL.createObjectURL(uploadedFile)}
+                          to={URL.createObjectURL(uploadedFile)}
                           download={uploadedFile.name}
                           variant="filled"
                           color="green"

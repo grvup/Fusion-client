@@ -163,6 +163,7 @@ function Admin_edit_course_form() {
       });
 
       if (response.ok) {
+        localStorage.setItem("AdminCoursesCachechange", "true");
         const data = await response.json();
         alert("Course added successfully!");
         console.log("Response Data:", data);

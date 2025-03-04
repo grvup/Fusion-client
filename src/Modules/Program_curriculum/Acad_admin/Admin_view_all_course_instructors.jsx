@@ -33,9 +33,27 @@ function Admin_view_all_course_instructors() {
           throw new Error("Authorization token not found");
         }
 
-        const data = await adminFetchCourseInstructorData();
-        console.log(data);
-        setInstructors(data);
+        const cachedData = localStorage.getItem("AdminInstructorsCache");
+        const timestamp = localStorage.getItem("AdminInstructorsTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        const cachedDataChange = localStorage.getItem(
+          "AdminInstructorsCacheChange",
+        );
+
+        // 10 min cache
+        if (cachedData && isCacheValid && cachedDataChange === "false") {
+          setInstructors(JSON.parse(cachedData));
+        } else {
+          const data = await adminFetchCourseInstructorData();
+          setInstructors(data);
+          localStorage.setItem("AdminInstructorsCacheChange", "false");
+          localStorage.setItem("AdminInstructorsCache", JSON.stringify(data));
+          localStorage.setItem(
+            "AdminInstructorsTimestamp",
+            Date.now().toString(),
+          );
+        }
       } catch (error) {
         console.error("Error fetching instructors: ", error);
       } finally {
@@ -180,7 +198,7 @@ function Admin_view_all_course_instructors() {
                         borderRight: "1px solid #d3d3d3",
                       }}
                     >
-                      Course Code
+                      Code
                     </th>
                     <th
                       style={{
@@ -204,7 +222,7 @@ function Admin_view_all_course_instructors() {
                         borderRight: "1px solid #d3d3d3",
                       }}
                     >
-                      Course Version
+                      Version
                     </th>
                     <th
                       style={{

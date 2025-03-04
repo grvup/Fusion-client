@@ -131,9 +131,7 @@ function AdminViewProgrammes() {
           }}
         >
           <Link
-            to={`/programme_curriculum/admin_edit_programme_form?programme=${encodeURIComponent(
-              element.programme,
-            )}`}
+            to={`/programme_curriculum/admin_edit_programme_form/${element.id}`}
           >
             <Button variant="filled" color="green" radius="sm">
               Edit

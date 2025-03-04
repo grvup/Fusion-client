@@ -65,14 +65,19 @@ function Admin_view_all_working_curriculums() {
   // Filtered data based on search inputs
   const filteredData = curriculums.filter((item) => {
     return (
-      item.name.toLowerCase().includes(filters.name.toLowerCase()) &&
-      item.version.toLowerCase().includes(filters.version.toLowerCase()) &&
-      (item.batch || []).some((b) =>
-        b.toLowerCase().includes(filters.batch.toLowerCase()),
-      ) &&
-      item.semesters.toString().includes(filters.semesters)
+      (filters.name === "" ||
+        item.name.toLowerCase().includes(filters.name.toLowerCase())) &&
+      (filters.version === "" ||
+        item.version.toLowerCase().includes(filters.version.toLowerCase())) &&
+      (filters.batch === "" ||
+        (item.batch || []).some((b) =>
+          b.toLowerCase().includes(filters.batch.toLowerCase()),
+        )) &&
+      (filters.semesters === "" ||
+        item.semesters.toString().includes(filters.semesters))
     );
   });
+
   const cellStyle = {
     padding: "15px 20px",
     textAlign: "center",

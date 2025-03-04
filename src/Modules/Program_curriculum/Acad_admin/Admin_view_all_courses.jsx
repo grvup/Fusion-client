@@ -3,7 +3,6 @@ import {
   ScrollArea,
   TextInput,
   Table,
-  Loader,
   Flex,
   Grid,
   MantineProvider,
@@ -56,7 +55,11 @@ function Admin_view_all_courses() {
   }, []);
 
   if (loading) {
-    return <Loader size="lg" variant="dots" />; // Show loader while loading
+    <tr>
+      <td colSpan="5" style={{ textAlign: "center" }}>
+        Loading...
+      </td>
+    </tr>;
   }
 
   if (error) {
@@ -65,10 +68,13 @@ function Admin_view_all_courses() {
 
   const filteredCourses = courses.filter((course) => {
     return (
-      course.code.toLowerCase().includes(searchCode.toLowerCase()) &&
-      course.name.toLowerCase().includes(searchCourse.toLowerCase()) &&
-      course.version.includes(searchVersion) &&
-      course.credits.toString().includes(searchCredits)
+      (searchCode === "" ||
+        course.code.toLowerCase().includes(searchCode.toLowerCase())) &&
+      (searchCourse === "" ||
+        course.name.toLowerCase().includes(searchCourse.toLowerCase())) &&
+      (searchVersion === "" || course.version.includes(searchVersion)) &&
+      (searchCredits === "" ||
+        course.credits.toString().includes(searchCredits))
     );
   });
 
