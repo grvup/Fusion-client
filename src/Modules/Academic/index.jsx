@@ -15,6 +15,7 @@ import GenerateStudentList from "./GenerateStudentList";
 import ViewRollList from "./ViewRollList";
 import AllocateCourses from "./AllocateCourses";
 import VerifyStudentRegistration from "./VerifyStudentRegistration";
+import SwayamRegistration from "./SwayamRegistration";
 
 function AcademicPage() {
   const [activeTab, setActiveTab] = useState("0");
@@ -46,12 +47,14 @@ function AcademicPage() {
       { title: "Available Courses" },
       { title: "Pre-Registration" },
       { title: "Final-Registration" },
+      { title: "Swayam Registration" },
     ];
     tabComponents = [
       RegisteredCourses,
       AvailableCourses,
       PreRegistration,
       FinalRegistration,
+      SwayamRegistration,
     ];
   } else {
     tabItems = [{ title: "View Roll List" }];
