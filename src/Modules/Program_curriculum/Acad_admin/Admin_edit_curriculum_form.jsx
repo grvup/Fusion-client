@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import {
   TextInput,
   Select,
@@ -43,6 +43,8 @@ function Admin_edit_curriculum_form({ existingData }) {
       numCredits: existingData.numCredits || 0,
     },
   });
+
+  const navigate = useNavigate();
 
   const curriculumId = searchParams.get("curriculum");
   useEffect(() => {
@@ -145,6 +147,7 @@ function Admin_edit_curriculum_form({ existingData }) {
   // Handle form submission (Update API written directly in the form)
   const handleSubmit = async (values) => {
     try {
+      localStorage.setItem("AdminCurriculumsCachechange", "true");
       const token = localStorage.getItem("authToken");
       if (!token) throw new Error("Authorization token not found");
 
@@ -171,6 +174,7 @@ function Admin_edit_curriculum_form({ existingData }) {
         message: response.data.message || "Curriculum updated successfully!",
         color: "green",
       });
+      navigate("/programme_curriculum/acad_view_all_working_curriculums");
     } catch (err) {
       console.error("Error updating curriculum:", err);
       setNotification({
@@ -338,16 +342,16 @@ function Admin_edit_curriculum_form({ existingData }) {
             }}
           >
             <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a href="/programme_curriculum/acad_admin_add_programme_form">
+              <Link to="/programme_curriculum/acad_admin_add_programme_form">
                 <Button className="right-btn-curriculum">Add Programme</Button>
-              </a>
+              </Link>
 
-              <a href="/programme_curriculum/acad_admin_add_batch_form">
+              <Link to="/programme_curriculum/acad_admin_add_batch_form">
                 <Button className="right-btn-curriculum">Add Batch</Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_discipline_form">
+              </Link>
+              <Link to="/programme_curriculum/acad_admin_add_discipline_form">
                 <Button className="right-btn-curriculum">Add Discipline</Button>
-              </a>
+              </Link>
             </Group>
           </div>
         </div>

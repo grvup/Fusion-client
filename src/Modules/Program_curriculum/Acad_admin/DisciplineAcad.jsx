@@ -26,13 +26,15 @@ function DisciplineAcad() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const cachedData = localStorage.getItem("disciplinesCache");
-        const timestamp = localStorage.getItem("disciplinesTimestamp");
+        const cachedData = localStorage.getItem("DisciplineAcad");
+        const timestamp = localStorage.getItem("DisciplineAcadTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
         // 10 min cache
-
-        if (cachedData && isCacheValid) {
+        const cachedDatachange = localStorage.getItem(
+          "AdminDisciplineCachechange",
+        );
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           setDisciplines(JSON.parse(cachedData));
         } else {
           const token = localStorage.getItem("authToken");
@@ -40,9 +42,13 @@ function DisciplineAcad() {
 
           const data = await fetchDisciplinesData(token);
           setDisciplines(data);
+          localStorage.setItem("AdminDisciplineCachechange", "false");
 
-          localStorage.setItem("disciplinesCache", JSON.stringify(data));
-          localStorage.setItem("disciplinesTimestamp", Date.now().toString());
+          localStorage.setItem("DisciplineAcad", JSON.stringify(data));
+          localStorage.setItem(
+            "DisciplineAcadTimestamp",
+            Date.now().toString(),
+          );
         }
       } catch (error) {
         console.error("Error fetching disciplines: ", error);
@@ -55,12 +61,16 @@ function DisciplineAcad() {
   }, []);
 
   const filteredDisciplines = disciplines.filter((item) => {
-    const disciplineMatch = item.name
-      .toLowerCase()
-      .includes(disciplineFilter.toLowerCase());
-    const programMatch = item.programmes.some((program) =>
-      program.name.toLowerCase().includes(programFilter.toLowerCase()),
-    );
+    const disciplineMatch =
+      disciplineFilter === "" ||
+      item.name.toLowerCase().includes(disciplineFilter.toLowerCase());
+
+    const programMatch =
+      programFilter === "" ||
+      item.programmes.some((program) =>
+        program.name.toLowerCase().includes(programFilter.toLowerCase()),
+      );
+
     return disciplineMatch && programMatch;
   });
 
@@ -236,13 +246,13 @@ function DisciplineAcad() {
                             borderRight: "1px solid #d3d3d3",
                           }}
                         >
-                          <a
-                            href={`/programme_curriculum/acad_admin_edit_discipline_form/${item.id}`}
+                          <Link
+                            to={`/programme_curriculum/acad_admin_edit_discipline_form/${item.id}`}
                           >
                             <Button variant="filled" color="green" radius="sm">
                               Edit
                             </Button>
-                          </a>
+                          </Link>
                         </td>
                       </tr>
                     ))

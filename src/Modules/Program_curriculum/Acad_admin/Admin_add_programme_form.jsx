@@ -10,7 +10,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Admin_add_programme_form() {
   const form = useForm({
@@ -46,7 +46,7 @@ function Admin_add_programme_form() {
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem("programmesCachechange", true);
+        localStorage.setItem("AdminProgrammesCachechange", "true");
         alert("Programme added successfully!");
         console.log("Response Data:", data);
         navigate("/programme_curriculum/acad_view_all_programme");
@@ -153,12 +153,12 @@ function Admin_add_programme_form() {
             }}
           >
             <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <a href="/programme_curriculum/acad_admin_add_curriculum_form">
+              <Link to="/programme_curriculum/acad_admin_add_curriculum_form">
                 <Button className="right-btn-programme">Add Curriculum</Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_discipline_form">
+              </Link>
+              <Link to="/programme_curriculum/acad_admin_add_discipline_form">
                 <Button className="right-btn-programme">Add Discipline</Button>
-              </a>
+              </Link>
             </Group>
           </div>
         </div>

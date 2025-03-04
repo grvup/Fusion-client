@@ -3,7 +3,6 @@ import {
   ScrollArea,
   TextInput,
   Table,
-  Loader,
   Flex,
   Grid,
   MantineProvider,
@@ -27,20 +26,23 @@ function Admin_view_all_courses() {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        const cachedData = localStorage.getItem("coursesCache");
-        const timestamp = localStorage.getItem("coursesTimestamp");
+        const cachedData = localStorage.getItem("AdminCoursesCache");
+        const timestamp = localStorage.getItem("AdminCoursesTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        const cachedDatachange = localStorage.getItem(
+          "AdminCoursesCachechange",
+        );
         // 10 min cache
-
-        if (cachedData && isCacheValid) {
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           setCourses(JSON.parse(cachedData));
         } else {
           const data = await fetchAllCourses();
           setCourses(data);
+          localStorage.setItem("AdminCoursesCachechange", "false");
 
-          localStorage.setItem("coursesCache", JSON.stringify(data));
-          localStorage.setItem("coursesTimestamp", Date.now().toString());
+          localStorage.setItem("AdminCoursesCache", JSON.stringify(data));
+          localStorage.setItem("AdminCoursesTimestamp", Date.now().toString());
         }
       } catch (err) {
         setError("Failed to load courses.");
@@ -53,7 +55,11 @@ function Admin_view_all_courses() {
   }, []);
 
   if (loading) {
-    return <Loader size="lg" variant="dots" />; // Show loader while loading
+    <tr>
+      <td colSpan="5" style={{ textAlign: "center" }}>
+        Loading...
+      </td>
+    </tr>;
   }
 
   if (error) {
@@ -62,10 +68,13 @@ function Admin_view_all_courses() {
 
   const filteredCourses = courses.filter((course) => {
     return (
-      course.code.toLowerCase().includes(searchCode.toLowerCase()) &&
-      course.name.toLowerCase().includes(searchCourse.toLowerCase()) &&
-      course.version.includes(searchVersion) &&
-      course.credits.toString().includes(searchCredits)
+      (searchCode === "" ||
+        course.code.toLowerCase().includes(searchCode.toLowerCase())) &&
+      (searchCourse === "" ||
+        course.name.toLowerCase().includes(searchCourse.toLowerCase())) &&
+      (searchVersion === "" || course.version.includes(searchVersion)) &&
+      (searchCredits === "" ||
+        course.credits.toString().includes(searchCredits))
     );
   });
 

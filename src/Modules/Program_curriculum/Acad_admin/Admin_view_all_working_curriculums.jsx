@@ -27,24 +27,30 @@ function Admin_view_all_working_curriculums() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const cachedData = localStorage.getItem("curriculumsCache");
-        const timestamp = localStorage.getItem("curriculumsTimestamp");
+        const cachedData = localStorage.getItem("AdminCurriculumsCache");
+        const timestamp = localStorage.getItem("AdminCurriculumsTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000; // 10 min cache
-
-        if (cachedData && isCacheValid) {
+        const cachedDatachange = localStorage.getItem(
+          "AdminCurriculumsCachechange",
+        );
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           setCurriculums(JSON.parse(cachedData));
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
 
           const data = await fetchWorkingCurriculumsData(token);
+          localStorage.setItem("AdminCurriculumsCachechange", "false");
           setCurriculums(data.curriculums);
           localStorage.setItem(
-            "curriculumsCache",
+            "AdminCurriculumsCache",
             JSON.stringify(data.curriculums),
           );
-          localStorage.setItem("curriculumsTimestamp", Date.now().toString());
+          localStorage.setItem(
+            "AdminCurriculumsTimestamp",
+            Date.now().toString(),
+          );
         }
       } catch (error) {
         console.error("Error fetching curriculums: ", error);
@@ -59,14 +65,19 @@ function Admin_view_all_working_curriculums() {
   // Filtered data based on search inputs
   const filteredData = curriculums.filter((item) => {
     return (
-      item.name.toLowerCase().includes(filters.name.toLowerCase()) &&
-      item.version.toLowerCase().includes(filters.version.toLowerCase()) &&
-      (item.batch || []).some((b) =>
-        b.toLowerCase().includes(filters.batch.toLowerCase()),
-      ) &&
-      item.semesters.toString().includes(filters.semesters)
+      (filters.name === "" ||
+        item.name.toLowerCase().includes(filters.name.toLowerCase())) &&
+      (filters.version === "" ||
+        item.version.toLowerCase().includes(filters.version.toLowerCase())) &&
+      (filters.batch === "" ||
+        (item.batch || []).some((b) =>
+          b.toLowerCase().includes(filters.batch.toLowerCase()),
+        )) &&
+      (filters.semesters === "" ||
+        item.semesters.toString().includes(filters.semesters))
     );
   });
+
   const cellStyle = {
     padding: "15px 20px",
     textAlign: "center",
@@ -110,7 +121,9 @@ function Admin_view_all_working_curriculums() {
         }}
       >
         {/* Edit button as a link */}
-        <Link to="/programme_curriculum/admin_edit_curriculum_form">
+        <Link
+          to={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${element.id}`}
+        >
           <Button variant="filled" color="green" radius="sm">
             Edit
           </Button>

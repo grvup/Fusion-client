@@ -28,36 +28,33 @@ function AdminViewProgrammes() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const cachedData = localStorage.getItem("programmesCache");
-        console.log(cachedData);
-        const timestamp = localStorage.getItem("programmesTimestamp");
+        const cachedData = localStorage.getItem("AdminProgrammesCache");
+        const timestamp = localStorage.getItem("AdminProgrammesTimestamp");
         const isCacheValid =
           timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
-
-        const cachedDatachange = localStorage.getItem("programmesCachechange");
+        const cachedDatachange = localStorage.getItem(
+          "AdminProgrammesCachechange",
+        );
         // 10 min cache
-        console.log("1", typeof cachedDatachange);
-        if (cachedData && isCacheValid && !cachedDatachange === false) {
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           const data = JSON.parse(cachedData);
-          // console.log(data);
           setUgData(data.ug_programmes || []);
-          // console.log(data.ug_programmes);
-          // console.log(ugData);
           setPgData(data.pg_programmes || []);
           setPhdData(data.phd_programmes || []);
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
-          console.log("2", typeof !cachedDatachange);
           const data = await fetchAllProgrammes(token);
-          localStorage.setItem("programmesCachechange", false);
-          // console.log(data);
           setUgData(data.ug_programmes || []);
           setPgData(data.pg_programmes || []);
           setPhdData(data.phd_programmes || []);
+          localStorage.setItem("AdminProgrammesCachechange", "false");
 
-          localStorage.setItem("programmesCache", JSON.stringify(data));
-          localStorage.setItem("programmesTimestamp", Date.now().toString());
+          localStorage.setItem("AdminProgrammesCache", JSON.stringify(data));
+          localStorage.setItem(
+            "AdminProgrammesTimestamp",
+            Date.now().toString(),
+          );
         }
       } catch (err) {
         console.error("Error fetching data: ", err);
@@ -134,9 +131,7 @@ function AdminViewProgrammes() {
           }}
         >
           <Link
-            to={`/programme_curriculum/admin_edit_programme_form?programme=${encodeURIComponent(
-              element.programme,
-            )}`}
+            to={`/programme_curriculum/admin_edit_programme_form/${element.id}`}
           >
             <Button variant="filled" color="green" radius="sm">
               Edit
