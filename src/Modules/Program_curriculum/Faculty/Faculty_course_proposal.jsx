@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Faculty_course_proposal.css";
 import { Button } from "@mantine/core";
-
+// import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import PropTypes from "prop-types";
 
 function FormSection({ activeTab, setActiveTab, title, formType }) {
@@ -63,73 +63,67 @@ function Admin_course_proposal_form() {
   };
 
   return (
-    <div className="admin-course-proposal-container">
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Curriculums</span>
-        <span>CSE UG Curriculum</span>
-      </nav>
+    <div style={{ padding: "20px" }}>
+      <div>
+        {/* Section Switch Buttons */}
+        <Button
+          onClick={() => handleFormSwitch("new-forms")}
+          variant="subtle" // Keep the design minimal
+          style={{
+            margin: "10px 1vw 10px 0px ",
+            fontWeight: activeForm === "new-forms" ? "bold" : "normal",
+            fontSize: "1.5vw",
+            color: "black",
+            backgroundColor: "transparent",
+            boxShadow: activeForm === "new-forms" ? "0 2px 0px black" : "none", // Box shadow when active
+            // padding: "0",
+          }}
+        >
+          New Forms
+        </Button>
 
-      {/* Options Section */}
-      <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>Disciplines</p>
-        <p>Batches</p>
+        <Button
+          onClick={() => handleFormSwitch("updated-forms")}
+          variant="subtle"
+          style={{
+            fontWeight: activeForm === "updated-forms" ? "bold" : "normal",
+            fontSize: "1.5vw",
+            color: "black",
+            backgroundColor: "transparent",
+            boxShadow:
+              activeForm === "updated-forms" ? "0px 2px 0px black" : "none", // Box shadow when active
+            // padding: "0",
+          }}
+        >
+          Updated Forms
+        </Button>
       </div>
 
-      {/* Section Switch Buttons */}
-      <Button
-        onClick={() => handleFormSwitch("new-forms")}
-        variant="subtle" // Keep the design minimal
-        style={{
-          margin: "10px 1vw 10px 0 ",
-          fontWeight: activeForm === "new-forms" ? "bold" : "normal",
-          fontSize: "1.5vw",
-          color: "black",
-          backgroundColor: "transparent",
-          boxShadow: activeForm === "new-forms" ? "0 2px 0px black" : "none", // Box shadow when active
-          padding: "0",
-        }}
+      <hr />
+
+      <div
+        className="admin-course-proposal-container"
+        style={{ marginTop: "20px", backgroundColor: "#f5f7f8" }}
       >
-        New Forms
-      </Button>
+        {/* Conditional Rendering of Form Sections */}
+        {activeForm === "new-forms" && (
+          <FormSection
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            title="New Course Proposal Forms"
+            formType="new-forms" // Pass form type to conditionally show button
+          />
+        )}
 
-      <Button
-        onClick={() => handleFormSwitch("updated-forms")}
-        variant="subtle"
-        style={{
-          fontWeight: activeForm === "updated-forms" ? "bold" : "normal",
-          fontSize: "1.5vw",
-          color: "black",
-          backgroundColor: "transparent",
-          boxShadow:
-            activeForm === "updated-forms" ? "0px 2px 0px black" : "none", // Box shadow when active
-          padding: "0",
-        }}
-      >
-        Updated Forms
-      </Button>
-
-      {/* Conditional Rendering of Form Sections */}
-      {activeForm === "new-forms" && (
-        <FormSection
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          title="New Course Proposal Forms"
-          formType="new-forms" // Pass form type to conditionally show button
-        />
-      )}
-
-      {activeForm === "updated-forms" && (
-        <FormSection
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          title="Updated Course Proposal Forms"
-          formType="updated-forms" // Pass form type to conditionally show button
-        />
-      )}
+        {activeForm === "updated-forms" && (
+          <FormSection
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            title="Updated Course Proposal Forms"
+            formType="updated-forms" // Pass form type to conditionally show button
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -137,6 +131,10 @@ function Admin_course_proposal_form() {
 // Reusable FormSection Component
 
 function CourseProposalTable() {
+  const handleNavigation = (courseCode) => {
+    window.location.href = `/programme_curriculum/faculty_course_view?course=${courseCode}`;
+  };
+
   return (
     <table className="table">
       <thead>
@@ -155,7 +153,12 @@ function CourseProposalTable() {
           <td className="table-data">Electric Vehicle and Mobility</td>
           <td className="table-data">ME8017</td>
           <td className="table-data">
-            <button className="view-button">View</button>
+            <button
+              className="view-button"
+              onClick={() => handleNavigation("ME8017")}
+            >
+              View
+            </button>
           </td>
           <td className="table-data">
             <button className="submit-button">Submit</button>
@@ -169,7 +172,12 @@ function CourseProposalTable() {
           <td className="table-data">Lab based Project 1</td>
           <td className="table-data">CS206L</td>
           <td className="table-data">
-            <button className="view-button">View</button>
+            <button
+              className="view-button"
+              onClick={() => handleNavigation("CS206L")}
+            >
+              View
+            </button>
           </td>
           <td className="table-data">
             <button className="submit-button">Submit</button>
@@ -184,6 +192,9 @@ function CourseProposalTable() {
 }
 
 function ArchivedCoursesTable() {
+  const handleNavigation = (courseCode) => {
+    window.location.href = `/programme_curriculum/faculty_course_view?course=${courseCode}`;
+  };
   return (
     <table className="table">
       <thead>
@@ -201,7 +212,13 @@ function ArchivedCoursesTable() {
           <td className="table-data">Data Structures</td>
           <td className="table-data">CS101</td>
           <td className="table-data">
-            <button className="view-button">View</button>
+            <button
+              className="view-button"
+              onClick={() => handleNavigation("CS101")}
+            >
+              View
+            </button>
+            {/* <button className="view-button" onClick={() => window.location.href = "/programme_curriculum/faculty_course_view?course=CS101"}>View</button> */}
           </td>
           <td className="table-data">
             <button className="submit-button">Restore</button>
@@ -212,7 +229,13 @@ function ArchivedCoursesTable() {
           <td className="table-data">Operating Systems</td>
           <td className="table-data">CS102</td>
           <td className="table-data">
-            <button className="view-button">View</button>
+            <button
+              className="view-button"
+              onClick={() => handleNavigation("CS102")}
+            >
+              View
+            </button>
+            {/* <button className="view-button" onClick={() => window.location.href = "/programme_curriculum/faculty_course_view?course=CS102"}>View</button> */}
           </td>
           <td className="table-data">
             <button className="submit-button">Restore</button>

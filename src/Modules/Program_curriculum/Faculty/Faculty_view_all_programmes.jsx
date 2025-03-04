@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
 import {
+  Button,
+  Container,
+  Flex,
   MantineProvider,
   Table,
-  Flex,
-  Container,
-  Button,
   Text,
 } from "@mantine/core";
+import React, { useEffect, useState } from "react";
 import { fetchAllProgrammes } from "../api/api";
 
 function ViewAllProgrammes() {

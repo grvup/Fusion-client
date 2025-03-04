@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  Breadcrumbs,
-  Anchor,
   Textarea,
   TextInput,
   Button,
@@ -31,18 +29,6 @@ function VCourseProposalForm() {
     alert("Form Submitted!");
   };
 
-  // Breadcrumb items
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-    { title: "Course Proposal", href: "#" }, // Added breadcrumb for the current form
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
-
   return (
     <div
       style={{
@@ -54,31 +40,17 @@ function VCourseProposalForm() {
       }}
     >
       {/* Breadcrumbs Section */}
-      <Container
+      {/* <Container
         fluid
         style={{
           padding: "0",
           marginTop: "0.5rem",
         }}
       >
-        <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
-      </Container>
+        
+      </Container> */}
 
       {/* Options Section */}
-      <Group
-        spacing="xs"
-        style={{
-          padding: "0",
-          marginTop: "0.5rem",
-        }}
-        className="program-options"
-      >
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group>
 
       {/* Main Layout */}
       <Container
