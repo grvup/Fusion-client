@@ -1,11 +1,23 @@
-import { Button, Card, ScrollArea, Table } from "@mantine/core";
+import { Button, ScrollArea, Table, Grid, TextInput } from "@mantine/core";
 import React, { useState } from "react";
-// import { FaSearch, FaTimes } from "react-icons/fa";
-import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { useMediaQuery } from "@mantine/hooks";
 
 function Admin_view_a_courses() {
-  // const [selectedOption, setSelectedOption] = useState(null);
-  const [showSearch, setShowSearch] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [filter, setFilter] = useState({
+    code: "",
+    name: "",
+    version: "",
+    credits: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFilter({
+      ...filter,
+      [name]: value,
+    });
+  };
 
   const courses = [
     {
@@ -106,142 +118,110 @@ function Admin_view_a_courses() {
     },
   ];
 
-  // if (loading) {
-  //   return <Loader />; // Show loader while loading
-  // }
-
   return (
     <div style={{ padding: "20px", paddingTop: "10px" }}>
-      {/* Options Section */}
       <div className="program-options" style={{ borderBottom: "none" }}>
         <Button variant="filled" style={{ marginRight: "10px" }}>
           Courses
         </Button>
-        <div className="top-actions">
-          {/* <Button className="add-course-btn">ADD COURSE</Button> */}
-          {/* <Button className="search-btn" onClick={() => setShowSearch(!showSearch)}>
-          {showSearch ? 'Hide Search' : 'Search Courses'}
-          </Button> */}
-          <MagnifyingGlass
-            className="search-icon"
-            onClick={() => setShowSearch(!showSearch)} // Toggle search form
-            size={24} // Set the size of the icon
-            color="#007bff" // Set the color of the icon
-            style={{ cursor: "pointer", marginLeft: "10px" }} // Add pointer cursor and margin
-          />
-        </div>
       </div>
 
       <hr />
 
-      <div className={`courses-container ${showSearch ? "search-active" : ""}`}>
-        <div className="courses-table-section">
-          <ScrollArea className="courses-scroll-area">
-            <div radius="md" className="courses-card-container">
-              <Table highlightOnHover striped className="courses-table">
-                <thead className="courses-table-header">
-                  <tr>
-                    <th>Course Code</th>
-                    <th>Course Name</th>
-                    <th>Version</th>
-                    <th>Credits</th>
-                    <th>Edit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {courses.map((course, index) => (
-                    <tr key={index} className="courses-table-row">
-                      <td>
-                        <a
-                          href={`/programme_curriculum/faculty_course_view?course=${course.code}`}
-                          className="course-link"
-                        >
-                          {course.code}
-                        </a>
-                      </td>
-                      <td>{course.name}</td>
-                      <td>{course.version}</td>
-                      <td>{course.credits}</td>
-                      <td>
-                        <a
-                          href={`/programme_curriculum/faculty_forward_form?course=${course.code}`}
-                        >
-                          <Button className="courses-edit-button">Edit</Button>
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          </ScrollArea>
-        </div>
-
-        {showSearch && (
-          <div className="courses-search-section">
-            <Card
-              // shadow="sm"
-              // padding="lg"
-              radius="md"
-              withBorder
-              className="courses-search-card"
-            >
-              <X
-                className="close-search-icon"
-                onClick={() => setShowSearch(false)} // Close search when clicked
-                size={20}
-                color="red"
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  cursor: "pointer",
-                }}
-              />
-
-              <h4 className="courses-form-title">FILTER SEARCH</h4>
-              {/* <ScrollArea>
-                <label htmlFor="code-input">Code contains</label>
-                <TextInput 
-                  id="code-input" 
-                  placeholder="Code contains:" 
-                  className="courses-input-field" 
+      <Grid>
+        {isMobile && (
+          <Grid.Col span={12}>
+            <ScrollArea type="hover">
+              {[
+                { label: "Course Code", name: "code" },
+                { label: "Course Name", name: "name" },
+                { label: "Version", name: "version" },
+                { label: "Credits", name: "credits" },
+              ].map((input, index) => (
+                <TextInput
+                  key={index}
+                  label={`${input.label}:`}
+                  placeholder={`Select by ${input.label}`}
+                  value={filter[input.name]}
+                  name={input.name}
+                  mb={5}
+                  onChange={handleInputChange}
                 />
-
-                <label htmlFor="name-input">Name contains</label>
-                <TextInput 
-                  id="name-input" 
-                  placeholder="Name contains:" 
-                  className="courses-input-field" 
-                />
-
-                <label htmlFor="version-input">Version</label>
-                <TextInput 
-                  id="version-input" 
-                  placeholder="Version:" 
-                  className="courses-input-field" 
-                />
-
-                <Select
-                  label="Working course:"
-                  placeholder="Unknown"
-                  data={['Unknown', 'Yes', 'No']}
-                  value={selectedOption}
-                  onChange={setSelectedOption}
-                  className="courses-select-field"
-                />
-              </ScrollArea> */}
-              <Button fullWidth className="add-course-btn">
-                Search
-              </Button>
-            </Card>
-          </div>
+              ))}
+            </ScrollArea>
+          </Grid.Col>
         )}
-      </div>
+        <Grid.Col span={isMobile ? 12 : 9}>
+          <div className="courses-table-section">
+            <ScrollArea className="courses-scroll-area">
+              <div radius="md" className="courses-card-container">
+                <Table highlightOnHover striped className="courses-table">
+                  <thead className="courses-table-header">
+                    <tr>
+                      <th>Course Code</th>
+                      <th>Course Name</th>
+                      <th>Version</th>
+                      <th>Credits</th>
+                      <th>Edit</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {courses.map((course, index) => (
+                      <tr key={index} className="courses-table-row">
+                        <td>
+                          <a
+                            href={`/programme_curriculum/faculty_course_view?course=${course.code}`}
+                            className="course-link"
+                          >
+                            {course.code}
+                          </a>
+                        </td>
+                        <td>{course.name}</td>
+                        <td>{course.version}</td>
+                        <td>{course.credits}</td>
+                        <td>
+                          <a
+                            href={`/programme_curriculum/faculty_forward_form?course=${course.code}`}
+                          >
+                            <Button className="courses-edit-button">
+                              Edit
+                            </Button>
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </Table>
+              </div>
+            </ScrollArea>
+          </div>
+        </Grid.Col>
+
+        {!isMobile && (
+          <Grid.Col span={3}>
+            <ScrollArea type="hover">
+              {[
+                { label: "Course Code", name: "code" },
+                { label: "Course Name", name: "name" },
+                { label: "Version", name: "version" },
+                { label: "Credits", name: "credits" },
+              ].map((input, index) => (
+                <TextInput
+                  key={index}
+                  label={`${input.label}:`}
+                  placeholder={`Select by ${input.label}`}
+                  value={filter[input.name]}
+                  name={input.name}
+                  mb={5}
+                  onChange={handleInputChange}
+                />
+              ))}
+            </ScrollArea>
+          </Grid.Col>
+        )}
+      </Grid>
 
       <style>{`
-
-
         .search-icon {
           cursor: pointer;
           transition: color 0.3s ease-in-out;
@@ -250,7 +230,6 @@ function Admin_view_a_courses() {
         .search-icon:hover {
           color: #0056b3; /* Darker shade on hover */
         }
-
         
         .courses-container {
           display: flex;
@@ -293,7 +272,6 @@ function Admin_view_a_courses() {
           text-decoration: underline;
           color: #0056b3;
         }
-
 
         .add-course-btn, .search-btn {
           padding: 10px 20px;
@@ -364,7 +342,6 @@ function Admin_view_a_courses() {
         .courses-scroll-area {
           background-color: white;
           height: 100%;
-          // padding: 20px;
           overflow-y: auto;
         }
 
@@ -474,7 +451,6 @@ function Admin_view_a_courses() {
   .program-options > p:last-child::after {
     content: ""; /* Remove the '|' from the last item */
   }
-
 
         @media (max-width: 768px) {
           .courses-container {
