@@ -36,12 +36,11 @@ function AdminViewProgrammes() {
           "AdminProgrammesCachechange",
         );
         // 10 min cache
-        if (cachedData && isCacheValid && cachedDatachange === "true") {
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           const data = JSON.parse(cachedData);
           setUgData(data.ug_programmes || []);
           setPgData(data.pg_programmes || []);
           setPhdData(data.phd_programmes || []);
-          localStorage.setItem("AdminProgrammesCachechange", "false");
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
@@ -49,6 +48,7 @@ function AdminViewProgrammes() {
           setUgData(data.ug_programmes || []);
           setPgData(data.pg_programmes || []);
           setPhdData(data.phd_programmes || []);
+          localStorage.setItem("AdminProgrammesCachechange", "false");
 
           localStorage.setItem("AdminProgrammesCache", JSON.stringify(data));
           localStorage.setItem(

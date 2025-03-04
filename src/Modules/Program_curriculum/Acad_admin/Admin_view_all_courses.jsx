@@ -35,12 +35,12 @@ function Admin_view_all_courses() {
           "AdminCoursesCachechange",
         );
         // 10 min cache
-        if (cachedData && isCacheValid && cachedDatachange === "true") {
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           setCourses(JSON.parse(cachedData));
-          localStorage.setItem("AdminCoursesCachechange", "false");
         } else {
           const data = await fetchAllCourses();
           setCourses(data);
+          localStorage.setItem("AdminCoursesCachechange", "false");
 
           localStorage.setItem("AdminCoursesCache", JSON.stringify(data));
           localStorage.setItem("AdminCoursesTimestamp", Date.now().toString());

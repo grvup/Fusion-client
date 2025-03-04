@@ -37,11 +37,10 @@ function AdminViewAllBatches() {
           "AdminBatchesCachechange",
         );
         // 10 min cache
-        if (cachedData && isCacheValid && cachedDatachange === "true") {
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           const data = JSON.parse(cachedData);
           setBatches(data.batches || []);
           setFinishedBatches(data.finished_batches || []);
-          localStorage.setItem("AdminBatchesCachechange", "false");
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
@@ -56,6 +55,7 @@ function AdminViewAllBatches() {
           setBatches(response.data.batches || []);
           setFinishedBatches(response.data.finished_batches || []);
 
+          localStorage.setItem("AdminBatchesCachechange", "false");
           localStorage.setItem(
             "AdminBatchesCache",
             JSON.stringify(response.data),

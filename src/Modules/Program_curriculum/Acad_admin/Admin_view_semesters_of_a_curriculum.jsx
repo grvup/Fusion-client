@@ -262,7 +262,7 @@ function Admin_view_semesters_of_a_curriculum() {
                             >
                               <p>
                                 <strong style={{ fontSize: "0.65vw" }}>
-                                  {slot.courses[0].name}
+                                  {slot.courses[0].code}
                                 </strong>
                                 <br />
                                 (L: {slot.courses[0].lecture_hours}, T:{" "}

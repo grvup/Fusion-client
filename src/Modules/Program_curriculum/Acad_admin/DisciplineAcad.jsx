@@ -34,15 +34,15 @@ function DisciplineAcad() {
         const cachedDatachange = localStorage.getItem(
           "AdminDisciplineCachechange",
         );
-        if (cachedData && isCacheValid && cachedDatachange === "true") {
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           setDisciplines(JSON.parse(cachedData));
-          localStorage.setItem("AdminDisciplineCachechange", "false");
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
 
           const data = await fetchDisciplinesData(token);
           setDisciplines(data);
+          localStorage.setItem("AdminDisciplineCachechange", "false");
 
           localStorage.setItem("DisciplineAcad", JSON.stringify(data));
           localStorage.setItem(

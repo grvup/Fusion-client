@@ -34,14 +34,14 @@ function Admin_view_all_working_curriculums() {
         const cachedDatachange = localStorage.getItem(
           "AdminCurriculumsCachechange",
         );
-        if (cachedData && isCacheValid && cachedDatachange === "true") {
+        if (cachedData && isCacheValid && cachedDatachange === "false") {
           setCurriculums(JSON.parse(cachedData));
-          localStorage.setItem("AdminCurriculumsCachechange", "false");
         } else {
           const token = localStorage.getItem("authToken");
           if (!token) throw new Error("Authorization token not found");
 
           const data = await fetchWorkingCurriculumsData(token);
+          localStorage.setItem("AdminCurriculumsCachechange", "false");
           setCurriculums(data.curriculums);
           localStorage.setItem(
             "AdminCurriculumsCache",
@@ -116,7 +116,9 @@ function Admin_view_all_working_curriculums() {
         }}
       >
         {/* Edit button as a link */}
-        <Link to="/programme_curriculum/admin_edit_curriculum_form">
+        <Link
+          to={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${element.id}`}
+        >
           <Button variant="filled" color="green" radius="sm">
             Edit
           </Button>
