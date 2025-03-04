@@ -12,6 +12,7 @@ import AcademicPage from "./Modules/Academic/index";
 import ValidateAuth from "./helper/validateauth";
 import FacultyProfessionalProfile from "./Modules/facultyProfessionalProfile/facultyProfessionalProfile";
 import InactivityHandler from "./helper/inactivityhandler";
+import Examination from "./Modules/Examination/examination";
 import ProgrammeCurriculumRoutes from "./Modules/Program_curriculum/programmCurriculum";
 
 const theme = createTheme({
@@ -77,6 +78,7 @@ export default function App() {
         />
         <Route path="/accounts/login" element={<LoginPage />} />
         <Route path="/reset-password" element={<ForgotPassword />} />
+        <Route path="/examination/*" element={<Examination />} />
       </Routes>
     </MantineProvider>
   );

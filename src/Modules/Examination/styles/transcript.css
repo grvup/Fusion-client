@@ -1,0 +1,127 @@
+
+  .transcript-title {
+    font-size: 2rem; /* Increased font size for the title */
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .transcript-table {
+    min-width: 80%;
+    text-align: center;
+    border-radius: 15px;
+  }
+  
+  
+  .transcript-table td {
+    padding: 5px;
+    border: 1px solid #d0d7de;
+    font-weight: bold;
+    font-size: 1rem; /* Increased font size for table data */
+  }
+  
+  .transcript-gpa {
+    font-size: 1rem; /* Larger font size for GPA */
+    margin-top: 16px;
+  }/* Transcript.css */
+
+.transcript-container {
+    margin-top: 0rem;
+    border-left: "10px solid #1E90FF";
+    width: 100%;
+  }
+  
+  .transcript-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .transcript-title {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .table-container {
+    max-height: 600px;
+    overflow: auto;
+    width: auto;
+  }
+  
+  .transcript-table {
+    min-width: 50%;
+    text-align: center;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+  }
+  
+  .table-header {
+    background-color: #ecf1f5;
+    color: #66B2EC;
+  }
+  
+  .table-header-cell {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.5rem;
+  }
+  
+  @media (min-width: 640px) {
+    .table-header-cell {
+      padding: 1rem 1.5rem;
+      font-size: 0.8rem;
+    }
+  
+  }
+
+  .table-row {
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .table-cell {
+    padding: 1rem;
+    font-weight: bold;
+    text-align: center;
+  }
+  .tc{
+    display: flex;
+    align-items: center;
+    /* justify-content: center; */
+  } 
+   @media screen and (min-width: 740px) {
+    .tc{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  .table-cell-content {
+    border-radius: 0.5rem;
+    /* background-color: #EBFDFF; */
+    padding: 0.56rem 0.5rem;
+    width: 50%;
+    text-align: center;
+  }
+  
+  .actions-button {
+    background-color: #1E90FF;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    margin: 4px;
+  }
+  
+  .actions-button:hover {
+    color: black;
+    font-weight: bold;
+  }
+  
+  @media (min-width: 640px) {
+    .actions-button {
+      font-size: 0.75rem;
+    }
+  }

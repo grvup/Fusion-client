@@ -1,0 +1,146 @@
+/* General page styling */
+.submit-grades-page {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .breadcrumb {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .breadcrumb a {
+    color: #007bff;
+    text-decoration: none;
+    margin-right: 5px;
+  }
+  
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Container styling */
+  .submit-grades-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  h1 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Updated form-row styling for inline alignment */
+  .form-row {
+    display: flex;
+    gap: 20px; /* Adjusts the space between elements for better alignment */
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: flex-start; /* Ensures all elements stay in one line */
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: row; /* Ensures elements stay in a row */
+    gap: 15px; /* Adjust spacing between labels and inputs */
+    align-items: center;
+  }
+  
+  /* Labels stay to the left of the dropdowns */
+  label {
+    font-size: 14px;
+    /* color: #555; */
+    font-weight: bold;
+    color: #333; /* Darker color */
+    margin-right: 10px; /* Space between label and input */
+    white-space: nowrap; /* Ensures label stays in one line */
+  }
+  
+  select {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    width: 180px; /* Set width for consistent dropdown size */
+  }
+  
+  .search-btn {
+    padding: 8px 16px; /* Adjust button size to align with dropdowns */
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .search-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .search-btn {
+    width: 100px; /* Make the button smaller */
+    font-size: 14px;
+  }
+  
+  /* Table styling */
+  .table-container {
+    margin-top: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f1f1f1;
+    color: #333;
+  }
+  
+  td input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  thead th {
+    font-weight: bold;
+    text-align: left;
+    background-color: #f0f0ff;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  thead th:hover {
+    background-color: #e6e6ff;
+  }
+  
+  thead th::after {
+    /* content: '▼'; */
+    font-size: 12px;
+    margin-left: 5px;
+    color: #555;
+  }
+  .btn-div{
+    display: flex;
+    gap:10px;
+  }
