@@ -9,7 +9,8 @@ import AdminViewAllBatches from "./Acad_admin/Admin_view_all_batches";
 import AdminViewSemestersOfACurriculum from "./Acad_admin/Admin_view_semesters_of_a_curriculum";
 import FacultyViewAllCourses from "./Faculty/Faculty_view_all_courses";
 import FacultyViewACourse from "./Faculty/Faculty_view_a_course";
-// import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
+import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
+import FacultyViewAllWorkingCurriculums from "./Faculty/Faculty_view_all_working_curriculums";
 import ViewAllCourses from "./View_all_courses";
 import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
@@ -31,7 +32,7 @@ import ViewSemesterOfACurriculum from "./ViewSemesterOfACurriculum";
 import InwardFile from "./Faculty/InwardFiles";
 import OutwardFile from "./Faculty/OutwardFiles";
 import BDesView from "./Faculty/BDesView";
-// import Discipline from "./Faculty/Discipline";
+import Discipline from "./Faculty/Discipline";
 // import FacultyViewAllProgrammes from "./Faculty/Faculty_view_all_programmes";
 
 import StudCourseSlotDetails from "./Student/StudCourseSlotDetails";
@@ -168,6 +169,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_course_view"
           element={
             <Layout>
+              <NavTab />
               <FacultyViewACourse />
             </Layout>
           }
@@ -177,7 +179,8 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <NavTab />
-              <ViewAllBatches />
+              <FacultyViewAllBatches />
+              {/* <ViewAllBatches /> */}
             </Layout>
           }
         />
@@ -194,6 +197,7 @@ export default function ProgrammeCurriculumRoutes() {
           path="/faculty_forward_form"
           element={
             <Layout>
+              <NavTab />
               <VCourseProposalForm />
             </Layout>
           }
@@ -221,7 +225,8 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <NavTab />
-              <ViewAllWorkingCurriculums />
+              {/* <ViewAllWorkingCurriculums /> */}
+              <FacultyViewAllWorkingCurriculums />
             </Layout>
           }
         />
@@ -273,7 +278,8 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <Layout>
               <NavTab />
-              <DisciplineStud />
+              {/* <DisciplineStud /> */}
+              <Discipline />
             </Layout>
           }
         />

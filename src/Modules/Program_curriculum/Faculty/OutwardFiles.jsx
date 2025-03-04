@@ -1,18 +1,17 @@
 import React, { useState } from "react";
-import { ScrollArea, Button, Select, TextInput } from "@mantine/core";
+import { ScrollArea, Button } from "@mantine/core";
 
-import { MagnifyingGlass, X } from "@phosphor-icons/react";
+// import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
 function OutwardFile() {
   const [activeTab, setActiveTab] = useState("OutwardFiles");
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
-  const [filter, setFilter] = useState({
-    sendBy: "",
-    receivedAs: "",
-    fileId: 0,
-    remark: "",
-    date: "",
-  });
+  // const [filter, setFilter] = useState({
+  //   sendBy: "",
+  //   receivedAs: "",
+  //   fileId: 0,
+  //   remark: "",
+  //   date: "",
+  // });
 
   const OutwardFiles = [
     {
@@ -34,41 +33,19 @@ function OutwardFile() {
     },
   ];
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFilter({
-      ...filter,
-      [name]: value,
-    });
-  };
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFilter({
+  //     ...filter,
+  //     [name]: value,
+  //   });
+  // };
 
   return (
-    <div>
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Curriculums</span>
-        <span>CSE UG Curriculum</span>
-      </nav>
-
-      <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>disciplines</p>
-        <p>OutwardFiles</p>
-
+    <div style={{ padding: "20px", paddingTop: "10px" }}>
+      {/* <div className="program-options" style={{ border: "none" }}>
         <div className="top-actions">
-          {/* <Button variant="filled" color="blue">
-            Add Batch
-          </Button> */}
-
-          {/* Toggle search icon and close icon based on search visibility */}
           {!isSearchVisible ? (
-            // <BiSearch
-            //   size={24}
-            //   onClick={() => setIsSearchVisible(true)}
-            //   style={{ cursor: "pointer", color: "#007bff" }}
-            // />
 
             <MagnifyingGlass
               size={24}
@@ -77,12 +54,10 @@ function OutwardFile() {
             />
           ) : null}
         </div>
-      </div>
+      </div> */}
 
       <div className="courses-container">
-        <div
-          className={`courses-table-section ${isSearchVisible ? "" : "full-width"}`}
-        >
+        <div className="courses-table-section full-width">
           <div className="tabs">
             <Button
               variant={activeTab === "OutwardFiles" ? "filled" : "outline"}
@@ -133,7 +108,13 @@ function OutwardFile() {
                               justifyContent: "space-around",
                             }}
                           >
-                            <Button variant="filled" color="blue">
+                            <Button
+                              variant="filled"
+                              color="blue"
+                              onClick={() => {
+                                window.location.href = `/programme_curriculum/view_inward_file`;
+                              }}
+                            >
                               View
                             </Button>
                             <Button variant="filled" color="gray">
@@ -176,7 +157,13 @@ function OutwardFile() {
                               justifyContent: "space-around",
                             }}
                           >
-                            <Button variant="filled" color="blue">
+                            <Button
+                              variant="filled"
+                              color="blue"
+                              onClick={() => {
+                                window.location.href = `/programme_curriculum/view_inward_file`;
+                              }}
+                            >
                               View
                             </Button>
                             <Button variant="filled" color="green">
@@ -193,107 +180,7 @@ function OutwardFile() {
           </ScrollArea>
         </div>
 
-        {isSearchVisible && (
-          <ScrollArea
-            className="courses-search-section"
-            type="hover"
-            style={{ height: "500px" }}
-          >
-            <div className="courses-search-card">
-              <div className="filter-form">
-                {/* Close icon in the search section */}
-                {/* <AiOutlineClose
-                  size={24}
-                  onClick={() => setIsSearchVisible(false)}
-                  style={{
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                    cursor: "pointer",
-                    color: "#ff0000",
-                  }}
-                /> */}
-
-                <X
-                  size={24}
-                  onClick={() => setIsSearchVisible(false)}
-                  style={{
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                    cursor: "pointer",
-                    color: "#ff0000",
-                  }}
-                />
-
-                <h3>Filter Search</h3>
-                <TextInput
-                  label="Name contains:"
-                  value={filter.name}
-                  name="name"
-                  onChange={handleInputChange}
-                />
-                <TextInput
-                  label="Year contains:"
-                  value={filter.year}
-                  name="year"
-                  onChange={handleInputChange}
-                />
-                <Select
-                  label="Curriculum"
-                  placeholder="Select curriculum"
-                  value={filter.curriculum}
-                  onChange={(value) =>
-                    setFilter({ ...filter, curriculum: value })
-                  }
-                  data={[
-                    {
-                      value: "CSE PhD Curriculum v1.0",
-                      label: "CSE PhD Curriculum v1.0",
-                    },
-                    {
-                      value: "ME PhD Curriculum v1.0",
-                      label: "ME PhD Curriculum v1.0",
-                    },
-                  ]}
-                />
-                <Select
-                  label="Running batch"
-                  placeholder="Select batch status"
-                  value={filter.runningBatch}
-                  onChange={(value) =>
-                    setFilter({ ...filter, runningBatch: value })
-                  }
-                  data={[
-                    { value: "Unknown", label: "Unknown" },
-                    { value: "Running", label: "Running" },
-                  ]}
-                />
-                <Select
-                  label="Discipline"
-                  placeholder="Select discipline"
-                  value={filter.discipline}
-                  onChange={(value) =>
-                    setFilter({ ...filter, discipline: value })
-                  }
-                  data={[
-                    {
-                      value: "Mechanical Engineering ME",
-                      label: "Mechanical Engineering ME",
-                    },
-                    {
-                      value: "Computer Science and Engineering CSE",
-                      label: "Computer Science and Engineering CSE",
-                    },
-                  ]}
-                />
-                <Button variant="filled" color="blue">
-                  Search
-                </Button>
-              </div>
-            </div>
-          </ScrollArea>
-        )}
+        {/* Remove isSearchVisible from className */}
       </div>
 
       <style>{`
@@ -310,6 +197,7 @@ function OutwardFile() {
           display: flex;
           flex-direction: column;
           transition: all 0.3s ease-in-out;
+          overflow-x: scroll;
         }
 
         .full-width {
@@ -333,20 +221,48 @@ function OutwardFile() {
           margin-top: 20px;
         }
 
-        .OutwardFiles-table {
-          margin-top: 20px;
-        }
+        // .OutwardFiles-table {
+        //   margin-top: 20px;
+        // }
 
         .courses-table {
           width: 100%;
           border-collapse: collapse;
-          border: 1px solid #007bff;
+          border: 1px solid #d3d3d3;
         }
 
-        .courses-table th, .courses-table td {
-          padding: 10px;
-          text-align: left;
-          border: 1px solid #007bff;
+        .courses-table th {
+          padding: 15px 20px;
+          background-color: #C5E2F6;
+          color: #3498db;
+          font-size: 16px;
+          text-align: center;
+          border-right: 1px solid #d3d3d3;
+          font-weight: normal;
+        }
+
+        .courses-table th:last-child {
+          border-right: none;
+        }
+
+        .courses-table td {
+          padding: 15px 20px;
+          text-align: center;
+          color: black;
+          border-right: 1px solid #d3d3d3;
+        }
+
+        .courses-table td:last-child {
+          border-right: none;
+        }
+
+        /* Add alternating row colors */
+        .courses-table tbody tr:nth-child(even) {
+          background-color: #15ABFF1C;
+        }
+
+        .courses-table tbody tr:nth-child(odd) {
+          background-color: #fff;
         }
 
         .courses-search-section {

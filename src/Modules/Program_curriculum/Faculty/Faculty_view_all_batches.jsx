@@ -1,153 +1,59 @@
-import React, { useState } from "react";
-import { ScrollArea, Button, Select, TextInput } from "@mantine/core";
-// import { BiSearch } from "react-icons/bi"; // Search icon
-// import { AiOutlineClose } from "react-icons/ai"; // Close icon
-import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import React, { useState, useEffect } from "react";
+import {
+  ScrollArea,
+  Button,
+  TextInput,
+  Flex,
+  MantineProvider,
+  Container,
+  Table,
+  Grid,
+} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
+import { Link } from "react-router-dom";
+import { fetchBatchesData } from "../api/api";
 
 function Batches() {
   const [activeTab, setActiveTab] = useState("Batches");
   const [filter, setFilter] = useState({
     name: "",
+    discipline: "",
     year: "",
     curriculum: "",
-    runningBatch: "",
-    discipline: "",
   });
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  // const [loading, setLoading] = useState(true);
+  const [batches, setBatches] = useState([]);
+  const [finishedBatches, setFinishedBatches] = useState([]);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const batches = [
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
+  useEffect(() => {
+    const loadBatches = async () => {
+      try {
+        const cachedData = localStorage.getItem("batchesCache");
+        const timestamp = localStorage.getItem("batchesTimestamp");
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        // 10 min cache
 
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
+        if (cachedData && isCacheValid) {
+          const data = JSON.parse(cachedData);
+          setBatches(data.runningBatches || []);
+          setFinishedBatches(data.finishedBatches || []);
+        } else {
+          const data = await fetchBatchesData();
+          setBatches(data.runningBatches || []);
+          setFinishedBatches(data.finishedBatches || []);
 
-    {
-      name: "PhD",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2016,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2016,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Electronics and Communication Engineering ECE",
-      year: 2016,
-      curriculum: "ECE PhD Curriculum v1.0",
-    },
-  ];
+          localStorage.setItem("batchesCache", JSON.stringify(data));
+          localStorage.setItem("batchesTimestamp", Date.now().toString());
+        }
+      } catch (err) {
+        console.error("Error loading batches:", err);
+      }
+    };
 
-  const finishedBatches = [
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-    {
-      name: "B.Tech",
-      discipline: "Mechanical Engineering ME",
-      year: 2015,
-      curriculum: "ME UG Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Computer Science and Engineering CSE",
-      year: 2015,
-      curriculum: "CSE PhD Curriculum v1.0",
-    },
-    {
-      name: "PhD",
-      discipline: "Design Des.",
-      year: 2015,
-      curriculum: "PhD in Design v1.0",
-    },
-  ];
+    loadBatches();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -157,312 +63,208 @@ function Batches() {
     });
   };
 
+  const applyFilters = (data) => {
+    return data.filter((batch) => {
+      return (
+        batch.name.toLowerCase().includes(filter.name.toLowerCase()) &&
+        batch.discipline
+          .toLowerCase()
+          .includes(filter.discipline.toLowerCase()) &&
+        batch.year.toString().includes(filter.year) &&
+        batch.curriculum.toLowerCase().includes(filter.curriculum.toLowerCase())
+      );
+    });
+  };
+
+  const filteredBatches = applyFilters(batches);
+  const filteredFinishedBatches = applyFilters(finishedBatches);
+
   return (
-    <div>
-      <nav className="breadcrumbs">
-        <span>Program and Curriculum</span>
-        <span>Curriculums</span>
-        <span>CSE UG Curriculum</span>
-      </nav>
-
-      <div className="program-options">
-        <p>Programmes</p>
-        <p className="active">Curriculums</p>
-        <p>Courses</p>
-        <p>disciplines</p>
-        <p>batches</p>
-
-        <div className="top-actions">
-          {/* <Button variant="filled" color="blue">Add Batch</Button> */}
-
-          {/* Toggle search icon and close icon based on search visibility */}
-          {!isSearchVisible ? (
-            <MagnifyingGlass
-              size={24}
-              onClick={() => setIsSearchVisible(true)}
-              style={{ cursor: "pointer", color: "#007bff" }}
-            />
-          ) : null}
-        </div>
-      </div>
-
-      <div className="courses-container">
-        <div
-          className={`courses-table-section ${isSearchVisible ? "" : "full-width"}`}
-        >
-          <div className="tabs">
-            <Button
-              variant={activeTab === "Batches" ? "filled" : "outline"}
-              onClick={() => setActiveTab("Batches")}
-            >
-              Batches
-            </Button>
-            <Button
-              variant={activeTab === "Finished Batches" ? "filled" : "outline"}
-              onClick={() => setActiveTab("Finished Batches")}
-            >
-              Finished Batches
-            </Button>
-          </div>
-
-          <ScrollArea
-            className="courses-scroll-area"
-            type="hover"
-            style={{ height: "300px" }}
+    <MantineProvider
+      theme={{ colorScheme: "light" }}
+      withGlobalStyles
+      withNormalizeCSS
+    >
+      <Container style={{ padding: "20px", maxWidth: "100%" }}>
+        <Flex justify="flex-start" align="center" mb={10}>
+          <Button
+            variant={activeTab === "Batches" ? "filled" : "outline"}
+            onClick={() => setActiveTab("Batches")}
+            style={{ marginRight: "10px" }}
           >
-            {activeTab === "Batches" && (
-              <div className="batches-table">
-                <table className="courses-table">
-                  <thead className="courses-table-header">
-                    <tr>
-                      <th>Name</th>
-                      <th>Discipline</th>
-                      <th>Year</th>
-                      <th>Curriculum</th>
-                      <th>Edit</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {batches.map((batch, index) => (
-                      <tr key={index} className="courses-table-row">
-                        <td>{batch.name}</td>
-                        <td>{batch.discipline}</td>
-                        <td>{batch.year}</td>
-                        <td>
-                          <a href="/dashboard" className="course-link">
-                            {batch.curriculum}
-                          </a>
-                        </td>
-                        <td>
-                          <Button variant="light" color="green">
-                            Edit
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {activeTab === "Finished Batches" && (
-              <div className="batches-table">
-                <table className="courses-table">
-                  <thead className="courses-table-header">
-                    <tr>
-                      <th>Name</th>
-                      <th>Discipline</th>
-                      <th>Year</th>
-                      <th>Curriculum</th>
-                      <th>Edit</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {finishedBatches.map((batch, index) => (
-                      <tr key={index} className="courses-table-row">
-                        <td>{batch.name}</td>
-                        <td>{batch.discipline}</td>
-                        <td>{batch.year}</td>
-                        <td>
-                          <a href="/dashboard" className="course-link">
-                            {batch.curriculum}
-                          </a>
-                        </td>
-                        <td>
-                          <Button variant="light" color="green">
-                            Edit
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </ScrollArea>
-        </div>
-
-        {isSearchVisible && (
-          <ScrollArea
-            className="courses-search-section"
-            type="hover"
-            style={{ height: "500px" }}
+            Batches
+          </Button>
+          <Button
+            variant={activeTab === "Finished Batches" ? "filled" : "outline"}
+            onClick={() => setActiveTab("Finished Batches")}
+            style={{ marginRight: "10px" }}
           >
-            <div className="courses-search-card">
-              <div className="filter-form">
-                {/* Close icon in the search section */}
-                <X
-                  size={24}
-                  onClick={() => setIsSearchVisible(false)}
-                  style={{
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                    cursor: "pointer",
-                    color: "#ff0000",
-                  }}
-                />
+            Finished Batches
+          </Button>
+        </Flex>
+        <hr />
 
-                <h3>Filter Search</h3>
-                <TextInput
-                  label="Name contains:"
-                  value={filter.name}
-                  name="name"
-                  onChange={handleInputChange}
-                />
-                <TextInput
-                  label="Year contains:"
-                  value={filter.year}
-                  name="year"
-                  onChange={handleInputChange}
-                />
-                <Select
-                  label="Curriculum"
-                  placeholder="Select curriculum"
-                  value={filter.curriculum}
-                  onChange={(value) =>
-                    setFilter({ ...filter, curriculum: value })
+        <Grid>
+          {isMobile && (
+            <Grid.Col span={12}>
+              <ScrollArea type="hover">
+                {[
+                  { label: "Name", name: "name" },
+                  { label: "Discipline", name: "discipline" },
+                  { label: "Year", name: "year" },
+                  { label: "Curriculum", name: "curriculum" },
+                ].map((input, index) => (
+                  <TextInput
+                    key={index}
+                    label={`${input.label}:`}
+                    placeholder={`Select by ${input.label}`}
+                    value={filter[input.name]}
+                    name={input.name}
+                    mb={5}
+                    onChange={handleInputChange}
+                  />
+                ))}
+              </ScrollArea>
+            </Grid.Col>
+          )}
+          <Grid.Col span={isMobile ? 12 : 9}>
+            <div
+              style={{
+                maxHeight: "61vh",
+                overflowY: "auto",
+                border: "1px solid #d3d3d3",
+                borderRadius: "10px",
+              }}
+            >
+              <style>
+                {`
+                  div::-webkit-scrollbar {
+                    display: none;
                   }
-                  data={[
-                    {
-                      value: "CSE PhD Curriculum v1.0",
-                      label: "CSE PhD Curriculum v1.0",
-                    },
-                    {
-                      value: "ME PhD Curriculum v1.0",
-                      label: "ME PhD Curriculum v1.0",
-                    },
-                  ]}
-                />
-                <Select
-                  label="Running batch"
-                  placeholder="Select batch status"
-                  value={filter.runningBatch}
-                  onChange={(value) =>
-                    setFilter({ ...filter, runningBatch: value })
-                  }
-                  data={[
-                    { value: "Unknown", label: "Unknown" },
-                    { value: "Running", label: "Running" },
-                  ]}
-                />
-                <Select
-                  label="Discipline"
-                  placeholder="Select discipline"
-                  value={filter.discipline}
-                  onChange={(value) =>
-                    setFilter({ ...filter, discipline: value })
-                  }
-                  data={[
-                    {
-                      value: "Mechanical Engineering ME",
-                      label: "Mechanical Engineering ME",
-                    },
-                    {
-                      value: "Computer Science and Engineering CSE",
-                      label: "Computer Science and Engineering CSE",
-                    },
-                  ]}
-                />
-                <Button variant="filled" color="blue">
-                  Search
-                </Button>
-              </div>
+                `}
+              </style>
+
+              <Table
+                style={{
+                  backgroundColor: "white",
+                  padding: "20px",
+                  flexGrow: 1,
+                }}
+              >
+                <thead>
+                  <tr>
+                    {["Name", "Discipline", "Year", "Curriculum"].map(
+                      (header, index) => (
+                        <th
+                          key={index}
+                          style={{
+                            padding: "15px 20px",
+                            backgroundColor: "#C5E2F6",
+                            color: "#3498db",
+                            fontSize: "16px",
+                            textAlign: "center",
+                            borderRight: "1px solid #d3d3d3",
+                          }}
+                        >
+                          {header}
+                        </th>
+                      ),
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {(activeTab === "Batches"
+                    ? filteredBatches
+                    : filteredFinishedBatches
+                  ).map((batch, index) => (
+                    <tr
+                      key={index}
+                      style={{
+                        backgroundColor:
+                          index % 2 !== 0 ? "#E6F7FF" : "#ffffff",
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {batch.name}
+                      </td>
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {batch.discipline}
+                      </td>
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {batch.year}
+                      </td>
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "#3498db",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        <Link
+                          to={`/programme_curriculum/stud_curriculum_view/${batch.id}`}
+                          style={{
+                            color: "#3498db",
+                            textDecoration: "none",
+                            fontSize: "14px",
+                          }}
+                        >
+                          {batch.curriculum}
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
             </div>
-          </ScrollArea>
-        )}
-      </div>
+          </Grid.Col>
 
-      <style>{`
-        .courses-container {
-          display: flex;
-          gap: 20px;
-          width: 100%;
-          height: 100vh;
-          transition: all 0.3s ease-in-out;
-        }
-
-        .courses-table-section {
-          flex: 3;
-          display: flex;
-          flex-direction: column;
-          transition: all 0.3s ease-in-out;
-        }
-
-        .full-width {
-          flex: 1;
-        }
-
-        .top-actions {
-          display: flex;
-          gap: 10px;
-          margin-left: auto;
-          align-items: center;
-        }
-
-        .tabs {
-          display: flex;
-          gap: 20px;
-          margin-top: 10px;
-        }
-
-        .courses-scroll-area {
-          margin-top: 20px;
-        }
-
-        .batches-table {
-          margin-top: 20px;
-        }
-
-        .courses-table {
-          width: 100%;
-          border-collapse: collapse;
-          border: 1px solid #007bff;
-        }
-
-        .courses-table th, .courses-table td {
-          padding: 10px;
-          text-align: left;
-          border: 1px solid #007bff;
-        }
-
-        .courses-search-section {
-          flex: 1;
-          min-width: 300px;
-          transition: all 0.3s ease-in-out;
-          height: 400px;
-          position: relative;
-        }
-
-        .filter-form {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .breadcrumbs {
-          font-size: 14px;
-          margin-bottom: 10px;
-          color: #333;
-          font-size: 20px;
-        }
-
-        .breadcrumbs > span {
-          margin-right: 5px;
-          font-size: 1.4vw;
-          font-weight: bold;
-        }
-
-        .breadcrumbs > span::after {
-          content: ">";
-          margin-left: 5px;
-        }
-
-        .breadcrumbs > span:last-child::after {
-          content: ""; /* Remove the '>' from the last breadcrumb */
-        }
-      `}</style>
-    </div>
+          {!isMobile && (
+            <Grid.Col span={3}>
+              <ScrollArea type="hover">
+                {[
+                  { label: "Name", name: "name" },
+                  { label: "Discipline", name: "discipline" },
+                  { label: "Year", name: "year" },
+                  { label: "Curriculum", name: "curriculum" },
+                ].map((input, index) => (
+                  <TextInput
+                    key={index}
+                    label={`${input.label}:`}
+                    placeholder={`Select by ${input.label}`}
+                    value={filter[input.name]}
+                    name={input.name}
+                    mb={5}
+                    onChange={handleInputChange}
+                  />
+                ))}
+              </ScrollArea>
+            </Grid.Col>
+          )}
+        </Grid>
+      </Container>
+    </MantineProvider>
   );
 }
 

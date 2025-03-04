@@ -74,6 +74,7 @@
 
 .form-container{
   width: 100%;
+  overflow-x: scroll;
 }
 
 .tabs {
@@ -112,42 +113,41 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #ddd;
+  border: 1px solid #d3d3d3;
 }
 
 .table-header {
-  padding: 10px;
-  background-color: #b0e0ff;
-  color: black;
+  padding: 15px 20px;
+  background-color: #C5E2F6;
+  color: #3498db;
+  font-size: 16px;
   text-align: center;
-  border: 1px solid #007bff;
+  border-right: 1px solid #d3d3d3;
+  font-weight: normal;
+}
+
+.table-header:last-child {
+  border-right: none;
 }
 
 .table-data {
-  padding: 10px;
+  padding: 15px 20px;
   text-align: center;
-  border: 1px solid #007bff;
+  color: black;
+  border-right: 1px solid #d3d3d3;
 }
 
-.view-button,
-.submit-button,
-.archive-button,
-.add-button {
-  padding: 5px 5px;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  margin: 0 10px 0 0 ;
+.table-data:last-child {
+  border-right: none;
 }
 
-.view-button {
-  background-color: #28a745;
-  color: white;
+/* Add alternating row colors */
+.table tbody tr:nth-child(even) {
+  background-color: #15ABFF1C;
 }
 
-.submit-button {
-  background-color: #007bff;
-  color: white;
+.table tbody tr:nth-child(odd) {
+  background-color: #fff;
 }
 
 .archive-button {
@@ -166,18 +166,15 @@
 }
 .view-button,
 .submit-button,
-.archive-button,
-.add-button {
-  padding: 8px 12px; /* Adjust padding for a better fit */
+.archive-button {
+  padding: 8px 12px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 4px;
   border: none;
-  font-weight: bold; /* Make text bold for better visibility */
-}
-
-.view-button {
+  font-weight: normal;
   background-color: #28a745;
   color: white;
+  transition: background-color 0.3s;
 }
 
 .submit-button {
