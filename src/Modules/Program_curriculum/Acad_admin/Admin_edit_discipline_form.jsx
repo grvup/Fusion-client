@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  Checkbox,
+  MultiSelect,
   Button,
   Group,
   Text,
@@ -209,7 +209,7 @@ function Admin_edit_discipline_form() {
 
                 <div>
                   {programmes.length > 0 ? (
-                    <Checkbox.Group
+                    <MultiSelect
                       id="linkedProgrammes"
                       value={form.values.linkedProgrammes}
                       onChange={(value) =>
@@ -217,18 +217,12 @@ function Admin_edit_discipline_form() {
                       }
                       withAsterisk
                       label="Link Programmes to this Discipline" // Add aria-label
-                    >
-                      <Group direction="column" spacing="sm">
-                        {programmes.map((programme) => (
-                          <Checkbox
-                            key={programme.id}
-                            value={programme.id.toString()}
-                            label={programme.name}
-                            id={`programme-${programme.id}`}
-                          />
-                        ))}
-                      </Group>
-                    </Checkbox.Group>
+                      data={programmes.map((programme) => ({
+                        value: programme.id.toString(),
+                        label: programme.name,
+                      }))}
+                      searchable
+                    />
                   ) : (
                     <p style={{ color: "gray", fontStyle: "italic" }}>
                       No programmes available to be attached.

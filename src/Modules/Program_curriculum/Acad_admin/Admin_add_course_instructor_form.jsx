@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   NumberInput,
@@ -11,12 +11,17 @@ import {
   FileInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useNavigate } from "react-router-dom";
+import { fetchAllCourses, fetchFacultiesData } from "../api/api";
 
 function Admin_add_course_instructor() {
   const [activeSection, setActiveSection] = useState("manual");
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [faculties, setFaculties] = useState([]);
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: {
@@ -28,9 +33,84 @@ function Admin_add_course_instructor() {
     },
   });
 
-  const handleSubmit = (values) => {
-    localStorage.setItem("AdminInstructorsCacheChange", "true");
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("Authentication not found");
+        }
+        const response = await fetchAllCourses();
+        // console.log(response);
+
+        const courseList = response.map((course) => ({
+          id: course.id,
+          name: `${course.name} (${course.code})`,
+        }));
+        setCourses(courseList);
+        console.log("Course data: ", courseList);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    const fetchFaculties = async () => {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) {
+          throw new Error("Authentication not found");
+        }
+
+        const response = await fetchFacultiesData();
+        console.log(response);
+
+        const facultyList = response.map((faculty) => ({
+          id: faculty.id,
+          name: `${faculty.faculty_first_name} ${faculty.faculty_last_name}`,
+        }));
+
+        setFaculties(facultyList);
+        console.log("Faculty data: ", faculties);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchCourses();
+    fetchFaculties();
+  }, []);
+
+  const handleSubmit = async (values) => {
     console.log(values);
+    const apiUrl =
+      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_course_instructor/";
+
+    const payload = {
+      course_id: values.courseName, // Removed `_id`
+      instructor_id: values.instructor, // Removed `_id`
+      year: values.year,
+      semester_no: values.semester,
+      form_submit: true, // Add this if needed on the backend
+    };
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        alert("Course Instructor added successfully!");
+        navigate("/programme_curriculum/admin_course_instructor");
+      } else {
+        const errorText = await response.text();
+        console.error("Error:", errorText);
+        alert("Failed to add course instructor.");
+      }
+    } catch (error) {
+      console.error("Error adding course instructor:", error);
+      alert("Failed to add course instructor.");
+    }
   };
 
   const handleUpload = () => {
@@ -113,27 +193,30 @@ function Admin_add_course_instructor() {
                     <Select
                       label="Select Course"
                       placeholder="-- Select Course Name --"
-                      data={["Course 1", "Course 2", "Course 3"]}
+                      data={courses.map((course) => ({
+                        label: `${course.name}`,
+                        value: String(course.id),
+                      }))}
                       value={form.values.courseName}
                       onChange={(value) =>
                         form.setFieldValue("courseName", value)
                       }
+                      searchable
                       required
                     />
 
                     <Select
                       label="Select Instructor"
                       placeholder="-- Select Instructor --"
-                      data={[
-                        "Instructor 1",
-                        "Instructor 2",
-                        "Instructor 3",
-                        "Instructor 4",
-                      ]}
+                      data={faculties.map((faculty) => ({
+                        label: `${faculty.name} (${faculty.id})`,
+                        value: String(faculty.id),
+                      }))}
                       value={form.values.instructor}
                       onChange={(value) =>
                         form.setFieldValue("instructor", value)
                       }
+                      searchable
                       required
                     />
 
@@ -148,12 +231,22 @@ function Admin_add_course_instructor() {
                     <Select
                       label="Select Semester Number"
                       placeholder="-- Select Semester --"
-                      data={["1", "2", "3", "4", "5", "6", "7", "8"]}
+                      data={[
+                        { value: "1", label: "Semester 1" },
+                        { value: "2", label: "Semester 2" },
+                        { value: "3", label: "Semester 3" },
+                        { value: "4", label: "Semester 4" },
+                        { value: "5", label: "Semester 5" },
+                        { value: "6", label: "Semester 6" },
+                        { value: "7", label: "Semester 7" },
+                        { value: "8", label: "Semester 8" },
+                      ]}
                       value={form.values.semester}
                       onChange={(value) =>
                         form.setFieldValue("semester", value)
                       }
                       required
+                      searchable
                     />
 
                     <Group position="right" mt="lg">

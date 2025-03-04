@@ -52,6 +52,7 @@ import AdminEditCourseSlotForm from "./Acad_admin/Admin_edit_course_slot_form";
 import AdminEditDisciplineForm from "./Acad_admin/Admin_edit_discipline_form";
 import AdminEditCourseForm from "./Acad_admin/Admin_edit_course_form";
 import AdminEditBatchForm from "./Acad_admin/Admin_edit_batch_form";
+import AdminEditCourseInstructor from "./Acad_admin/Admin_edit_course_instructor_form";
 
 // breadcrumb
 // import BreadCrumbs from "./BreadCrumbsPorgrammeCurriculum";
@@ -528,6 +529,15 @@ export default function ProgrammeCurriculumRoutes() {
             <Layout>
               <BreadcrumbTabsAcadadmin />
               <AdminAddCourseInstructor />
+            </Layout>
+          }
+        />
+        <Route
+          path="/admin_edit_course_instructor/:id"
+          element={
+            <Layout>
+              <BreadcrumbTabsAcadadmin />
+              <AdminEditCourseInstructor />
             </Layout>
           }
         />

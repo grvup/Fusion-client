@@ -435,3 +435,15 @@ export const fetchBatchData = async (batch_id) => {
     throw error;
   }
 };
+
+export const fetchFacultiesData = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/admin_faculties/`,
+    );
+    return response.data.faculties;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
