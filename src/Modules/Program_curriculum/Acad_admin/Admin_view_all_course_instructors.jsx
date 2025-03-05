@@ -105,7 +105,9 @@ function Admin_view_all_course_instructors() {
         }}
       >
         {/* Edit button as a link */}
-        <Link to="/programme_curriculum/admin_edit_curriculum_form">
+        <Link
+          to={`/programme_curriculum/admin_edit_course_instructor/${element.id}`}
+        >
           <Button variant="filled" color="green" radius="sm">
             Edit
           </Button>
