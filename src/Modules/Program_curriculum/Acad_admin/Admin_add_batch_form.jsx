@@ -17,6 +17,7 @@ import {
   fetchBatchName,
   fetchGetUnlinkedCurriculum,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_add_batch_form() {
   const [batchNames, setBatchNames] = useState([]); // State for batch names
@@ -76,7 +77,7 @@ function Admin_add_batch_form() {
       };
       console.log(payload);
       const response = await axios.post(
-        "http://127.0.0.1:8000/programme_curriculum/api/admin_add_batch/",
+        `${host}/programme_curriculum/api/admin_add_batch/`,
         payload,
         {
           headers: {

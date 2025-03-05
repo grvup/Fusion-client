@@ -20,6 +20,7 @@ import {
   fetchProgram,
   fetchAllProgrammes,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_curriculum_form({ existingData }) {
   const [loading, setLoading] = useState(true);
@@ -161,7 +162,7 @@ function Admin_edit_curriculum_form({ existingData }) {
       };
 
       const response = await axios.put(
-        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_curriculum/${curriculumId}/`,
+        `${host}/programme_curriculum/api/admin_edit_curriculum/${curriculumId}/`,
         payload,
         {
           headers: {

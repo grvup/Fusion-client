@@ -13,6 +13,7 @@ import {
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { fetchCurriculumData } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_programme_form() {
   const { id } = useParams();
@@ -68,7 +69,7 @@ function Admin_edit_programme_form() {
       };
       console.log("Edited Programme Data Submitted:", submitData);
       const response = await fetch(
-        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_programme/${id}/`,
+        `${host}/programme_curriculum/api/admin_edit_programme/${id}/`,
         {
           method: "POST",
           body: JSON.stringify(submitData),

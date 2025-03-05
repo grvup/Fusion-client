@@ -11,6 +11,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchDisciplinesData, fetchAllProgrammes } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_discipline_form() {
   const form = useForm({
@@ -95,7 +96,7 @@ function Admin_edit_discipline_form() {
   const handleSubmit = async (values) => {
     console.log("Submitted values are: ", values);
 
-    const apiUrl = `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_discipline/${id}/`;
+    const apiUrl = `${host}/programme_curriculum/api/admin_edit_discipline/${id}/`;
 
     // Transform the values into the required structure
     const payload = {

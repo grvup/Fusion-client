@@ -15,6 +15,7 @@ import {
   fetchFacultiesData,
   adminFetchCourseInstructorData,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_course_instructor() {
   const [courses, setCourses] = useState([]);
@@ -92,7 +93,7 @@ function Admin_edit_course_instructor() {
   const handleSubmit = async (values) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/programme_curriculum/api/admin_update_course_instructor/${id}/`,
+        `${host}/programme_curriculum/api/admin_update_course_instructor/${id}/`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

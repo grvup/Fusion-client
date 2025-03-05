@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useNavigate, Link } from "react-router-dom";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_add_programme_form() {
   const form = useForm({
@@ -25,8 +26,7 @@ function Admin_add_programme_form() {
   const navigate = useNavigate();
 
   const handleSubmit = async (values) => {
-    const apiUrl =
-      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_programme/";
+    const apiUrl = `${host}/programme_curriculum/api/admin_add_programme/`;
 
     console.log("Form Values:", values);
 

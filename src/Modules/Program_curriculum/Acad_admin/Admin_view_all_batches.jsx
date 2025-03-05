@@ -12,6 +12,7 @@ import {
 import axios from "axios"; // Assuming axios is used for API calls
 import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
+import { host } from "../../../routes/globalRoutes";
 
 function AdminViewAllBatches() {
   const [activeTab, setActiveTab] = useState("Batches");
@@ -46,7 +47,7 @@ function AdminViewAllBatches() {
           if (!token) throw new Error("Authorization token not found");
 
           const response = await axios.get(
-            "http://127.0.0.1:8000/programme_curriculum/api/admin_batches/",
+            `${host}/programme_curriculum/api/admin_batches/`,
             {
               headers: { Authorization: `Token ${token}` },
             },

@@ -14,6 +14,7 @@ import { useForm } from "@mantine/form";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { fetchAllProgrammes } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function AdminAddCurriculumForm() {
   const form = useForm({
@@ -92,7 +93,7 @@ function AdminAddCurriculumForm() {
       }
 
       const response = await axios.post(
-        "http://127.0.0.1:8000/programme_curriculum/api/admin_add_curriculum/",
+        `${host}/programme_curriculum/api/admin_add_curriculum/`,
         payload,
         {
           headers: {
