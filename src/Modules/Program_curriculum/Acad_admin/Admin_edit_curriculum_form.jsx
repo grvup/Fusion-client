@@ -20,6 +20,7 @@ import {
   fetchProgram,
   fetchAllProgrammes,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_curriculum_form({ existingData }) {
   const [loading, setLoading] = useState(true);
@@ -95,8 +96,8 @@ function Admin_edit_curriculum_form({ existingData }) {
             // Set the programme value using the ID from the response
             programme: response.programme_id.toString(),
             workingCurriculum: response.working_curriculum || false,
-            versionNo: response.version_no || 1.0,
-            numSemesters: response.num_semesters || 1,
+            versionNo: response.version || 1.0,
+            numSemesters: response.semesters ? response.semesters.length : 1,
             numCredits: response.num_credits || 0,
           });
         }
@@ -161,7 +162,7 @@ function Admin_edit_curriculum_form({ existingData }) {
       };
 
       const response = await axios.put(
-        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_curriculum/${curriculumId}/`,
+        `${host}/programme_curriculum/api/admin_edit_curriculum/${curriculumId}/`,
         payload,
         {
           headers: {

@@ -1,6 +1,7 @@
 import axios from "axios";
+import { host } from "../../../routes/globalRoutes";
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = host;
 
 export const studentFetchSemesterData = async (id) => {
   try {

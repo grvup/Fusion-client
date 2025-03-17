@@ -22,6 +22,7 @@ import {
   fetchCourseSlotTypeChoices,
   fetchSemesterDetails,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_add_course_slot_form() {
   const [courses, setCourses] = useState([]);
@@ -198,7 +199,7 @@ function Admin_add_course_slot_form() {
       };
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        "http://127.0.0.1:8000/programme_curriculum/api/admin_add_courseslot/",
+        `${host}/programme_curriculum/api/admin_add_courseslot/`,
         formData,
         {
           headers: {

@@ -48,6 +48,7 @@ import AdminAddProgrammeForm from "./Acad_admin/Admin_add_programme_form";
 import InstigateForm from "./Acad_admin/Instigate_form";
 import AdminEditProgrammeForm from "./Acad_admin/Admin_edit_programme_form";
 import AdminEditCurriculumForm from "./Acad_admin/Admin_edit_curriculum_form";
+import AdminReplicateCurriculumform from "./Acad_admin/Acad_admin_replicate_curriculum";
 import AdminEditCourseSlotForm from "./Acad_admin/Admin_edit_course_slot_form";
 import AdminEditDisciplineForm from "./Acad_admin/Admin_edit_discipline_form";
 import AdminEditCourseForm from "./Acad_admin/Admin_edit_course_form";
@@ -461,6 +462,15 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
+          path="/acad_admin_replicate_curriculum_form"
+          element={
+            <Layout>
+              <NavTab />
+              <AdminReplicateCurriculumform />
+            </Layout>
+          }
+        />
+        <Route
           path="/admin_edit_course_slot_form/:courseslotid"
           element={
             <Layout>
@@ -469,7 +479,7 @@ export default function ProgrammeCurriculumRoutes() {
             </Layout>
           }
         />
-        <Route
+        {/* <Route
           path="/acad_admin_replicate_curriculum"
           element={
             <Layout>
@@ -477,7 +487,7 @@ export default function ProgrammeCurriculumRoutes() {
               <AdminAddCurriculumForm />
             </Layout>
           }
-        />
+        /> */}
         <Route
           path="/admin_edit_discipline_form"
           element={

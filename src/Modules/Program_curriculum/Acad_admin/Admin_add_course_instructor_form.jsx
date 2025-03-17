@@ -13,6 +13,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 import { fetchAllCourses, fetchFacultiesData } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_add_course_instructor() {
   const [activeSection, setActiveSection] = useState("manual");
@@ -81,8 +82,7 @@ function Admin_add_course_instructor() {
 
   const handleSubmit = async (values) => {
     console.log(values);
-    const apiUrl =
-      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_course_instructor/";
+    const apiUrl = `${host}/programme_curriculum/api/admin_add_course_instructor/`;
 
     const payload = {
       course_id: values.courseName, // Removed `_id`

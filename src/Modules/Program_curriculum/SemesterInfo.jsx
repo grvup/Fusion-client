@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Button, Table, Flex, Group } from "@mantine/core";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { host } from "../../routes/globalRoutes";
 
 export default function SemesterInfo() {
   const [activeTab, setActiveTab] = useState(0);
@@ -17,7 +18,7 @@ export default function SemesterInfo() {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
 
         const response = await axios.get(
-          `http://127.0.0.1:8000/programme_curriculum/api/admin_semester/${semesterId}`, // Use backticks for template literal
+          `${host}/programme_curriculum/api/admin_semester/${semesterId}`, // Use backticks for template literal
           {
             headers: {
               Authorization: `Token ${token}`, // Add the Authorization header

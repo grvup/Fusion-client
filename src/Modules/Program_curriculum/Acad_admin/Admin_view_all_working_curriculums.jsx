@@ -122,10 +122,10 @@ function Admin_view_all_working_curriculums() {
       >
         {/* Edit button as a link */}
         <Link
-          to={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${element.id}`}
+          to={`/programme_curriculum/acad_admin_replicate_curriculum_form?curriculum=${element.id}`}
         >
           <Button variant="filled" color="green" radius="sm">
-            Edit
+            Replicate
           </Button>
         </Link>
       </td>

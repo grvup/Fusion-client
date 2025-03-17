@@ -164,17 +164,35 @@ function Admin_view_semesters_of_a_curriculum() {
 
           <div className="dropdown-section">
             <h4 className="section-title">BATCHES</h4>
-            <a
-              href="/programme_curriculum/acad_admin_add_batch_form"
+            {batches.length > 0 ? (
+              <button className="dropdown-btn blue-btn" disabled>
+                BATCH ALREADY ATTACHED
+              </button>
+            ) : (
+              <a
+                href={`/programme_curriculum/acad_admin_add_batch_form?curriculum_id=${curriculumId}`}
+                style={{ textDecoration: "none" }}
+              >
+                <button className="dropdown-btn blue-btn">NEW BATCH</button>
+              </a>
+            )}
+            {/* <a
+              href={`/programme_curriculum/acad_admin_add_batch_form?curriculum_id=${curriculumId}`}
               style={{ textDecoration: "none" }}
             >
               <button className="dropdown-btn blue-btn">NEW BATCH</button>
-            </a>
+            </a> */}
             <a
               href="/programme_curriculum/admin_edit_batch_form"
               style={{ textDecoration: "none" }}
             >
               <button className="dropdown-btn blue-btn">EDIT BATCH</button>
+            </a>
+            <a
+              href="/programme_curriculum/admin_edit_batch_form"
+              style={{ textDecoration: "none" }}
+            >
+              <button className="dropdown-btn blue-btn">LINK BATCH</button>
             </a>
 
             {/* <button className="dropdown-btn black-btn">LINK BATCH</button> */}

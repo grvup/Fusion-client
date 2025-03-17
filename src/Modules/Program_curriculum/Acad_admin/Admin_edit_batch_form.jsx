@@ -18,6 +18,7 @@ import {
   fetchGetUnlinkedCurriculum,
   fetchBatchData, // Add this function to fetch batch data by ID
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_batch_form() {
   const [searchParams] = useSearchParams();
@@ -99,7 +100,7 @@ function Admin_edit_batch_form() {
       };
       console.log(payload);
       const response = await axios.put(
-        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_batch/${batchId}/`, // Use PUT request for editing
+        `${host}programme_curriculum/api/admin_edit_batch/${batchId}/`, // Use PUT request for editing
         payload,
         {
           headers: {

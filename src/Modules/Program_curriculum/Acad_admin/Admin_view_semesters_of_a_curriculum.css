@@ -303,6 +303,11 @@
   text-align: left; /* Left align first column */
 }
 
+.dropdown-btn.blue-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .table-container table {

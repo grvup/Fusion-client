@@ -13,6 +13,7 @@ import {
 } from "@mantine/core";
 import axios from "axios";
 import { useMediaQuery } from "@mantine/hooks";
+import { host } from "../../../routes/globalRoutes";
 
 const CURRICULUM_DATA = {
   info: {
@@ -77,7 +78,7 @@ function BDesAcadView() {
         const token = localStorage.getItem("authToken"); // Replace with actual method to get token
 
         const response = await axios.get(
-          `http://127.0.0.1:8000/programme_curriculum/api/curriculums/${programmeId}`, // Use backticks for template literal
+          `${host}/programme_curriculum/api/curriculums/${programmeId}`, // Use backticks for template literal
           {
             headers: {
               Authorization: `Token ${token}`, // Add the Authorization header

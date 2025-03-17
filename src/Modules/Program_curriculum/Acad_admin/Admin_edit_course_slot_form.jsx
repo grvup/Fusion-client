@@ -20,6 +20,7 @@ import {
   fetchSemesterDetails,
   fetchCourslotData,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_course_slot_form() {
   const { courseslotid } = useParams(); // Get the course slot ID from the URL
@@ -176,7 +177,7 @@ function Admin_edit_course_slot_form() {
       };
       const token = localStorage.getItem("authToken");
       const response = await axios.put(
-        `http://127.0.0.1:8000/programme_curriculum/api/admin_edit_courseslot/${courseslotid}/`,
+        `${host}/programme_curriculum/api/admin_edit_courseslot/${courseslotid}/`,
         formData,
         {
           headers: {

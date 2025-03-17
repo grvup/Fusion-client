@@ -19,6 +19,7 @@ import {
   fetchAllCourses,
   fetchCourseDetails,
 } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function Admin_edit_course_form() {
   const form = useForm({
@@ -126,8 +127,7 @@ function Admin_edit_course_form() {
   }, [id]);
 
   const handleSubmit = async (values) => {
-    const apiUrl =
-      "http://127.0.0.1:8000/programme_curriculum/api/admin_add_course/";
+    const apiUrl = `${host}/programme_curriculum/api/admin_add_course/`;
     console.log("Form Values:", values);
 
     const payload = {
