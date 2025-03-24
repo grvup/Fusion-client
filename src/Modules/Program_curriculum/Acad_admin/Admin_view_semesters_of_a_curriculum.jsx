@@ -334,7 +334,7 @@ function Admin_view_semesters_of_a_curriculum() {
                         slot.courses.length === 1 ? (
                           <div>
                             <a
-                              href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
+                              href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}`}
                               style={{ textDecoration: "none" }}
                             >
                               <p>
@@ -351,7 +351,7 @@ function Admin_view_semesters_of_a_curriculum() {
                         ) : (
                           <div>
                             <a
-                              href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
+                              href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}`}
                               style={{ textDecoration: "none" }}
                             >
                               <strong style={{ fontSize: "0.65vw" }}>

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, Button, Table, Flex, Group } from "@mantine/core";
+import {
+  Container,
+  Button,
+  Table,
+  Flex,
+  Group,
+  Modal,
+  Text,
+} from "@mantine/core";
 import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { host } from "../../routes/globalRoutes";
@@ -11,6 +19,8 @@ export default function SemesterInfo() {
   const semesterId = searchParams.get("semester_id");
   const [semcourseSlots, setsemCourseSlots] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [slotToDelete, setSlotToDelete] = useState(null);
 
   useEffect(() => {
     const fetchsemCourseslotData = async () => {
@@ -37,8 +47,40 @@ export default function SemesterInfo() {
     fetchsemCourseslotData();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
   // console.log(semcourseSlots)
+  const handleDeleteCourseSlot = async () => {
+    if (!slotToDelete) return; // Add safety check
+
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.delete(
+        `${host}/programme_curriculum/api/admin_delete_courseslot/${slotToDelete}/`,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        // Remove the deleted course slot from the state
+        setsemCourseSlots((prevSlots) => ({
+          ...prevSlots,
+          course_slots: prevSlots.course_slots.filter(
+            (slot) => slot.id !== slotToDelete,
+          ),
+        }));
+        alert("Course slot deleted successfully!");
+      }
+    } catch (error) {
+      console.error("Error deleting course slot:", error);
+      alert("Failed to delete course slot.");
+    } finally {
+      setDeleteModalOpen(false);
+      setSlotToDelete(null);
+    }
+  };
+  if (loading) return <div>Loading...</div>;
 
   const renderCourseTables = (data) =>
     data.map((slot) => (
@@ -209,7 +251,15 @@ export default function SemesterInfo() {
                   Edit Slot
                 </Button>
               </a>
-              <Button variant="solid" color="red" size="md">
+              <Button
+                variant="solid"
+                color="red"
+                size="md"
+                onClick={() => {
+                  setSlotToDelete(slot.id);
+                  setDeleteModalOpen(true);
+                }}
+              >
                 Remove Slot
               </Button>
             </td>
@@ -228,6 +278,25 @@ export default function SemesterInfo() {
           Program and Curriculum &gt; Curriculums &gt; CSE UG Curriculum
         </Text>
       </Flex> */}
+      {/* Delete Confirmation Modal */}
+      <Modal
+        opened={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title="Warning"
+        centered
+      >
+        <Text size="md" mb="xl">
+          Are you sure you want to remove this course slot?
+        </Text>
+        <Group position="right">
+          <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button color="red" onClick={handleDeleteCourseSlot}>
+            Remove
+          </Button>
+        </Group>
+      </Modal>
 
       {/* Tabs for Semester Info and Course Slots */}
       <Flex mb={20}>
