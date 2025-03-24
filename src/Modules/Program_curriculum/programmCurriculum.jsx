@@ -9,8 +9,10 @@ import AdminViewAllBatches from "./Acad_admin/Admin_view_all_batches";
 import AdminViewSemestersOfACurriculum from "./Acad_admin/Admin_view_semesters_of_a_curriculum";
 import FacultyViewAllCourses from "./Faculty/Faculty_view_all_courses";
 import FacultyViewACourse from "./Faculty/Faculty_view_a_course";
+import FacultyViewACourseProposalForm from "./Faculty/Faculty_view_a_course_proposal_form";
 import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
 import FacultyViewAllWorkingCurriculums from "./Faculty/Faculty_view_all_working_curriculums";
+import FacultyAddCourseProposalForm from "./Faculty/Faculty_add_course_proposal_form";
 import ViewAllCourses from "./View_all_courses";
 import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
@@ -67,7 +69,15 @@ export default function ProgrammeCurriculumRoutes() {
   const NavTab =
     role === "student"
       ? BreadcrumbTabs
-      : role === "Professor"
+      : role === "Professor" ||
+          role === "Assistant Professor" ||
+          role === "Dean Academic" ||
+          role === "HOD (CSE)" ||
+          role === "HOD (ECE)" ||
+          role === "HOD (ME)" ||
+          role === "HOD (NS)" ||
+          role === "HOD (Design)" ||
+          role === "HOD (Liberal Arts)"
         ? BreadcrumbTabsFaculty
         : role === "acadadmin" || role === "studentacadadmin"
           ? BreadcrumbTabsAcadadmin
@@ -177,6 +187,15 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
+          path="/view_a_course_proposal_form"
+          element={
+            <Layout>
+              <NavTab />
+              <FacultyViewACourseProposalForm />
+            </Layout>
+          }
+        />
+        <Route
           path="/faculty_batches"
           element={
             <Layout>
@@ -201,6 +220,15 @@ export default function ProgrammeCurriculumRoutes() {
             <Layout>
               <NavTab />
               <VCourseProposalForm />
+            </Layout>
+          }
+        />
+        <Route
+          path="/new_course_proposal_form"
+          element={
+            <Layout>
+              <NavTab />
+              <FacultyAddCourseProposalForm />
             </Layout>
           }
         />
