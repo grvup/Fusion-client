@@ -196,7 +196,7 @@ function Admin_view_semesters_of_a_curriculum() {
               onMouseEnter={() => setIsEditBatchHovered(true)}
               onMouseLeave={() => setIsEditBatchHovered(false)}
             >
-              <button className="add-course-slot-button">EDIT BATCH</button>
+              <button className="dropdown-btn green-btn">EDIT BATCH</button>
               {/* Semester options visible on hover */}
               {isEditBatchHovered && (
                 <div className="editbatch-dropdown">
@@ -231,7 +231,7 @@ function Admin_view_semesters_of_a_curriculum() {
               onMouseEnter={() => setIsLinkedBatchHovered(true)}
               onMouseLeave={() => setIsLinkedBatchHovered(false)}
             >
-              <button className="add-course-slot-button">LINK BATCH</button>
+              <button className="dropdown-btn green-btn">LINK BATCH</button>
               {/* Semester options visible on hover */}
               {isLinkedBatchHovered && (
                 <div className="Linkbatch-dropdown">
@@ -258,176 +258,177 @@ function Admin_view_semesters_of_a_curriculum() {
           </div>
         </div>
       )}
-
-      <Table
-        striped
-        highlightOnHover
-        style={{
-          borderCollapse: "collapse",
-          textAlign: "center",
-          width: isHovered ? "calc(100% - 15vw)" : "100%", // Shrink table width when hovered
-          transition: "width 0.3s ease", // Smooth transition
-        }}
-      >
-        <thead>
-          <tr style={{ border: "1px solid black" }}>
-            <td style={{ border: "1px solid black" }} />
-            <td
-              colSpan={semesterscnt.length}
-              style={{ border: "1px solid black" }}
-            >
-              <h2>
-                {curriculum_name} &nbsp; v{version}
-              </h2>
-            </td>
-          </tr>
-          {batches.length > 0 && (
+      <div className="table-container">
+        <Table
+          striped
+          highlightOnHover
+          style={{
+            borderCollapse: "collapse",
+            textAlign: "center",
+            width: isHovered ? "calc(100% - 15vw)" : "100%", // Shrink table width when hovered
+            transition: "width 0.3s ease", // Smooth transition
+          }}
+        >
+          <thead>
             <tr style={{ border: "1px solid black" }}>
               <td style={{ border: "1px solid black" }} />
               <td
-                colSpan={curriculum.no_of_semester}
+                colSpan={semesterscnt.length}
                 style={{ border: "1px solid black" }}
               >
-                <h4>
-                  Batches:&nbsp;&nbsp;&nbsp;
-                  {batches.map((batch, index) => (
-                    <span key={index}>
-                      {batch.name} {batch.discipline} {batch.year}
-                      ,&nbsp;&nbsp;&nbsp;
-                    </span>
-                  ))}
-                </h4>
+                <h2>
+                  {curriculum_name} &nbsp; v{version}
+                </h2>
               </td>
             </tr>
-          )}
-          <tr style={{ border: "1px solid black" }}>
-            <td style={{ border: "1px solid black" }} />
-            {semesters.map((semester, index) => (
-              <td key={index} style={{ border: "1px solid black" }}>
-                <a
-                  href={`/programme_curriculum/semester_info?semester_id=${semester.id}`}
-                  style={{ textDecoration: "none" }}
+            {batches.length > 0 && (
+              <tr style={{ border: "1px solid black" }}>
+                <td style={{ border: "1px solid black" }} />
+                <td
+                  colSpan={curriculum.no_of_semester}
+                  style={{ border: "1px solid black" }}
                 >
-                  <strong style={{ color: "blue", fontSize: "0.85vw" }}>
-                    Semester {semester.semester_no}
-                  </strong>
-                </a>
-              </td>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {Array.from({ length: maxSlots }).map((_, slotIndex) => (
-            <tr key={slotIndex} style={{ border: "1px solid black" }}>
-              <td style={{ border: "1px solid black" }}>
-                Slot {slotIndex + 1}
-              </td>
-              {Object.values(semesterWiseSlots).map(
-                (slotRow, semesterIndex) => {
-                  const slot = slotRow[slotIndex];
-                  return (
-                    <td
-                      key={semesterIndex}
-                      style={{ border: "1px solid black" }}
-                    >
-                      {slot && slot.name ? (
-                        slot.courses.length === 1 ? (
-                          <div>
-                            <a
-                              href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
-                              style={{ textDecoration: "none" }}
-                            >
-                              <p>
-                                <strong style={{ fontSize: "0.65vw" }}>
-                                  {slot.courses[0].code}
-                                </strong>
-                                <br />
-                                (L: {slot.courses[0].lecture_hours}, T:{" "}
-                                {slot.courses[0].tutorial_hours}, C:{" "}
-                                {slot.courses[0].credit})
-                              </p>
-                            </a>
-                          </div>
-                        ) : (
-                          <div>
-                            <a
-                              href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
-                              style={{ textDecoration: "none" }}
-                            >
-                              <strong style={{ fontSize: "0.65vw" }}>
-                                {slot.name}
-                              </strong>
-                            </a>
-                          </div>
-                        )
-                      ) : (
-                        <div />
-                      )}
-                    </td>
-                  );
-                },
-              )}
+                  <h4>
+                    Batches:&nbsp;&nbsp;&nbsp;
+                    {batches.map((batch, index) => (
+                      <span key={index}>
+                        {batch.name} {batch.discipline} {batch.year}
+                        ,&nbsp;&nbsp;&nbsp;
+                      </span>
+                    ))}
+                  </h4>
+                </td>
+              </tr>
+            )}
+            <tr style={{ border: "1px solid black" }}>
+              <td style={{ border: "1px solid black" }} />
+              {semesters.map((semester, index) => (
+                <td key={index} style={{ border: "1px solid black" }}>
+                  <a
+                    href={`/programme_curriculum/semester_info?semester_id=${semester.id}`}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <strong style={{ color: "blue", fontSize: "13px" }}>
+                      Semester {semester.semester_no}
+                    </strong>
+                  </a>
+                </td>
+              ))}
             </tr>
-          ))}
-
-          <tr style={{ border: "1px solid black" }}>
-            <td style={{ border: "1px solid black" }}>
-              <strong style={{ color: "blue", fontSize: "0.75vw" }}>
-                Start Date
-              </strong>
-            </td>
-            {semesters.map((semester, index) => (
-              <td key={index} style={{ border: "1px solid black" }}>
-                {semester.start_semester || "N/A"}
-              </td>
-            ))}
-          </tr>
-          <tr style={{ border: "1px solid black" }}>
-            <td style={{ border: "1px solid black" }}>
-              <strong style={{ color: "blue", fontSize: "0.75vw" }}>
-                End Date
-              </strong>
-            </td>
-            {semesters.map((semester, index) => (
-              <td key={index} style={{ border: "1px solid black" }}>
-                {semester.end_semester || "N/A"}
-              </td>
-            ))}
-          </tr>
-          <tr style={{ border: "1px solid black" }}>
-            <td style={{ border: "1px solid black" }}>
-              <strong style={{ color: "blue", fontSize: "0.75vw" }}>
-                Total Credits
-              </strong>
-            </td>
-            {semester_credits.map((credit, index) => (
-              <td key={index} style={{ border: "1px solid black" }}>
-                {credit}
-              </td>
-            ))}
-          </tr>
-          <tr style={{ border: "1px solid black", padding: "0.75vw 45%" }}>
-            <td style={{ border: "1px solid black" }}>
-              <strong style={{ color: "blue", fontSize: "0.75vw" }}>
-                Instigated
-              </strong>
-            </td>
-            {semesters.map((semester, index) => (
-              <td key={index} style={{ border: "1px solid black" }}>
-                {semester.is_instigated ? (
-                  <div style={{ color: "green" }}>
-                    <i className="icon checkmark" /> Yes
-                  </div>
-                ) : (
-                  <div style={{ color: "red" }}>
-                    <i className="attention icon" /> Not Yet
-                  </div>
+          </thead>
+          <tbody>
+            {Array.from({ length: maxSlots }).map((_, slotIndex) => (
+              <tr key={slotIndex} style={{ border: "1px solid black" }}>
+                <td style={{ border: "1px solid black" }}>
+                  Slot {slotIndex + 1}
+                </td>
+                {Object.values(semesterWiseSlots).map(
+                  (slotRow, semesterIndex) => {
+                    const slot = slotRow[slotIndex];
+                    return (
+                      <td
+                        key={semesterIndex}
+                        style={{ border: "1px solid black" }}
+                      >
+                        {slot && slot.name ? (
+                          slot.courses.length === 1 ? (
+                            <div>
+                              <a
+                                href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
+                                style={{ textDecoration: "none" }}
+                              >
+                                <p>
+                                  <strong style={{ fontSize: "10px" }}>
+                                    {slot.courses[0].code}
+                                  </strong>
+                                  <br />
+                                  (L: {slot.courses[0].lecture_hours}, T:{" "}
+                                  {slot.courses[0].tutorial_hours}, C:{" "}
+                                  {slot.courses[0].credit})
+                                </p>
+                              </a>
+                            </div>
+                          ) : (
+                            <div>
+                              <a
+                                href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}`}
+                                style={{ textDecoration: "none" }}
+                              >
+                                <strong style={{ fontSize: "10px" }}>
+                                  {slot.name}
+                                </strong>
+                              </a>
+                            </div>
+                          )
+                        ) : (
+                          <div />
+                        )}
+                      </td>
+                    );
+                  },
                 )}
-              </td>
+              </tr>
             ))}
-          </tr>
-        </tbody>
-      </Table>
+
+            <tr style={{ border: "1px solid black" }}>
+              <td style={{ border: "1px solid black" }}>
+                <strong style={{ color: "blue", fontSize: "12px" }}>
+                  Start Date
+                </strong>
+              </td>
+              {semesters.map((semester, index) => (
+                <td key={index} style={{ border: "1px solid black" }}>
+                  {semester.start_semester || "N/A"}
+                </td>
+              ))}
+            </tr>
+            <tr style={{ border: "1px solid black" }}>
+              <td style={{ border: "1px solid black" }}>
+                <strong style={{ color: "blue", fontSize: "12px" }}>
+                  End Date
+                </strong>
+              </td>
+              {semesters.map((semester, index) => (
+                <td key={index} style={{ border: "1px solid black" }}>
+                  {semester.end_semester || "N/A"}
+                </td>
+              ))}
+            </tr>
+            <tr style={{ border: "1px solid black" }}>
+              <td style={{ border: "1px solid black" }}>
+                <strong style={{ color: "blue", fontSize: "12px" }}>
+                  Total Credits
+                </strong>
+              </td>
+              {semester_credits.map((credit, index) => (
+                <td key={index} style={{ border: "1px solid black" }}>
+                  {credit}
+                </td>
+              ))}
+            </tr>
+            <tr style={{ border: "1px solid black", padding: "12px 45%" }}>
+              <td style={{ border: "1px solid black" }}>
+                <strong style={{ color: "blue", fontSize: "12px" }}>
+                  Instigated
+                </strong>
+              </td>
+              {semesters.map((semester, index) => (
+                <td key={index} style={{ border: "1px solid black" }}>
+                  {semester.is_instigated ? (
+                    <div style={{ color: "green" }}>
+                      <i className="icon checkmark" /> Yes
+                    </div>
+                  ) : (
+                    <div style={{ color: "red" }}>
+                      <i className="attention icon" /> Not Yet
+                    </div>
+                  )}
+                </td>
+              ))}
+            </tr>
+          </tbody>
+        </Table>
+      </div>
     </div>
   );
 }

@@ -11,7 +11,7 @@
   cursor: pointer;
   z-index: 1;
   transition: background-color 0.5s;
-  width: 14vw;
+  width: 90px;
 }
 
 .options-button:hover {
@@ -28,7 +28,8 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
   z-index: 1;
-  width: 14vw;
+  width: fit-content;
+  max-width: 210px;
   overflow-x: visible;
   opacity: 0;
   transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
@@ -137,7 +138,7 @@
 
 .semester-dropdown {
   position: absolute;
-  right: 13.2vw;
+  right: 200px;
   top: 170px;
   background-color: white;
   border: 1px solid #ddd;
@@ -151,31 +152,35 @@
 }
 .editbatch-dropdown {
   position: absolute;
-  right: 13.2vw;
-  top: 300px;
+  right: 200px;
+  top: 334px;
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  padding: 5px;
   z-index: 2;
-  min-width: 200px;
+  min-width: 150px;
   overflow-y: auto; /* Scroll if content overflows */
   transition: max-height 0.4s ease-out;
   border-radius: 5px;
+  font-size: 15px;
+  /* width: 100%; */
 }
 .Linkbatch-dropdown {
   position: absolute;
-  right: 13.2vw;
-  top: 348px;
+  right: 200px;
+  top: 384px;
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  padding: 5px;
   z-index: 2;
-  min-width: 200px;
+  min-width: 150px;
   overflow-y: auto; /* Scroll if content overflows */
   transition: max-height 0.4s ease-out;
   border-radius: 5px;
+  font-size: 15px;
+  /* width: 100%; */
 }
 .Linkbatch-option {
   display: flex;
@@ -217,7 +222,7 @@
 
 .instigate-semester-dropdown {
   position: absolute;
-  right: 13.2vw;
+  right: 200px;
   top: 118px;
   background-color: white;
   border: 1px solid #ddd;
@@ -272,7 +277,7 @@
   align-items: center;
   gap: 20px;
   padding: 10px 0;
-  font-size: 0.8vw;
+  font-size: 10px;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -313,7 +318,7 @@
   width: 100%;
   border-collapse: collapse; /* Collapse borders for cleaner look */
   margin-top: 20px; /* Space above the table */
-  font-size: 0.9vw; /* Responsive font size */
+  font-size: 10px; /* Responsive font size */
 }
 
 .table-container th, .table-container td {
@@ -347,7 +352,7 @@
 
 .table-container h2, .table-container h4 {
   margin: 0; /* Reset margin */
-  font-size: 1vw; /* Responsive font size */
+  font-size: 12px; /* Responsive font size */
   color: #007bff; /* Color for headings */
   text-align: center; /* Centered headings */
 }
@@ -357,7 +362,7 @@
 }
 
 .table-container td p {
-  font-size: 0.8vw; /* Smaller font for content inside cells */
+  font-size: 10px; /* Smaller font for content inside cells */
 }
 
 .table-container td div {
@@ -377,7 +382,7 @@
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .table-container table {
-      font-size: 1.2vw; /* Larger font size on smaller screens */
+      font-size: 10px; /* Larger font size on smaller screens */
   }
 
   .table-container th, .table-container td {
@@ -385,6 +390,22 @@
   }
 
   .table-container h2, .table-container h4 {
-      font-size: 1.5vw; /* Adjust heading size for mobile */
+      font-size: 12px; /* Adjust heading size for mobile */
+  }
+}
+
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 900px) {
+  .table-container {
+    max-width: 100%;
+  }
+  
+  .table-container table {
+    min-width: 800px; /* Ensures the table doesn't shrink too much */
   }
 }
