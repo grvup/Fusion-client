@@ -14,8 +14,10 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { fetchCurriculumData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
+import { useMediaQuery } from "@mantine/hooks";
 
 function Admin_edit_programme_form() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const { id } = useParams();
   const navigate = useNavigate();
   const [programmeData, setProgrammeData] = useState([]);

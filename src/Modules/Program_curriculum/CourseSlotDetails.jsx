@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom"; // Assuming you're using react-router for routing
+import { Link, useSearchParams, useNavigate } from "react-router-dom"; // Assuming you're using react-router for routingimport { Link, useSearchParams, useNavigate } from "react-router-dom"; // Added useNavigate for redirection
 import "./CourseSlotDetails.css"; // Separate CSS file for styling
+import axios from "axios"; // Import axios for making HTTP requests
 import { fetchCourseSlotData } from "./api/api";
+import { host } from "../../routes/globalRoutes"; // Adjust the import path as needed
 
 function CourseSlotDetails() {
   const [courseSlot, setCourseSlot] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
   const courseslotId = searchParams.get("course_slot");
+  const curriculumId = searchParams.get("curriculum");
 
   // Simulate fetching the course slot data from a server with dummy data
   useEffect(() => {
@@ -28,13 +32,37 @@ function CourseSlotDetails() {
     loadCourseSlotData();
   }, [courseslotId]);
 
-  if (loading) return <div>Loading...</div>;
-  console.log(courseSlot);
-  const handleDelete = () => {
-    setShowModal(false);
-    alert("Course Slot Deleted (simulation).");
+  const handleDeleteCourseSlot = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.delete(
+        `${host}/programme_curriculum/api/admin_delete_courseslot/${courseslotId}/`,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        alert("Course slot deleted successfully!");
+        navigate(
+          `/programme_curriculum/view_curriculum?curriculum=${curriculumId}`,
+        ); // Redirect after deletion
+      }
+    } catch (error) {
+      console.error("Error deleting course slot:", error);
+      alert("Failed to delete course slot.");
+    } finally {
+      setShowModal(false); // Close the modal
+    }
   };
 
+  const handleDelete = () => {
+    handleDeleteCourseSlot();
+  };
+
+  if (loading) return <div>Loading...</div>;
   if (!courseSlot) return <div className="loading">Loading...</div>;
 
   return (
@@ -93,7 +121,7 @@ function CourseSlotDetails() {
                       <td>Course Code</td>
                       <td>Course Name</td>
                       <td>Credits</td>
-                      <td />
+                      {/* <td /> */}
                     </tr>
                   </thead>
                   <tbody>
