@@ -448,3 +448,22 @@ export const fetchFacultiesData = async () => {
     throw error;
   }
 };
+
+export const fetchFacultyCourseProposalData = async (username, designation) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await axios.get(
+      `${BASE_URL}/programme_curriculum/api/view_course_proposal_forms/?username=${username}&des=${designation}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    console.log(response);
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};
