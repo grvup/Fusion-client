@@ -1,5 +1,8 @@
 // viewinward.jsx
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+
 import {
   Button,
   Box,
@@ -10,6 +13,7 @@ import {
   Select,
   Textarea,
 } from "@mantine/core";
+import { fetchFacultyViewInwardFilesData } from "../api/api";
 
 // CSS styles as JS objects
 const pageStyle = {
@@ -42,7 +46,34 @@ const boldTextStyle = {
 
 // Main Component
 function ViewInward() {
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id"); // Extracting the ID from URL parameters
+  const username = useSelector((state) => state.user.roll_no);
+  const role = useSelector((state) => state.user.role);
+
+  const [viewfileData, setViewFileData] = useState([]); // State to hold the fetched data
+  const [viewcourseData, setViewCourseData] = useState([]); // State to hold the fetched data
   const [activeTab, setActiveTab] = useState("notesheet"); // State to track the active tab
+
+  useEffect(() => {
+    const fetchData = async (uname, des) => {
+      try {
+        const response = await fetchFacultyViewInwardFilesData(id, uname, des);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        console.log(data);
+        setViewFileData(data.file_data);
+        setViewCourseData(data.course_data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData(username, role);
+  }, [id, username, role]);
+  // State to hold the note data
+
   const [noteData, setNoteData] = useState({
     createdBy: "",
     fileId: "",

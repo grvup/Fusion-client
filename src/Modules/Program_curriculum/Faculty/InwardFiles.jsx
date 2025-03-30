@@ -1,67 +1,119 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollArea, Button } from "@mantine/core";
+import { useSelector } from "react-redux";
+import { fetchFacultyInwardFilesData } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 // import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
 function InwardFile() {
   const [activeTab, setActiveTab] = useState("InwardFiles");
-  // const [filter, setFilter] = useState({
-  //   receivedAs: "",
-  //   sendBy: "",
-  //   fileId: 0,
-  //   remark: "",
-  //   date: "",
-  // });
+  const [inwardFiles, setInwardFiles] = useState([]);
+  const [archivedFiles, setArchivedFiles] = useState([]);
+  const username = useSelector((state) => state.user.roll_no);
+  const role = useSelector((state) => state.user.role);
 
-  const InwardFiles = [
-    {
-      receivedAs: "vkjain - HOD (CSE)",
-      sendBy: "atul - Professor",
-      fileId: 1,
-      remark: "pls take a review",
-      date: "Oct 13, 2024, 10:58 p.m.",
-    },
-  ];
+  function formatDateWithRounding(isoDateString) {
+    const date = new Date(isoDateString);
+    // Round minutes up if seconds > 30
+    const seconds = date.getSeconds();
+    if (seconds > 30) {
+      date.setMinutes(date.getMinutes() + 1);
+    }
+    const options = {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    let formatted = date.toLocaleString("en-US", options);
+    // Handle edge cases (e.g., 11:59 -> 12:00)
+    if (date.getMinutes() === 60) {
+      date.setHours(date.getHours() + 1);
+      date.setMinutes(0);
+      formatted = date.toLocaleString("en-US", options);
+    }
+    return formatted.replace(/(AM|PM)/, (match) => match.toLowerCase());
+  }
+  useEffect(() => {
+    const fetchInwardFiles = async (uname, des) => {
+      try {
+        const response = await fetchFacultyInwardFilesData(uname, des);
+        const data = await response.json();
+        console.log(data);
+        const nonArchived = data.courseProposals.filter(
+          (file) => !file.sender_archive,
+        );
+        const archived = data.courseProposals.filter(
+          (file) => file.sender_archive,
+        );
+        setInwardFiles(nonArchived);
+        setArchivedFiles(archived);
+      } catch (error) {
+        console.error("Error fetching inward files:", error);
+      }
+    };
+    fetchInwardFiles(username, role);
+  }, [username, role]);
 
-  const ArchivedFiles = [
-    {
-      receivedAs: "vkjain - HOD (CSE)",
-      sendBy: "atul - Professor",
-      fileId: 1,
-      remark: "check it",
-      date: "Oct 13, 2024, 11:12 p.m.",
-    },
-  ];
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFilter({
-  //     ...filter,
-  //     [name]: value,
-  //   });
-  // };
-
-  // const handleNavigation = (courseCode) => {
-  //   window.location.href = `/programme_curriculum/faculty_course_view?course=${courseCode}`;
-  // };
+  const handleArchive = async (fileId, uname, designation) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await fetch(
+        `${host}/programme_curriculum/api/tracking_archive/${fileId}/?username=${uname}&des=${designation}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      // Update local state
+      setInwardFiles((prev) => {
+        const fileToArchive = prev.find((f) => f.id === fileId);
+        if (fileToArchive) {
+          fileToArchive.sender_archive = true;
+          setArchivedFiles((prevn) => [...prevn, fileToArchive]);
+          return prev.filter((f) => f.id !== fileId);
+        }
+        return prev;
+      });
+    } catch (error) {
+      console.error("Error archiving file:", error);
+      alert("Failed to archive file");
+    }
+  };
+  const handleUnarchive = async (fileId, uname, designation) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await fetch(
+        `${host}/programme_curriculum/api/tracking_unarchive/${fileId}/?username=${uname}&des=${designation}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      // Update local state
+      setArchivedFiles((prev) => {
+        const fileToUnarchive = prev.find((f) => f.id === fileId);
+        if (fileToUnarchive) {
+          fileToUnarchive.sender_archive = false;
+          setInwardFiles((prevn) => [...prevn, fileToUnarchive]);
+          return prev.filter((f) => f.id !== fileId);
+        }
+        return prev;
+      });
+    } catch (error) {
+      console.error("Error unarchiving file:", error);
+      alert("Failed to unarchive file");
+    }
+  };
 
   return (
     <div style={{ padding: "20px", paddingTop: "10px" }}>
-      {/* <div className="program-options">
-        <div className="top-actions">
-
-
-          {!isSearchVisible ? (
-            
-
-            <MagnifyingGlass
-              size={24}
-              onClick={() => setIsSearchVisible(true)}
-              style={{ cursor: "pointer", color: "#007bff" }}
-            />
-          ) : null}
-        </div>
-      </div> */}
-
       <div className="courses-container">
         <div className="courses-table-section full-width">
           <div className="tabs">
@@ -100,13 +152,18 @@ function InwardFile() {
                     </tr>
                   </thead>
                   <tbody>
-                    {InwardFiles.map((inward, index) => (
+                    {inwardFiles.map((inward, index) => (
                       <tr key={index} className="courses-table-row">
-                        <td>{inward.receivedAs}</td>
-                        <td>{inward.sendBy}</td>
-                        <td>{inward.fileId}</td>
-                        <td>{inward.remark}</td>
-                        <td>{inward.date}</td>
+                        <td>
+                          {inward.receive_id__username}-
+                          {inward.receive_design__name}
+                        </td>
+                        <td>
+                          {inward.current_id}-{inward.current_design}
+                        </td>
+                        <td>{inward.file_id}</td>
+                        <td>{inward.remarks}</td>
+                        <td>{formatDateWithRounding(inward.receive_date)}</td>
                         <td>
                           <div
                             style={{
@@ -118,13 +175,22 @@ function InwardFile() {
                               variant="filled"
                               color="blue"
                               onClick={() => {
-                                window.location.href = `/programme_curriculum/view_inward_file`;
+                                window.location.href = `/programme_curriculum/view_inward_file/?id=${inward.id}`;
                               }}
                             >
                               View
                             </Button>
                             <Button variant="filled" color="blue">
                               Submit
+                            </Button>
+                            <Button
+                              variant="filled"
+                              color="blue"
+                              onClick={() =>
+                                handleArchive(inward.id, username, role)
+                              }
+                            >
+                              Archive
                             </Button>
                           </div>
                         </td>
@@ -149,13 +215,18 @@ function InwardFile() {
                     </tr>
                   </thead>
                   <tbody>
-                    {ArchivedFiles.map((inward, index) => (
+                    {archivedFiles.map((inward, index) => (
                       <tr key={index} className="courses-table-row">
-                        <td>{inward.receivedAs}</td>
-                        <td>{inward.sendBy}</td>
-                        <td>{inward.fileId}</td>
-                        <td>{inward.remark}</td>
-                        <td>{inward.date}</td>
+                        <td>
+                          {inward.receive_id__username}-
+                          {inward.receive_design__name}
+                        </td>
+                        <td>
+                          {inward.current_id}-{inward.current_design}
+                        </td>
+                        <td>{inward.file_id}</td>
+                        <td>{inward.remarks}</td>
+                        <td>{formatDateWithRounding(inward.receive_date)}</td>
                         <td>
                           <div
                             style={{
@@ -167,12 +238,18 @@ function InwardFile() {
                               variant="filled"
                               color="blue"
                               onClick={() => {
-                                window.location.href = `/programme_curriculum/view_inward_file`;
+                                window.location.href = `/programme_curriculum/view_inward_file/?id=${inward.id}`;
                               }}
                             >
                               View
                             </Button>
-                            <Button variant="filled" color="green">
+                            <Button
+                              variant="filled"
+                              color="green"
+                              onClick={() =>
+                                handleUnarchive(inward.id, username, role)
+                              }
+                            >
                               UnArchive
                             </Button>
                           </div>

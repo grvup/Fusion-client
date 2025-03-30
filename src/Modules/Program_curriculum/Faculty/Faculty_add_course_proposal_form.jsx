@@ -16,7 +16,6 @@ import { useForm } from "@mantine/form";
 import { useNavigate, useParams } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 import {
-  fetchDisciplinesData,
   fetchAllCourses,
   // fetchCourseDetails,
 } from "../api/api";
@@ -47,6 +46,7 @@ function Faculty_add_course_proposal_form() {
       labEvaluation: 15,
       attendance: 5,
       uploader: "",
+      uploader_name: "",
       Designation: "",
       Title: "",
       Description: "",
@@ -54,33 +54,17 @@ function Faculty_add_course_proposal_form() {
   });
   const role = useSelector((state) => state.user.role);
   console.log(useSelector((state) => state.user));
-  const uploader_name = useSelector((state) => state.user.username);
-  // const username = useSelector((state) => state.user.rollnumber);
-  console.log(uploader_name);
+  const uploader_fullname = useSelector((state) => state.user.username);
+  const uploader_username = useSelector((state) => state.user.roll_no);
+  console.log(uploader_username);
   const navigate = useNavigate();
   const { id } = useParams();
-  const [disciplines, setDisciplines] = useState([]);
+  // const [disciplines, setDisciplines] = useState([]);
   const [courses, setCourses] = useState([]);
   // const [course, setCourse] = useState([]);
+  console.log(form.values);
 
   useEffect(() => {
-    const fetchDisciplines = async () => {
-      try {
-        const response = await fetchDisciplinesData();
-        // console.log(response);
-
-        // const data = [...d.name, ...d.acronym, ...d.id];
-
-        const disciplineList = response.map((discipline) => ({
-          name: `${discipline.name} (${discipline.acronym})`,
-          id: discipline.id,
-        }));
-        setDisciplines(disciplineList);
-      } catch (fetchError) {
-        console.error("Error fetching disciplines: ", fetchError);
-      }
-    };
-
     const fetchCourses = async () => {
       try {
         const response = await fetchAllCourses();
@@ -95,40 +79,25 @@ function Faculty_add_course_proposal_form() {
         console.error("Error fetching courses: ", error);
       }
     };
-
-    // const loadCourseDetails = () => {
-    //   try {
-    //     // const data = await fetchCourseDetails(id);
-    //     // console.log(data);
-    //     // setCourse(data);
-    //     form.setValues({
-    //       Designation: role || " ",
-    //       uploader: uploader_name || " ",
-    //     });
-    //   } catch (err) {
-    //     console.error("Error fetching course details: ", err);
-    //   }
-    // };
-
-    fetchDisciplines();
     fetchCourses();
     // loadCourseDetails();
   }, [id]);
   useEffect(() => {
-    if (role && uploader_name) {
+    if (role && uploader_fullname) {
       try {
         form.setValues({
           Designation: role,
-          uploader: uploader_name,
+          uploader: uploader_username,
+          uploader_name: uploader_fullname,
         });
       } catch (err) {
         console.error("Error setting form values: ", err);
       }
     }
-  }, [role, uploader_name]);
+  }, [role, uploader_fullname]);
 
   const handleSubmit = async (values) => {
-    const apiUrl = `${host}/programme_curriculum/api/admin_add_course/`;
+    const apiUrl = `${host}/programme_curriculum/api/new_course_proposal_file/`;
     console.log("Form Values:", values);
 
     const payload = {
@@ -154,6 +123,10 @@ function Faculty_add_course_proposal_form() {
       pre_requisit_courses: values.preRequisiteCourse,
       pre_requisits: values.preRequisites,
       maxSeats: values.maxSeats,
+      Title: values.Title,
+      Description: values.Description,
+      uploader: values.uploader,
+      Designation: values.Designation,
     };
     console.log("Payload: ", payload);
     try {
@@ -164,11 +137,11 @@ function Faculty_add_course_proposal_form() {
       });
 
       if (response.ok) {
-        localStorage.setItem("AdminCoursesCachechange", "true");
+        // localStorage.setItem("CoursesCachechange", "true");
         const data = await response.json();
         alert("Course added successfully!");
         console.log("Response Data:", data);
-        navigate("/programme_curriculum/admin_courses");
+        navigate("/programme_curriculum/faculty_view_course_proposal");
       } else {
         const errorText = await response.text();
         console.error("Error:", errorText);
@@ -255,7 +228,7 @@ function Faculty_add_course_proposal_form() {
                     <Textarea
                       label="Uploader"
                       placeholder=""
-                      value={form.values.uploader}
+                      value={form.values.uploader_name}
                       onChange={(event) =>
                         form.setFieldValue(
                           "uploader",
@@ -283,7 +256,7 @@ function Faculty_add_course_proposal_form() {
                   placeholder="Enter Title"
                   value={form.values.Title}
                   onChange={(event) =>
-                    form.setFieldValue("syllabus", event.currentTarget.value)
+                    form.setFieldValue("Title", event.currentTarget.value)
                   }
                 />
                 <Textarea
@@ -291,7 +264,7 @@ function Faculty_add_course_proposal_form() {
                   placeholder="Enter Description"
                   value={form.values.Description}
                   onChange={(event) =>
-                    form.setFieldValue("syllabus", event.currentTarget.value)
+                    form.setFieldValue("Description", event.currentTarget.value)
                   }
                 />
                 <Table
@@ -563,26 +536,6 @@ function Faculty_add_course_proposal_form() {
                   />
                 </Group>
                 {/* Discipline and Others */}
-                <MultiSelect
-                  label="From Discipline"
-                  placeholder="Select Discipline"
-                  data={disciplines.map((discipline) => ({
-                    label: discipline.name,
-                    value: discipline.id.toString(), // Ensure value is a string for the MultiSelect component
-                    ...discipline,
-                  }))}
-                  value={
-                    Array.isArray(form.values.discipline)
-                      ? form.values.discipline.map(String) // Convert integers to strings for the MultiSelect component
-                      : []
-                  }
-                  onChange={(value) => {
-                    const integerValues = value ? value.map(Number) : []; // Convert selected strings back to integers
-                    form.setFieldValue("discipline", integerValues);
-                  }}
-                  required
-                  searchable
-                />
                 <Textarea
                   label="Pre-requisites"
                   placeholder="None"
