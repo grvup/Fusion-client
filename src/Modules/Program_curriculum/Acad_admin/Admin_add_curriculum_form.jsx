@@ -13,10 +13,12 @@ import {
 import { useForm } from "@mantine/form";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { useMediaQuery } from "@mantine/hooks";
 import { fetchAllProgrammes } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
 function AdminAddCurriculumForm() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const form = useForm({
     initialValues: {
       curriculumName: "",
@@ -30,7 +32,6 @@ function AdminAddCurriculumForm() {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const [ugData, setUgData] = useState([]);
   const [pgData, setPgData] = useState([]);
   const [phdData, setPhdData] = useState([]);
@@ -105,8 +106,8 @@ function AdminAddCurriculumForm() {
         alert("Curriculum added successfully!");
         navigate("/programme_curriculum/acad_view_all_working_curriculums");
       }
-    } catch (errror) {
-      console.error("Error:", errror);
+    } catch (err) {
+      console.error("Error:", err);
       alert("Failed to add curriculum.");
     } finally {
       setLoading(false);
@@ -114,119 +115,132 @@ function AdminAddCurriculumForm() {
   };
 
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    <Container
+      fluid
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        padding: "2rem",
+      }}
     >
-      <Container
-        fluid
+      {/* Buttons move above the form on mobile screens */}
+      {isMobile && (
+        <Group spacing="md" position="center" mb="lg">
+          <Link to="/programme_curriculum/acad_admin_add_programme_form">
+            <Button
+              className="right-btn-programme"
+              style={{ minWidth: "143px" }}
+            >
+              Add Programme
+            </Button>
+          </Link>
+          <Link to="/programme_curriculum/acad_admin_add_discipline_form">
+            <Button
+              className="right-btn-programme"
+              style={{ minWidth: "143px" }}
+            >
+              Add Discipline
+            </Button>
+          </Link>
+        </Group>
+      )}
+
+      <div
         style={{
           display: "flex",
-          justifyContent: "left",
-          alignItems: "left",
-          width: "100%",
-          margin: "0 0 0 -3.2vw",
+          flexDirection: isMobile ? "column" : "row",
+          gap: "2rem",
         }}
       >
-        <div
-          style={{
-            maxWidth: "290vw",
-            width: "100%",
-            display: "flex",
-            gap: "2rem",
-            padding: "2rem",
-            flex: 4,
-          }}
-        >
-          <div style={{ flex: 4 }}>
-            <form
-              onSubmit={form.onSubmit(handleSubmit)}
-              style={{
-                backgroundColor: "#fff",
-                padding: "2rem",
-                borderRadius: "8px",
-                boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-              }}
-            >
-              <Stack spacing="lg">
-                <Text size="xl" weight={700} align="center">
-                  Add Curriculum Form
-                </Text>
+        {/* Form */}
+        <div style={{ flex: 4 }}>
+          <form
+            onSubmit={form.onSubmit(handleSubmit)}
+            style={{
+              backgroundColor: "#fff",
+              padding: "2rem",
+              borderRadius: "8px",
+              boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Stack spacing="lg">
+              <Text size="xl" weight={700} align="center">
+                Add Curriculum Form
+              </Text>
 
-                <Input
-                  label="Curriculum Name"
-                  placeholder="Enter Curriculum Name"
-                  value={form.values.curriculumName}
-                  onChange={(event) =>
-                    form.setFieldValue("curriculumName", event.target.value)
-                  }
-                  required
-                />
+              <Input
+                label="Curriculum Name"
+                placeholder="Enter Curriculum Name"
+                value={form.values.curriculumName}
+                onChange={(event) =>
+                  form.setFieldValue("curriculumName", event.target.value)
+                }
+                required
+              />
 
-                <Select
-                  label="Programme"
-                  placeholder="-- Select Programme --"
-                  data={loadingPrograms ? [] : programOptions}
-                  value={form.values.programme}
-                  onChange={(value) => form.setFieldValue("programme", value)}
-                  required
-                  disabled={loadingPrograms}
-                  error={error}
-                />
+              <Select
+                label="Programme"
+                placeholder="-- Select Programme --"
+                data={loadingPrograms ? [] : programOptions}
+                value={form.values.programme}
+                onChange={(value) => form.setFieldValue("programme", value)}
+                required
+                disabled={loadingPrograms}
+                error={error}
+              />
 
-                <Checkbox
-                  label="Working Curriculum"
-                  checked={form.values.workingCurriculum}
-                  onChange={(event) =>
-                    form.setFieldValue(
-                      "workingCurriculum",
-                      event.target.checked,
-                    )
-                  }
-                />
+              <Checkbox
+                label="Working Curriculum"
+                checked={form.values.workingCurriculum}
+                onChange={(event) =>
+                  form.setFieldValue("workingCurriculum", event.target.checked)
+                }
+              />
 
-                <NumberInput
-                  label="Curriculum Version"
-                  value={form.values.versionNo}
-                  onChange={(value) => form.setFieldValue("versionNo", value)}
-                  required
-                  min={0.1}
-                  precision={1}
-                />
+              <NumberInput
+                label="Curriculum Version"
+                value={form.values.versionNo}
+                onChange={(value) => form.setFieldValue("versionNo", value)}
+                required
+                min={0.1}
+                precision={1}
+              />
 
-                <NumberInput
-                  label="Number of Semesters"
-                  value={form.values.numSemesters}
-                  onChange={(value) =>
-                    form.setFieldValue("numSemesters", value)
-                  }
-                  required
-                  min={1}
-                />
+              <NumberInput
+                label="Number of Semesters"
+                value={form.values.numSemesters}
+                onChange={(value) => form.setFieldValue("numSemesters", value)}
+                required
+                min={1}
+              />
 
-                <NumberInput
-                  label="Number of Credits"
-                  value={form.values.numCredits}
-                  onChange={(value) => form.setFieldValue("numCredits", value)}
-                  required
-                  min={0}
-                />
-              </Stack>
+              <NumberInput
+                label="Number of Credits"
+                value={form.values.numCredits}
+                onChange={(value) => form.setFieldValue("numCredits", value)}
+                required
+                min={0}
+              />
+            </Stack>
 
-              <Group position="right" mt="lg">
-                <Button
-                  variant="outline"
-                  onClick={() => form.reset()}
-                  className="cancel-btn"
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" className="submit-btn" loading={loading}>
-                  Submit
-                </Button>
-              </Group>
-            </form>
-          </div>
+            <Group position="right" mt="lg">
+              <Button
+                variant="outline"
+                onClick={() => form.reset()}
+                className="cancel-btn"
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="submit-btn" loading={loading}>
+                Submit
+              </Button>
+            </Group>
+          </form>
+        </div>
 
+        {/* Buttons remain on the right for larger screens */}
+        {!isMobile && (
           <div
             style={{
               flex: 1,
@@ -237,22 +251,32 @@ function AdminAddCurriculumForm() {
           >
             <Group spacing="md" direction="column" style={{ width: "100%" }}>
               <Link to="/programme_curriculum/acad_admin_add_programme_form">
-                <Button className="right-btn-programme">Add Programme</Button>
+                <Button
+                  className="right-btn-programme"
+                  style={{ minWidth: "143px" }}
+                >
+                  Add Programme
+                </Button>
               </Link>
               <Link to="/programme_curriculum/acad_admin_add_discipline_form">
-                <Button className="right-btn-programme">Add Discipline</Button>
+                <Button
+                  className="right-btn-programme"
+                  style={{ minWidth: "143px" }}
+                >
+                  Add Discipline
+                </Button>
               </Link>
             </Group>
           </div>
-        </div>
-      </Container>
+        )}
+      </div>
 
       <style>{`
         .right-btn-programme {
           width: 15vw;
         }
       `}</style>
-    </div>
+    </Container>
   );
 }
 

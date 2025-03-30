@@ -1,61 +1,121 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollArea, Button } from "@mantine/core";
-
+// import { useSearchParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { fetchFacultyOutwardFilesData } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 // import { MagnifyingGlass, X } from "@phosphor-icons/react";
 
 function OutwardFile() {
   const [activeTab, setActiveTab] = useState("OutwardFiles");
-  // const [filter, setFilter] = useState({
-  //   sendBy: "",
-  //   receivedAs: "",
-  //   fileId: 0,
-  //   remark: "",
-  //   date: "",
-  // });
 
-  const OutwardFiles = [
-    {
-      sendBy: "atul - Professor",
-      receivedAs: "vkjain - HOD (CSE)",
-      fileId: 1,
-      remark: "pls take a review",
-      date: "Oct 13, 2024, 10:58 p.m.",
-    },
-  ];
+  const [outwardFiles, setOutwardFiles] = useState([]);
+  const [archivedFiles, setArchivedFiles] = useState([]);
+  const username = useSelector((state) => state.user.roll_no);
+  const role = useSelector((state) => state.user.role);
 
-  const ArchivedFiles = [
-    {
-      sendBy: "atul - Professor",
-      receivedAs: "vkjain - HOD (CSE)",
-      fileId: 1,
-      remark: "check it",
-      date: "Oct 13, 2024, 11:12 p.m.",
-    },
-  ];
-
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFilter({
-  //     ...filter,
-  //     [name]: value,
-  //   });
-  // };
-
+  function formatDateWithRounding(isoDateString) {
+    const date = new Date(isoDateString);
+    // Round minutes up if seconds > 30
+    const seconds = date.getSeconds();
+    if (seconds > 30) {
+      date.setMinutes(date.getMinutes() + 1);
+    }
+    const options = {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    let formatted = date.toLocaleString("en-US", options);
+    // Handle edge cases (e.g., 11:59 -> 12:00)
+    if (date.getMinutes() === 60) {
+      date.setHours(date.getHours() + 1);
+      date.setMinutes(0);
+      formatted = date.toLocaleString("en-US", options);
+    }
+    return formatted.replace(/(AM|PM)/, (match) => match.toLowerCase());
+  }
+  const handleArchive = async (fileId, uname, designation) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await fetch(
+        `${host}/programme_curriculum/api/tracking_archive/${fileId}/?username=${uname}&des=${designation}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      // Update local state
+      setOutwardFiles((prev) => {
+        const fileToArchive = prev.find((f) => f.id === fileId);
+        if (fileToArchive) {
+          fileToArchive.sender_archive = true;
+          setArchivedFiles((prevn) => [...prevn, fileToArchive]);
+          return prev.filter((f) => f.id !== fileId);
+        }
+        return prev;
+      });
+    } catch (error) {
+      console.error("Error archiving file:", error);
+      alert("Failed to archive file");
+    }
+  };
+  const handleUnarchive = async (fileId, uname, designation) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      await fetch(
+        `${host}/programme_curriculum/api/tracking_unarchive/${fileId}/?username=${uname}&des=${designation}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      // Update local state
+      setArchivedFiles((prev) => {
+        const fileToUnarchive = prev.find((f) => f.id === fileId);
+        if (fileToUnarchive) {
+          fileToUnarchive.sender_archive = false;
+          setOutwardFiles((prevn) => [...prevn, fileToUnarchive]);
+          return prev.filter((f) => f.id !== fileId);
+        }
+        return prev;
+      });
+    } catch (error) {
+      console.error("Error unarchiving file:", error);
+      alert("Failed to unarchive file");
+    }
+  };
+  useEffect(() => {
+    const fetchOutwardFiles = async (uname, des) => {
+      try {
+        const response = await fetchFacultyOutwardFilesData(uname, des);
+        const data = await response.json();
+        console.log(data);
+        const nonArchived = data.courseProposals.filter(
+          (file) => !file.sender_archive,
+        );
+        const archived = data.courseProposals.filter(
+          (file) => file.sender_archive,
+        );
+        setOutwardFiles(nonArchived);
+        setArchivedFiles(archived);
+        // setOutwardFiles(data.courseProposals);
+      } catch (error) {
+        console.error("Error fetching outward files:", error);
+      }
+    };
+    fetchOutwardFiles(username, role);
+  }, [username, role]);
+  console.log(outwardFiles);
   return (
     <div style={{ padding: "20px", paddingTop: "10px" }}>
-      {/* <div className="program-options" style={{ border: "none" }}>
-        <div className="top-actions">
-          {!isSearchVisible ? (
-
-            <MagnifyingGlass
-              size={24}
-              onClick={() => setIsSearchVisible(true)}
-              style={{ cursor: "pointer", color: "#007bff" }}
-            />
-          ) : null}
-        </div>
-      </div> */}
-
       <div className="courses-container">
         <div className="courses-table-section full-width">
           <div className="tabs">
@@ -88,19 +148,24 @@ function OutwardFile() {
                       <th>Send by</th>
                       <th>Received as</th>
                       <th>File id</th>
-                      <th>remark</th>
-                      <th>date</th>
+                      <th>Remark</th>
+                      <th>Forward Date</th>
                       <th>View File</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {OutwardFiles.map((outward, index) => (
+                    {outwardFiles.map((outward, index) => (
                       <tr key={index} className="courses-table-row">
-                        <td>{outward.sendBy}</td>
-                        <td>{outward.receivedAs}</td>
-                        <td>{outward.fileId}</td>
-                        <td>{outward.remark}</td>
-                        <td>{outward.date}</td>
+                        <td>
+                          {outward.current_id}-{outward.current_design}
+                        </td>
+                        <td>
+                          {outward.receive_id__username}-
+                          {outward.receive_design__name}
+                        </td>
+                        <td>{outward.file_id}</td>
+                        <td>{outward.remarks}</td>
+                        <td>{formatDateWithRounding(outward.forward_date)}</td>
                         <td>
                           <div
                             style={{
@@ -112,12 +177,18 @@ function OutwardFile() {
                               variant="filled"
                               color="blue"
                               onClick={() => {
-                                window.location.href = `/programme_curriculum/view_inward_file`;
+                                window.location.href = `/programme_curriculum/view_inward_file/?id=${outward.id}`;
                               }}
                             >
                               View
                             </Button>
-                            <Button variant="filled" color="gray">
+                            <Button
+                              variant="filled"
+                              color="gray"
+                              onClick={() =>
+                                handleArchive(outward.id, username, role)
+                              }
+                            >
                               Archive
                             </Button>
                           </div>
@@ -143,13 +214,18 @@ function OutwardFile() {
                     </tr>
                   </thead>
                   <tbody>
-                    {ArchivedFiles.map((outward, index) => (
+                    {archivedFiles.map((outward, index) => (
                       <tr key={index} className="courses-table-row">
-                        <td>{outward.sendBy}</td>
-                        <td>{outward.receivedAs}</td>
-                        <td>{outward.fileId}</td>
-                        <td>{outward.remark}</td>
-                        <td>{outward.date}</td>
+                        <td>
+                          {outward.current_id}-{outward.current_design}
+                        </td>
+                        <td>
+                          {outward.receive_id__username}-
+                          {outward.receive_design__name}
+                        </td>
+                        <td>{outward.file_id}</td>
+                        <td>{outward.remarks}</td>
+                        <td>{formatDateWithRounding(outward.forward_date)}</td>
                         <td>
                           <div
                             style={{
@@ -161,13 +237,19 @@ function OutwardFile() {
                               variant="filled"
                               color="blue"
                               onClick={() => {
-                                window.location.href = `/programme_curriculum/view_inward_file`;
+                                window.location.href = `/programme_curriculum/view_inward_file/?id=${outward.id}`;
                               }}
                             >
                               View
                             </Button>
-                            <Button variant="filled" color="green">
-                              UnArchive
+                            <Button
+                              variant="filled"
+                              color="green"
+                              onClick={() =>
+                                handleUnarchive(outward.id, username, role)
+                              }
+                            >
+                              Unarchive
                             </Button>
                           </div>
                         </td>

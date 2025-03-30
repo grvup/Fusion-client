@@ -11,9 +11,11 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useNavigate, Link } from "react-router-dom";
+import { useMediaQuery } from "@mantine/hooks";
 import { host } from "../../../routes/globalRoutes";
 
 function Admin_add_programme_form() {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const form = useForm({
     initialValues: {
       category: "",
@@ -28,35 +30,21 @@ function Admin_add_programme_form() {
   const handleSubmit = async (values) => {
     const apiUrl = `${host}/programme_curriculum/api/admin_add_programme/`;
 
-    console.log("Form Values:", values);
-
-    const formData = new FormData();
-    formData.append("category", values.category);
-    formData.append("name", values.programmeName);
-    formData.append("programme_begin_year", values.year);
-
-    console.log("Form Data:", formData);
-
     try {
       setLoading(true);
       const response = await fetch(apiUrl, {
         method: "POST",
-        body: formData,
+        body: JSON.stringify(values),
+        headers: { "Content-Type": "application/json" },
       });
 
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("AdminProgrammesCachechange", "true");
         alert("Programme added successfully!");
-        console.log("Response Data:", data);
         navigate("/programme_curriculum/acad_view_all_programme");
       } else {
-        const errorText = await response.text();
-        console.error("Error:", errorText);
         alert("Failed to add programme.");
       }
     } catch (error) {
-      console.error("Network Error:", error);
       alert("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -64,112 +52,118 @@ function Admin_add_programme_form() {
   };
 
   return (
-    <div
-      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-    >
-      <Container
-        fluid
+    <Container fluid style={{ minHeight: "100vh", padding: "2rem" }}>
+      {isMobile && (
+        <Group spacing="md" position="center" mb="lg">
+          <Link to="/programme_curriculum/acad_admin_add_curriculum_form">
+            <Button
+              className="right-btn-programme"
+              style={{ minWidth: "140px" }}
+            >
+              Add Curriculum
+            </Button>
+          </Link>
+          <Link to="/programme_curriculum/acad_admin_add_discipline_form">
+            <Button
+              className="right-btn-programme"
+              style={{ minWidth: "140px" }}
+            >
+              Add Discipline
+            </Button>
+          </Link>
+        </Group>
+      )}
+
+      <div
         style={{
           display: "flex",
-          justifyContent: "left",
-          alignItems: "left",
-          width: "100%",
-          margin: "0 0 0 -3.2vw",
+          flexDirection: isMobile ? "column" : "row",
+          gap: "2rem",
         }}
       >
-        <div
-          style={{
-            maxWidth: "290vw",
-            width: "100%",
-            display: "flex",
-            gap: "2rem",
-            padding: "2rem",
-            flex: 4,
-          }}
-        >
-          <div style={{ flex: 4 }}>
-            <form
-              onSubmit={form.onSubmit(handleSubmit)}
-              style={{
-                backgroundColor: "#fff",
-                padding: "2rem",
-                borderRadius: "8px",
-                boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-              }}
-            >
-              <Stack spacing="lg">
-                <Text size="xl" weight={700} align="center">
-                  Add Programme Form
-                </Text>
-
-                <Select
-                  label="Programme Category"
-                  placeholder="-- Select Category --"
-                  data={["UG", "PG", "PHD"]}
-                  value={form.values.category}
-                  onChange={(value) => form.setFieldValue("category", value)}
-                  required
-                />
-
-                <Input
-                  label="Programme Name"
-                  placeholder="Enter Programme Name"
-                  value={form.values.programmeName}
-                  onChange={(event) =>
-                    form.setFieldValue("programmeName", event.target.value)
-                  }
-                  required
-                />
-
-                <NumberInput
-                  label="Programme Begin Year"
-                  value={form.values.year}
-                  onChange={(value) => form.setFieldValue("year", value)}
-                  required
-                />
-              </Stack>
-
-              <Group position="right" mt="lg">
-                <Button
-                  variant="outline"
-                  onClick={() => form.reset()}
-                  className="cancel-btn"
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" className="submit-btn" loading={loading}>
-                  Submit
-                </Button>
-              </Group>
-            </form>
-          </div>
-
-          <div
+        <div style={{ flex: 4 }}>
+          <form
+            onSubmit={form.onSubmit(handleSubmit)}
             style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
+              backgroundColor: "#fff",
+              padding: "2rem",
+              borderRadius: "8px",
+              boxShadow: "0 0 10px rgba(0,0,0,0.1)",
             }}
           >
-            <Group spacing="md" direction="column" style={{ width: "100%" }}>
+            <Stack spacing="lg">
+              <Text size="xl" weight={700} align="center">
+                Add Programme Form
+              </Text>
+
+              <Select
+                label="Programme Category"
+                placeholder="-- Select Category --"
+                data={["UG", "PG", "PHD"]}
+                value={form.values.category}
+                onChange={(value) => form.setFieldValue("category", value)}
+                required
+              />
+
+              <Input
+                label="Programme Name"
+                placeholder="Enter Programme Name"
+                value={form.values.programmeName}
+                onChange={(event) =>
+                  form.setFieldValue("programmeName", event.target.value)
+                }
+                required
+              />
+
+              <NumberInput
+                label="Programme Begin Year"
+                value={form.values.year}
+                onChange={(value) => form.setFieldValue("year", value)}
+                required
+              />
+            </Stack>
+
+            <Group position="right" mt="lg">
+              <Button variant="outline" onClick={() => form.reset()}>
+                Cancel
+              </Button>
+              <Button type="submit" loading={loading}>
+                Submit
+              </Button>
+            </Group>
+          </form>
+        </div>
+
+        {!isMobile && (
+          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+            <Group spacing="md" direction="column">
               <Link to="/programme_curriculum/acad_admin_add_curriculum_form">
-                <Button className="right-btn-programme">Add Curriculum</Button>
+                <Button
+                  className="right-btn-programme"
+                  style={{ minWidth: "140px" }}
+                >
+                  Add Curriculum
+                </Button>
               </Link>
               <Link to="/programme_curriculum/acad_admin_add_discipline_form">
-                <Button className="right-btn-programme">Add Discipline</Button>
+                <Button
+                  className="right-btn-programme"
+                  style={{ minWidth: "140px" }}
+                >
+                  Add Discipline
+                </Button>
               </Link>
             </Group>
           </div>
-        </div>
-      </Container>
+        )}
+      </div>
 
       <style>{`
         .right-btn-programme {
           width: 15vw;
         }
       `}</style>
-    </div>
+    </Container>
   );
 }
 

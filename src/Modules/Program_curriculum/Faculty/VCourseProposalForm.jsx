@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useEffect, useState } from "react";
 import {
   Textarea,
   TextInput,
@@ -9,7 +9,10 @@ import {
   Stack,
   Select,
 } from "@mantine/core";
+import { useSearchParams } from "react-router-dom";
 import { useForm } from "@mantine/form";
+import { fetchFacultySuperiorData, fetchDisciplinesData } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function VCourseProposalForm() {
   const form = useForm({
@@ -20,13 +23,140 @@ function VCourseProposalForm() {
       receiverId: "",
       receiverDesignation: "",
       remarks: "",
-      disciplines: "",
+      discipline: "",
     },
   });
+  const [searchParams] = useSearchParams();
+  const id = searchParams.get("id");
+  const courseProposals = JSON.parse(sessionStorage.getItem("courseProposals"));
+  const courseProposal = courseProposals.find(
+    (proposal) => proposal.pk === parseInt(id, 10),
+  );
+  // console.log(courseProposal);
+  const [superiorData, setSuperiorData] = useState(null);
+  const [receiverOptions, setReceiverOptions] = useState([]);
+  const [designationOptions, setDesignationOptions] = useState([]);
+  const [disciplines, setDisciplines] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  console.log(form.values);
+  // const courseProposalData = Object.entries(courseProposal.fields);
+  // console.log(courseProposalData);
+  useEffect(() => {
+    const fetchSuperiorData = async () => {
+      try {
+        const response = await fetchFacultySuperiorData(
+          courseProposal.fields.uploader,
+          courseProposal.fields.designation,
+        );
+        const data = await response.json();
+        console.log(data);
+        setSuperiorData(data.superior_data);
+        if (data.superior_data) {
+          setReceiverOptions([
+            {
+              value: data.superior_data.username,
+              label: `${data.superior_data.name} (${data.superior_data.designation})`,
+            },
+          ]);
+          setDesignationOptions([
+            {
+              value: data.superior_data.designation,
+              label: data.superior_data.designation,
+            },
+          ]);
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleSubmit = (values) => {
-    console.log("Form Submitted: ", values);
-    alert("Form Submitted!");
+    const fetchDisciplines = async () => {
+      try {
+        const response = await fetchDisciplinesData();
+        // console.log(response);
+
+        // const data = [...d.name, ...d.acronym, ...d.id];
+
+        const disciplineList = response.map((discipline) => ({
+          value: discipline.id.toString(),
+          label: `${discipline.name} (${discipline.acronym})`,
+        }));
+        setDisciplines(disciplineList);
+      } catch (fetchError) {
+        console.error("Error fetching disciplines: ", fetchError);
+      }
+    };
+
+    fetchSuperiorData();
+    fetchDisciplines();
+
+    if (id) {
+      // Fetch data from API and set form values
+      form.setValues({
+        fileId: id,
+        uploader: courseProposal.fields.uploader,
+        uploaderDesignation: courseProposal.fields.designation,
+      });
+    }
+  }, [courseProposal.fields.designation, courseProposal.fields.uploader]);
+
+  useEffect(() => {
+    if (superiorData) {
+      form.setValues({
+        ...form.values,
+        receiverId: superiorData.username,
+        receiverDesignation: superiorData.designation,
+      });
+    }
+  }, [id]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!superiorData) return <div>No superior data found</div>;
+
+  const handleSubmit = async (values) => {
+    const token = localStorage.getItem("authToken");
+
+    try {
+      // Prepare the payload with all form values
+      const payload = {
+        fileId: values.fileId,
+        uploader: values.uploader,
+        designation: values.uploaderDesignation,
+        receiverId: values.receiverId,
+        receiverDesignation: values.receiverDesignation,
+        remarks: values.remarks,
+        discipline: values.discipline,
+      };
+      const response = await fetch(
+        `${host}/programme_curriculum/api/filetracking/${id}/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit form");
+      }
+
+      const responseData = await response.json();
+      alert("Form submitted successfully!");
+      console.log("Submission successful:", responseData);
+      // Optionally redirect or reset the form
+      // navigate('/success-page');
+      // form.reset();
+    } catch (errors) {
+      console.error("Submission error:", errors);
+      alert(`Error submitting form: ${error.message}`);
+    }
   };
 
   return (
@@ -39,20 +169,6 @@ function VCourseProposalForm() {
         padding: "0",
       }}
     >
-      {/* Breadcrumbs Section */}
-      {/* <Container
-        fluid
-        style={{
-          padding: "0",
-          marginTop: "0.5rem",
-        }}
-      >
-        
-      </Container> */}
-
-      {/* Options Section */}
-
-      {/* Main Layout */}
       <Container
         fluid
         style={{
@@ -118,29 +234,25 @@ function VCourseProposalForm() {
               <Select
                 label="Receiver ID"
                 placeholder="---------------"
-                data={[
-                  { value: "1", label: "User 1" },
-                  { value: "2", label: "User 2" },
-                  { value: "3", label: "User 3" },
-                ]}
+                data={receiverOptions}
                 value={form.values.receiverId}
                 onChange={(value) => form.setFieldValue("receiverId", value)}
+                disabled={receiverOptions.length === 0}
+                nothingFound="No receivers found"
                 required
               />
 
               <Select
                 label="Receiver Designation"
                 placeholder="--------------"
-                data={[
-                  { value: "professor", label: "Professor" },
-                  { value: "hod", label: "HOD" },
-                  { value: "dean", label: "Dean" },
-                ]}
+                data={designationOptions}
                 value={form.values.receiverDesignation}
                 onChange={(value) =>
                   form.setFieldValue("receiverDesignation", value)
                 }
                 required
+                disabled={designationOptions.length === 0}
+                nothingFound="No designations found"
               />
 
               <Textarea
@@ -152,13 +264,16 @@ function VCourseProposalForm() {
                 }
               />
 
-              <TextInput
-                label="Disciplines"
-                placeholder="Enter Disciplines"
-                value={form.values.disciplines}
-                onChange={(event) =>
-                  form.setFieldValue("disciplines", event.currentTarget.value)
-                }
+              <Select
+                label="From Discipline"
+                placeholder="Select Discipline"
+                data={disciplines}
+                value={form.values.discipline}
+                onChange={(value) => form.setFieldValue("discipline", value)}
+                required
+                searchable
+                clearable
+                nothingFound="No disciplines found"
               />
             </Stack>
 

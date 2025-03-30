@@ -3,7 +3,9 @@ import { useSelector } from "react-redux";
 import "./Faculty_course_proposal.css";
 import { Button } from "@mantine/core";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import { fetchFacultyCourseProposalData } from "../api/api";
+import { host } from "../../../routes/globalRoutes";
 
 function FormSection({
   activeTab,
@@ -11,6 +13,9 @@ function FormSection({
   title,
   formType,
   courseProposals,
+  onArchiveSuccess,
+  // eslint-disable-next-line react/prop-types
+  onRestoreSuccess,
 }) {
   return (
     <div className="container">
@@ -49,9 +54,15 @@ function FormSection({
 
       <div className="form-container">
         {activeTab === "new-courses" ? (
-          <CourseProposalTable courseProposals={courseProposals} />
+          <CourseProposalTable
+            courseProposals={courseProposals}
+            onArchiveSuccess={onArchiveSuccess}
+          />
         ) : (
-          <ArchivedCoursesTable />
+          <ArchivedCoursesTable
+            courseProposals={courseProposals}
+            onRestoreSuccess={onRestoreSuccess}
+          />
         )}
       </div>
     </div>
@@ -84,6 +95,26 @@ function Admin_course_proposal_form() {
       fetchFacultyCourseProposal(username, role);
     }
   }, [username, role]);
+
+  const handleArchiveSuccess = (archivedId) => {
+    setCourseProposals((prevProposals) =>
+      prevProposals.map((proposal) =>
+        proposal.pk === archivedId
+          ? { ...proposal, fields: { ...proposal.fields, is_archive: true } }
+          : proposal,
+      ),
+    );
+  };
+
+  const handleRestoreSuccess = (restoredId) => {
+    setCourseProposals((prevProposals) =>
+      prevProposals.map((proposal) =>
+        proposal.pk === restoredId
+          ? { ...proposal, fields: { ...proposal.fields, is_archive: false } }
+          : proposal,
+      ),
+    );
+  };
 
   const handleFormSwitch = (form) => {
     setActiveForm(form);
@@ -137,6 +168,8 @@ function Admin_course_proposal_form() {
             title="New Course Proposal Forms"
             formType="new-forms"
             courseProposals={courseProposals}
+            onArchiveSuccess={handleArchiveSuccess}
+            onRestoreSuccess={handleRestoreSuccess}
           />
         )}
 
@@ -147,6 +180,8 @@ function Admin_course_proposal_form() {
             title="Updated Course Proposal Forms"
             formType="updated-forms"
             courseProposals={courseProposals}
+            onArchiveSuccess={handleArchiveSuccess}
+            onRestoreSuccess={handleRestoreSuccess}
           />
         )}
       </div>
@@ -154,9 +189,38 @@ function Admin_course_proposal_form() {
   );
 }
 
-function CourseProposalTable({ courseProposals }) {
+function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
   const handleNavigation = (id) => {
     window.location.href = `/programme_curriculum/view_a_course_proposal_form?proposalid=${id}`;
+  };
+
+  const handleArchive = async (id) => {
+    console.log("Archived: ", id);
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(
+        `${host}/programme_curriculum/api/file_archive/${id}/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+      const data = await response.json();
+      console.log("API Response: ", data);
+      // Refresh the page after successful archive
+      if (response.ok) {
+        onArchiveSuccess(id);
+        alert("Course archived successfully");
+      } else {
+        throw new Error(data.message || "Failed to archive course");
+      }
+      // window.location.reload();
+    } catch (error) {
+      console.error("Error archiving course: ", error);
+      alert("Failed to archive course");
+    }
   };
 
   return (
@@ -173,27 +237,38 @@ function CourseProposalTable({ courseProposals }) {
       </thead>
       <tbody>
         {courseProposals.length > 0 ? (
-          courseProposals.map((proposal, index) => (
-            <tr key={index}>
-              <td className="table-data">{proposal.fields.uploader}</td>
-              <td className="table-data">{proposal.fields.name}</td>
-              <td className="table-data">{proposal.fields.code}</td>
-              <td className="table-data">
-                <button
-                  className="view-button"
-                  onClick={() => handleNavigation(proposal.pk)}
+          courseProposals
+            .filter((proposal) => proposal.fields.is_archive === false)
+            .map((proposal, index) => (
+              <tr key={index}>
+                <td className="table-data">{proposal.fields.uploader}</td>
+                <td className="table-data">{proposal.fields.name}</td>
+                <td className="table-data">{proposal.fields.code}</td>
+                <td className="table-data">
+                  <button
+                    className="view-button"
+                    onClick={() => handleNavigation(proposal.pk)}
+                  >
+                    View
+                  </button>
+                </td>
+                <Link
+                  to={`/programme_curriculum/filetracking?id=${proposal.pk}`}
                 >
-                  View
-                </button>
-              </td>
-              <td className="table-data">
-                <button className="submit-button">Submit</button>
-              </td>
-              <td className="table-data">
-                <button className="archive-button">Archive</button>
-              </td>
-            </tr>
-          ))
+                  <td className="table-data">
+                    <button className="submit-button">Submit</button>
+                  </td>
+                </Link>
+                <td className="table-data">
+                  <button
+                    className="archive-button"
+                    onClick={() => handleArchive(proposal.pk)}
+                  >
+                    Archive
+                  </button>
+                </td>
+              </tr>
+            ))
         ) : (
           <tr>
             <td colSpan="6" style={{ textAlign: "center" }}>
@@ -206,10 +281,47 @@ function CourseProposalTable({ courseProposals }) {
   );
 }
 
-function ArchivedCoursesTable() {
+function ArchivedCoursesTable({ courseProposals, onRestoreSuccess }) {
   const handleNavigation = (courseCode) => {
     window.location.href = `/programme_curriculum/faculty_course_view?course=${courseCode}`;
   };
+  console.log(courseProposals);
+  const handleRestore = async (id) => {
+    console.log("Restoring: ", id);
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(
+        `${host}/programme_curriculum/api/file_unarchive/${id}/`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+      console.log("API Response: ", data);
+
+      if (response.ok) {
+        onRestoreSuccess(id);
+        alert("Course restored successfully");
+      } else {
+        throw new Error(data.message || "Failed to archive course");
+      }
+
+      // Call parent component's callback to update state
+      // if (onRestoreSuccess) {
+      //   onRestoreSuccess(id);
+      // }
+
+      // alert("Course restored successfully");
+    } catch (error) {
+      console.error("Error restoring course: ", error);
+      alert(error.message || "Failed to restore course");
+    }
+  };
+
   return (
     <table className="table">
       <thead>
@@ -222,43 +334,43 @@ function ArchivedCoursesTable() {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td className="table-data">atul - Professor</td>
-          <td className="table-data">Data Structures</td>
-          <td className="table-data">CS101</td>
-          <td className="table-data">
-            <button
-              className="view-button"
-              onClick={() => handleNavigation("CS101")}
-            >
-              View
-            </button>
-          </td>
-          <td className="table-data">
-            <button className="submit-button">Restore</button>
-          </td>
-        </tr>
-        <tr>
-          <td className="table-data">atul - Professor</td>
-          <td className="table-data">Operating Systems</td>
-          <td className="table-data">CS102</td>
-          <td className="table-data">
-            <button
-              className="view-button"
-              onClick={() => handleNavigation("CS102")}
-            >
-              View
-            </button>
-          </td>
-          <td className="table-data">
-            <button className="submit-button">Restore</button>
-          </td>
-        </tr>
+        {courseProposals.length > 0 ? (
+          courseProposals
+            .filter((proposal) => proposal.fields.is_archive === true)
+            .map((proposal, index) => (
+              <tr key={index}>
+                <td className="table-data">{proposal.fields.uploader}</td>
+                <td className="table-data">{proposal.fields.name}</td>
+                <td className="table-data">{proposal.fields.code}</td>
+                <td className="table-data">
+                  <button
+                    className="view-button"
+                    onClick={() => handleNavigation(proposal.fields.code)}
+                  >
+                    View
+                  </button>
+                </td>
+                <td className="table-data">
+                  <button
+                    className="submit-button"
+                    onClick={() => handleRestore(proposal.pk)}
+                  >
+                    Restore
+                  </button>
+                </td>
+              </tr>
+            ))
+        ) : (
+          <tr>
+            <td colSpan="5" style={{ textAlign: "center" }}>
+              No archived course proposals available.
+            </td>
+          </tr>
+        )}
       </tbody>
     </table>
   );
 }
-
 FormSection.propTypes = {
   activeTab: PropTypes.string.isRequired,
   setActiveTab: PropTypes.func.isRequired,
@@ -266,11 +378,18 @@ FormSection.propTypes = {
   formType: PropTypes.string.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   courseProposals: PropTypes.array.isRequired,
+  onArchiveSuccess: PropTypes.func,
 };
 
 CourseProposalTable.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   courseProposals: PropTypes.array.isRequired,
+  onArchiveSuccess: PropTypes.func,
+};
+ArchivedCoursesTable.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  courseProposals: PropTypes.array.isRequired,
+  onRestoreSuccess: PropTypes.func,
 };
 
 export default Admin_course_proposal_form;
