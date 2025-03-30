@@ -1,7 +1,7 @@
 import { ActionIcon, Table } from "@mantine/core";
 import { Bell } from "@phosphor-icons/react";
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import "./Admin_view_semesters_of_a_curriculum.css";
 import { adminFetchCurriculumSemesters } from "../api/api";
 /* eslint-disable jsx-a11y/control-has-associated-label */
@@ -30,16 +30,32 @@ function Admin_view_semesters_of_a_curriculum() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("authToken");
-        if (!token) {
-          throw new Error("Authorization token not found");
-        }
+        const cacheKey = `CurriculumCache_${curriculumId}`;
+        const timestampKey = `CurriculumTimestamp_${curriculumId}`;
+        const cacheChangeKey = `CurriculumCacheChange_${curriculumId}`;
 
-        const response = await adminFetchCurriculumSemesters(
-          curriculumId,
-          token,
-        );
-        setCurriculumData(response);
+        const cachedData = localStorage.getItem(cacheKey);
+        const timestamp = localStorage.getItem(timestampKey);
+        const isCacheValid =
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
+        const cachedDataChange = localStorage.getItem(cacheChangeKey);
+
+        if (cachedData && isCacheValid && cachedDataChange === "false") {
+          setCurriculumData(JSON.parse(cachedData));
+        } else {
+          const token = localStorage.getItem("authToken");
+          if (!token) throw new Error("Authorization token not found");
+
+          const response = await adminFetchCurriculumSemesters(
+            curriculumId,
+            token,
+          );
+          setCurriculumData(response);
+
+          localStorage.setItem(cacheKey, JSON.stringify(response));
+          localStorage.setItem(timestampKey, Date.now().toString());
+          localStorage.setItem(cacheChangeKey, "false");
+        }
       } catch (error) {
         console.error("Error fetching curriculum data: ", error);
       } finally {
@@ -49,6 +65,7 @@ function Admin_view_semesters_of_a_curriculum() {
 
     fetchData();
   }, [curriculumId]);
+
   // console.log(curriculumData)
 
   if (loading) return <div>Loading...</div>;
@@ -94,8 +111,8 @@ function Admin_view_semesters_of_a_curriculum() {
         >
           <div className="dropdown-section">
             <h4 className="section-title">CURRICULUM</h4>
-            <a
-              href={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${
+            <Link
+              to={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${
                 curriculumId
               }`}
               style={{ textDecoration: "none" }}
@@ -103,7 +120,7 @@ function Admin_view_semesters_of_a_curriculum() {
               <button className="dropdown-btn green-btn">
                 EDIT CURRICULUM
               </button>
-            </a>
+            </Link>
             <div
               className="instigate-semester"
               onMouseEnter={() => setIsInstigateSemesterHovered(true)}
@@ -117,8 +134,8 @@ function Admin_view_semesters_of_a_curriculum() {
               {isInstigateSemesterHovered && (
                 <div className="instigate-semester-dropdown">
                   {semesterscnt.map((semester, index) => (
-                    <a
-                      href={`/programme_curriculum/acad_admin_instigate_form?semester=${
+                    <Link
+                      to={`/programme_curriculum/acad_admin_instigate_form?semester=${
                         semester.value
                       }`}
                       style={{ textDecoration: "none" }}
@@ -129,7 +146,7 @@ function Admin_view_semesters_of_a_curriculum() {
                           <Bell size={20} />
                         </ActionIcon>
                       </div>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -148,8 +165,8 @@ function Admin_view_semesters_of_a_curriculum() {
               {isAddCourseSlotHovered && (
                 <div className="semester-dropdown">
                   {semesterscnt.map((semester, index) => (
-                    <a
-                      href={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${
+                    <Link
+                      to={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${
                         semester.value
                       }`}
                       style={{ textDecoration: "none" }}
@@ -158,7 +175,7 @@ function Admin_view_semesters_of_a_curriculum() {
                         <text>{semester.label}</text>
                         <text>+</text>
                       </div>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -172,12 +189,12 @@ function Admin_view_semesters_of_a_curriculum() {
                 BATCH ALREADY ATTACHED
               </button>
             ) : (
-              <a
-                href={`/programme_curriculum/acad_admin_add_batch_form?curriculum_id=${curriculumId}`}
+              <Link
+                to={`/programme_curriculum/acad_admin_add_batch_form?curriculum_id=${curriculumId}`}
                 style={{ textDecoration: "none" }}
               >
                 <button className="dropdown-btn blue-btn">NEW BATCH</button>
-              </a>
+              </Link>
             )}
             {/* <a
               href={`/programme_curriculum/acad_admin_add_batch_form?curriculum_id=${curriculumId}`}
@@ -202,15 +219,15 @@ function Admin_view_semesters_of_a_curriculum() {
                 <div className="editbatch-dropdown">
                   {batches.length > 0 ? (
                     batches.map((batch, index) => (
-                      <a
-                        href={`/programme_curriculum/admin_edit_batch_form?batch=${batch.id}`}
+                      <Link
+                        to={`/programme_curriculum/admin_edit_batch_form?batch=${batch.id}`}
                         style={{ textDecoration: "none" }}
                         key={index} // Move the key here to avoid React warning
                       >
                         <div className="editbatch-option">
                           {batch.name} {batch.discipline} {batch.year}
                         </div>
-                      </a>
+                      </Link>
                     ))
                   ) : (
                     <div className="editbatch-option">
@@ -239,15 +256,15 @@ function Admin_view_semesters_of_a_curriculum() {
                     <div className="editbatch-option">Batch already linked</div>
                   ) : (
                     unlikedbatches.map((batch, index) => (
-                      <a
-                        href={`/programme_curriculum/admin_edit_batch_form?batch=${batch.id}&curriculum_id=${curriculumId}`}
+                      <Link
+                        to={`/programme_curriculum/admin_edit_batch_form?batch=${batch.id}&curriculum_id=${curriculumId}`}
                         style={{ textDecoration: "none" }}
                         key={index} // Move the key here to avoid React warning
                       >
                         <div className="Linkbatch-option">
                           {batch.name} {batch.discipline} {batch.year}
                         </div>
-                      </a>
+                      </Link>
                     ))
                   )}
                 </div>
@@ -304,14 +321,14 @@ function Admin_view_semesters_of_a_curriculum() {
               <td style={{ border: "1px solid black" }} />
               {semesters.map((semester, index) => (
                 <td key={index} style={{ border: "1px solid black" }}>
-                  <a
-                    href={`/programme_curriculum/semester_info?semester_id=${semester.id}`}
+                  <Link
+                    to={`/programme_curriculum/semester_info?semester_id=${semester.id}`}
                     style={{ textDecoration: "none" }}
                   >
                     <strong style={{ color: "blue", fontSize: "13px" }}>
                       Semester {semester.semester_no}
                     </strong>
-                  </a>
+                  </Link>
                 </td>
               ))}
             </tr>
@@ -333,8 +350,8 @@ function Admin_view_semesters_of_a_curriculum() {
                         {slot && slot.name ? (
                           slot.courses.length === 1 ? (
                             <div>
-                              <a
-                                href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}`}
+                              <Link
+                                to={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}`}
                                 style={{ textDecoration: "none" }}
                               >
                                 <p>
@@ -346,18 +363,18 @@ function Admin_view_semesters_of_a_curriculum() {
                                   {slot.courses[0].tutorial_hours}, C:{" "}
                                   {slot.courses[0].credit})
                                 </p>
-                              </a>
+                              </Link>
                             </div>
                           ) : (
                             <div>
-                              <a
-                                href={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}`}
+                              <Link
+                                to={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}`}
                                 style={{ textDecoration: "none" }}
                               >
                                 <strong style={{ fontSize: "10px" }}>
                                   {slot.name}
                                 </strong>
-                              </a>
+                              </Link>
                             </div>
                           )
                         ) : (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useNavigate, useSearchParams, Link } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   TextInput,
   Select,
@@ -335,7 +335,7 @@ function Admin_replicate_curriculum_form({ existingData }) {
           </div>
 
           {/* Right Panel Buttons */}
-          <div
+          {/* <div
             style={{
               flex: 1,
               display: "flex",
@@ -355,7 +355,7 @@ function Admin_replicate_curriculum_form({ existingData }) {
                 <Button className="right-btn-curriculum">Add Discipline</Button>
               </Link>
             </Group>
-          </div>
+          </div> */}
         </div>
       </Container>
 

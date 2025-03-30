@@ -10,14 +10,14 @@ import {
   Container,
   Stack,
 } from "@mantine/core";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
 import { fetchCurriculumData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
-import { useMediaQuery } from "@mantine/hooks";
+// import { useMediaQuery } from "@mantine/hooks";
 
 function Admin_edit_programme_form() {
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  // const isMobile = useMediaQuery("(max-width: 768px)");
   const { id } = useParams();
   const navigate = useNavigate();
   const [programmeData, setProgrammeData] = useState([]);
@@ -191,23 +191,6 @@ function Admin_edit_programme_form() {
           </div>
 
           {/* Right Panel Buttons */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            <Group spacing="md" direction="column" style={{ width: "100%" }}>
-              <Link to="/programme_curriculum/acad_admin_add_curriculum_form">
-                <Button className="right-btn-programme">Add Curriculum</Button>
-              </Link>
-              <Link to="/programme_curriculum/acad_admin_add_discipline_form">
-                <Button className="right-btn-programme">Add Discipline</Button>
-              </Link>
-            </Group>
-          </div>
         </div>
       </Container>
 
