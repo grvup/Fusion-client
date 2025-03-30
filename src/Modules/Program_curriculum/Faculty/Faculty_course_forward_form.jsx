@@ -10,11 +10,12 @@ import {
   Select,
 } from "@mantine/core";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useForm } from "@mantine/form";
 import { fetchFacultySuperiorData, fetchDisciplinesData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
-function VCourseProposalForm() {
+function FacultyCourseForwardForm() {
   const form = useForm({
     initialValues: {
       fileId: "",
@@ -29,10 +30,12 @@ function VCourseProposalForm() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const id = searchParams.get("id");
-  const courseProposals = JSON.parse(sessionStorage.getItem("courseProposals"));
-  const courseProposal = courseProposals.find(
-    (proposal) => proposal.pk === parseInt(id, 10),
-  );
+  const username = useSelector((state) => state.user.roll_no);
+  const role = useSelector((state) => state.user.role);
+  //   const courseProposals = JSON.parse(sessionStorage.getItem("courseProposals"));
+  //   const courseProposal = courseProposals.find(
+  //     (proposal) => proposal.pk === parseInt(id, 10),
+  //   );
   // console.log(courseProposal);
   const [superiorData, setSuperiorData] = useState(null);
   const [receiverOptions, setReceiverOptions] = useState([]);
@@ -46,10 +49,7 @@ function VCourseProposalForm() {
   useEffect(() => {
     const fetchSuperiorData = async () => {
       try {
-        const response = await fetchFacultySuperiorData(
-          courseProposal.fields.uploader,
-          courseProposal.fields.designation,
-        );
+        const response = await fetchFacultySuperiorData(username, role);
         const data = await response.json();
         console.log(data);
         setSuperiorData(data.superior_data);
@@ -68,6 +68,7 @@ function VCourseProposalForm() {
           ]);
         }
       } catch (err) {
+        console.log("Error fetching superior data: ", err.message);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -98,11 +99,11 @@ function VCourseProposalForm() {
       // Fetch data from API and set form values
       form.setValues({
         fileId: id,
-        uploader: courseProposal.fields.uploader,
-        uploaderDesignation: courseProposal.fields.designation,
+        uploader: username,
+        uploaderDesignation: role,
       });
     }
-  }, [courseProposal.fields.designation, courseProposal.fields.uploader]);
+  }, [role, username]);
 
   useEffect(() => {
     if (superiorData) {
@@ -115,7 +116,7 @@ function VCourseProposalForm() {
   }, [id]);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  //   if (error) return <div>Error: {error}</div>;
   if (!superiorData) return <div>No superior data found</div>;
 
   const handleSubmit = async (values) => {
@@ -317,4 +318,4 @@ function VCourseProposalForm() {
   );
 }
 
-export default VCourseProposalForm;
+export default FacultyCourseForwardForm;
