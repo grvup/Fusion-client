@@ -150,7 +150,7 @@ function Admin_edit_course_instructor() {
           }}
         >
           {/* Form Section */}
-          <div style={{ flex: 4 }}>
+          <div style={{ width: "100%" }}>
             <form
               onSubmit={form.onSubmit(handleSubmit)}
               style={{

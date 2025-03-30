@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import axios from "axios";
-import { Link, useNavigate, useSearchParams } from "react-router-dom"; // For handling URL parameters and navigation
+import { useNavigate, useSearchParams } from "react-router-dom"; // For handling URL parameters and navigation
 import {
   fetchDisciplines,
   fetchBatchName,
@@ -244,7 +244,7 @@ function Admin_edit_batch_form() {
           </div>
 
           {/* Right Panel Buttons */}
-          <div
+          {/* <div
             style={{
               flex: 1,
               display: "flex",
@@ -272,7 +272,7 @@ function Admin_edit_batch_form() {
                 <Button className="right-btn-batch">Add Discipline</Button>
               </Link>
             </Group>
-          </div>
+          </div> */}
         </div>
       </Container>
 
