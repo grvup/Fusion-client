@@ -4,6 +4,7 @@ import "./CourseSlotDetails.css"; // Separate CSS file for styling
 import axios from "axios"; // Import axios for making HTTP requests
 import { fetchCourseSlotData } from "./api/api";
 import { host } from "../../routes/globalRoutes"; // Adjust the import path as needed
+// import { Modal, Button, Group, Text } from "@mantine/core"; // Import Mantine components
 
 function CourseSlotDetails() {
   const [courseSlot, setCourseSlot] = useState(null);
@@ -14,6 +15,7 @@ function CourseSlotDetails() {
   const [searchParams] = useSearchParams();
   const courseslotId = searchParams.get("course_slot");
   const curriculumId = searchParams.get("curriculum");
+  const semesterId = searchParams.get("semester");
 
   // Simulate fetching the course slot data from a server with dummy data
   useEffect(() => {
@@ -139,7 +141,7 @@ function CourseSlotDetails() {
                         <td>{course.credit}</td>
                         <td>
                           <Link
-                            to={`/edit-course/${course.id}`}
+                            to={`/programme_curriculum/acad_admin_edit_course_form/${course.id}`}
                             className="edit-btn"
                           >
                             Edit
@@ -159,7 +161,7 @@ function CourseSlotDetails() {
         {/* Action Buttons */}
         <div className="button-container">
           <Link
-            to={`/programme_curriculum/admin_edit_course_slot_form?course_slot_id=${courseSlot.id}`}
+            to={`/programme_curriculum/admin_edit_course_slot_form/${courseslotId}`}
             className="edit-course-slot-btn"
           >
             Edit Course Slot
@@ -171,7 +173,7 @@ function CourseSlotDetails() {
             Remove Course Slot
           </button>
           <Link
-            to={`/programme_curriculum/acad_admin_add_courseslot_form?semester_id=${courseSlot.semester}`}
+            to={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${semesterId}&curriculum=${curriculumId}`}
             className="add-course-slot-btn"
           >
             Add Course Slot

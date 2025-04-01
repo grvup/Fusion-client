@@ -17,6 +17,7 @@ export default function SemesterInfo() {
 
   const [searchParams] = useSearchParams();
   const semesterId = searchParams.get("semester_id");
+  const curriculumId = searchParams.get("curriculum_id");
   const [semcourseSlots, setsemCourseSlots] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -185,7 +186,7 @@ export default function SemesterInfo() {
                 }}
               >
                 <a
-                  href={`/programme_curriculum/admin_course/${course.courseCode}`}
+                  href={`/programme_curriculum/admin_course/${course.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   {course.code}
@@ -223,7 +224,7 @@ export default function SemesterInfo() {
                 }}
               >
                 <a
-                  href={`/programme_curriculum/acad_admin_edit_course_form/${slot.id}`}
+                  href={`/programme_curriculum/acad_admin_edit_course_form/${course.id}`}
                 >
                   <Button
                     variant="outline"
@@ -501,7 +502,11 @@ export default function SemesterInfo() {
                 </Button>
               </a>
               {/* <Link to="/programme_curriculum/acad_admin_add_courseslot_form"> */}
-              <Link to="/programme_curriculum/acad_admin_add_courseslot_form">
+              <Link
+                to={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${
+                  semesterId
+                }&curriculum=${curriculumId}`}
+              >
                 <Button
                   variant="filled"
                   color="green"
