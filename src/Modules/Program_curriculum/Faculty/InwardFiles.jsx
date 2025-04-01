@@ -42,6 +42,7 @@ function InwardFile() {
         const response = await fetchFacultyInwardFilesData(uname, des);
         const data = await response.json();
         console.log(data);
+        sessionStorage.setItem("inwardFilesData", JSON.stringify(data));
         const nonArchived = data.courseProposals.filter(
           (file) => !file.sender_archive,
         );
@@ -180,7 +181,13 @@ function InwardFile() {
                             >
                               View
                             </Button>
-                            <Button variant="filled" color="blue">
+                            <Button
+                              variant="filled"
+                              color="blue"
+                              onClick={() => {
+                                window.location.href = `/programme_curriculum/forward_course_forms/?id=${inward.id}`;
+                              }}
+                            >
                               Submit
                             </Button>
                             <Button
