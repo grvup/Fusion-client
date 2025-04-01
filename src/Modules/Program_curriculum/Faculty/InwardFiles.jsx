@@ -185,7 +185,11 @@ function InwardFile() {
                               variant="filled"
                               color="blue"
                               onClick={() => {
-                                window.location.href = `/programme_curriculum/forward_course_forms/?id=${inward.id}`;
+                                if (role === "Dean Academic") {
+                                  window.location.href = `/programme_curriculum/forward_course_forms_II/?id=${inward.id}`;
+                                } else {
+                                  window.location.href = `/programme_curriculum/forward_course_forms/?id=${inward.id}`;
+                                }
                               }}
                             >
                               Submit

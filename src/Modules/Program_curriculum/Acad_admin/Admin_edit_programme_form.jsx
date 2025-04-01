@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "@mantine/form";
+// import { useMediaQuery } from "@mantine/hooks";
 import { fetchCurriculumData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 // import { useMediaQuery } from "@mantine/hooks";

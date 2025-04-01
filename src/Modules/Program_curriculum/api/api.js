@@ -562,3 +562,25 @@ export const fetchFacultyViewInwardFilesData = async (
     throw error;
   }
 };
+export const fetchFacultyCourseProposalCourseData = async (id) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch(
+      `${BASE_URL}/programme_curriculum/api/forward_course_forms_II/?id=${id}`,
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch superior data");
+    }
+
+    // console.log(response);
+    return response;
+  } catch (error) {
+    console.log("Error fetching faculties data: ", error);
+    throw error;
+  }
+};

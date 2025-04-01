@@ -54,7 +54,7 @@ function ViewInward() {
   const [viewfileData, setViewFileData] = useState([]); // State to hold the fetched data
   const [viewcourseData, setViewCourseData] = useState([]); // State to hold the fetched data
   const [activeTab, setActiveTab] = useState("notesheet"); // State to track the active tab
-
+  console.log(viewfileData, viewcourseData);
   useEffect(() => {
     const fetchData = async (uname, des) => {
       try {

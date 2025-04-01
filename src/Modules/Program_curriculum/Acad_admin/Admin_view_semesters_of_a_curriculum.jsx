@@ -168,8 +168,9 @@ function Admin_view_semesters_of_a_curriculum() {
                     <Link
                       to={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${
                         semester.value
-                      }`}
+                      }&curriculum=${curriculumId}`} // Added curriculumId here
                       style={{ textDecoration: "none" }}
+                      key={index}
                     >
                       <div key={index} className="semester-option">
                         <text>{semester.label}</text>
@@ -322,7 +323,7 @@ function Admin_view_semesters_of_a_curriculum() {
               {semesters.map((semester, index) => (
                 <td key={index} style={{ border: "1px solid black" }}>
                   <Link
-                    to={`/programme_curriculum/semester_info?semester_id=${semester.id}`}
+                    to={`/programme_curriculum/semester_info?semester_id=${semester.id}&curriculum_id=${curriculumId}`}
                     style={{ textDecoration: "none" }}
                   >
                     <strong style={{ color: "blue", fontSize: "13px" }}>
@@ -351,7 +352,7 @@ function Admin_view_semesters_of_a_curriculum() {
                           slot.courses.length === 1 ? (
                             <div>
                               <Link
-                                to={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}`}
+                                to={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}&semester=${semesters[semesterIndex].id}`}
                                 style={{ textDecoration: "none" }}
                               >
                                 <p>
@@ -368,7 +369,7 @@ function Admin_view_semesters_of_a_curriculum() {
                           ) : (
                             <div>
                               <Link
-                                to={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}`}
+                                to={`/programme_curriculum/course_slot_details?course_slot=${slot.id}&curriculum=${curriculumId}&semester=${semesters[semesterIndex].id}`}
                                 style={{ textDecoration: "none" }}
                               >
                                 <strong style={{ fontSize: "10px" }}>

@@ -14,6 +14,7 @@ import FacultyViewAllBatches from "./Faculty/Faculty_view_all_batches";
 import FacultyViewAllWorkingCurriculums from "./Faculty/Faculty_view_all_working_curriculums";
 import FacultyAddCourseProposalForm from "./Faculty/Faculty_add_course_proposal_form";
 import FacultyCourseForwardForm from "./Faculty/Faculty_course_forward_form";
+import FacultyCourseProposalFinalForm from "./Faculty/Faculty_Course_Proposal_Final_Form";
 import ViewAllCourses from "./View_all_courses";
 import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
@@ -587,6 +588,15 @@ export default function ProgrammeCurriculumRoutes() {
             <Layout>
               <BreadcrumbTabsAcadadmin />
               <AdminEditCourseInstructor />
+            </Layout>
+          }
+        />
+        <Route
+          path="/forward_course_forms_II"
+          element={
+            <Layout>
+              <BreadcrumbTabsFaculty />
+              <FacultyCourseProposalFinalForm />
             </Layout>
           }
         />
