@@ -1,18 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { ScrollArea, Button } from "@mantine/core";
-// import { useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import {
+  ScrollArea,
+  Button,
+  TextInput,
+  Flex,
+  MantineProvider,
+  Container,
+  Table,
+  Grid,
+  Text
+} from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { fetchFacultyOutwardFilesData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
-// import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 function OutwardFile() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("OutwardFiles");
-
   const [outwardFiles, setOutwardFiles] = useState([]);
   const [archivedFiles, setArchivedFiles] = useState([]);
+  const [filter, setFilter] = useState({
+    sender: "",
+    receiver: "",
+    fileId: "",
+    remarks: ""
+  });
+  
   const username = useSelector((state) => state.user.roll_no);
   const role = useSelector((state) => state.user.role);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   function formatDateWithRounding(isoDateString) {
     const date = new Date(isoDateString);
@@ -38,6 +56,7 @@ function OutwardFile() {
     }
     return formatted.replace(/(AM|PM)/, (match) => match.toLowerCase());
   }
+
   const handleArchive = async (fileId, uname, designation) => {
     try {
       const token = localStorage.getItem("authToken");
@@ -65,6 +84,7 @@ function OutwardFile() {
       alert("Failed to archive file");
     }
   };
+  
   const handleUnarchive = async (fileId, uname, designation) => {
     try {
       const token = localStorage.getItem("authToken");
@@ -92,12 +112,12 @@ function OutwardFile() {
       alert("Failed to unarchive file");
     }
   };
+  
   useEffect(() => {
     const fetchOutwardFiles = async (uname, des) => {
       try {
         const response = await fetchFacultyOutwardFilesData(uname, des);
         const data = await response.json();
-        console.log(data);
         const nonArchived = data.courseProposals.filter(
           (file) => !file.sender_archive,
         );
@@ -106,284 +126,268 @@ function OutwardFile() {
         );
         setOutwardFiles(nonArchived);
         setArchivedFiles(archived);
-        // setOutwardFiles(data.courseProposals);
       } catch (error) {
         console.error("Error fetching outward files:", error);
       }
     };
     fetchOutwardFiles(username, role);
   }, [username, role]);
-  console.log(outwardFiles);
-  return (
-    <div style={{ padding: "20px", paddingTop: "10px" }}>
-      <div className="courses-container">
-        <div className="courses-table-section full-width">
-          <div className="tabs">
-            <Button
-              variant={activeTab === "OutwardFiles" ? "filled" : "outline"}
-              onClick={() => setActiveTab("OutwardFiles")}
-            >
-              Outward Files
-            </Button>
-            <Button
-              variant={
-                activeTab === "Finished OutwardFiles" ? "filled" : "outline"
-              }
-              onClick={() => setActiveTab("Finished OutwardFiles")}
-            >
-              Archived FIles
-            </Button>
-          </div>
 
-          <ScrollArea
-            className="courses-scroll-area"
-            type="hover"
-            style={{ height: "300px" }}
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFilter({
+      ...filter,
+      [name]: value,
+    });
+  };
+
+  const applyFilters = (data) => {
+    return data.filter((file) => {
+      const sender = `${file.current_id}-${file.current_design}`;
+      const receiver = `${file.receive_id__username}-${file.receive_design__name}`;
+      
+      return (
+        sender.toLowerCase().includes(filter.sender.toLowerCase()) &&
+        receiver.toLowerCase().includes(filter.receiver.toLowerCase()) &&
+        file.file_id.toLowerCase().includes(filter.fileId.toLowerCase()) &&
+        file.remarks.toLowerCase().includes(filter.remarks.toLowerCase())
+      );
+    });
+  };
+
+  const filteredOutwardFiles = applyFilters(outwardFiles);
+  const filteredArchivedFiles = applyFilters(archivedFiles);
+
+  return (
+    <MantineProvider
+      theme={{ colorScheme: "light" }}
+      withGlobalStyles
+      withNormalizeCSS
+    >
+      <Container style={{ padding: "20px", maxWidth: "100%" }}>
+        <Flex justify="flex-start" align="center" mb={10}>
+          <Button
+            variant={activeTab === "OutwardFiles" ? "filled" : "outline"}
+            onClick={() => setActiveTab("OutwardFiles")}
+            style={{ marginRight: "10px" }}
           >
-            {activeTab === "OutwardFiles" && (
-              <div className="OutwardFiles-table">
-                <table className="courses-table">
-                  <thead className="courses-table-header">
-                    <tr>
-                      <th>Send by</th>
-                      <th>Received as</th>
-                      <th>File id</th>
-                      <th>Remark</th>
-                      <th>Forward Date</th>
-                      <th>View File</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {outwardFiles.map((outward, index) => (
-                      <tr key={index} className="courses-table-row">
-                        <td>
-                          {outward.current_id}-{outward.current_design}
-                        </td>
-                        <td>
-                          {outward.receive_id__username}-
-                          {outward.receive_design__name}
-                        </td>
-                        <td>{outward.file_id}</td>
-                        <td>{outward.remarks}</td>
-                        <td>{formatDateWithRounding(outward.forward_date)}</td>
-                        <td>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-around",
-                            }}
+            Outward Files
+          </Button>
+          <Button
+            variant={activeTab === "Finished OutwardFiles" ? "filled" : "outline"}
+            onClick={() => setActiveTab("Finished OutwardFiles")}
+            style={{ marginRight: "10px" }}
+          >
+            Archived Files
+          </Button>
+        </Flex>
+        <hr />
+
+        <Grid>
+          {isMobile && (
+            <Grid.Col span={12}>
+              <ScrollArea type="hover">
+                {[
+                  { label: "Sender", name: "sender" },
+                  { label: "Receiver", name: "receiver" },
+                  { label: "File ID", name: "fileId" },
+                  { label: "Remarks", name: "remarks" },
+                ].map((input, index) => (
+                  <TextInput
+                    key={index}
+                    label={`${input.label}:`}
+                    placeholder={`Filter by ${input.label}`}
+                    value={filter[input.name]}
+                    name={input.name}
+                    mb={5}
+                    onChange={handleInputChange}
+                  />
+                ))}
+              </ScrollArea>
+            </Grid.Col>
+          )}
+          <Grid.Col span={isMobile ? 12 : 9}>
+            <div
+              style={{
+                maxHeight: "61vh",
+                overflowY: "auto",
+                border: "1px solid #d3d3d3",
+                borderRadius: "10px",
+              }}
+            >
+              <style>
+                {`
+                  div::-webkit-scrollbar {
+                    display: none;
+                  }
+                `}
+              </style>
+
+              <Table
+                style={{
+                  backgroundColor: "white",
+                  padding: "20px",
+                  flexGrow: 1,
+                }}
+              >
+                <thead>
+                  <tr>
+                    {[
+                      "Sent by",
+                      "Received as",
+                      "File ID",
+                      "Remarks",
+                      "Forward Date",
+                      "Actions"
+                    ].map((header, index) => (
+                      <th
+                        key={index}
+                        style={{
+                          padding: "15px 20px",
+                          backgroundColor: "#C5E2F6",
+                          color: "#3498db",
+                          fontSize: "16px",
+                          textAlign: "center",
+                          borderRight: index < 5 ? "1px solid #d3d3d3" : "none",
+                        }}
+                      >
+                        {header}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {(activeTab === "OutwardFiles"
+                    ? filteredOutwardFiles
+                    : filteredArchivedFiles
+                  ).map((file, index) => (
+                    <tr
+                      key={index}
+                      style={{
+                        backgroundColor:
+                          index % 2 !== 0 ? "#E6F7FF" : "#ffffff",
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {file.current_id}-{file.current_design}
+                      </td>
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {file.receive_id__username}-{file.receive_design__name}
+                      </td>
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {file.file_id}
+                      </td>
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {file.remarks}
+                      </td>
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {formatDateWithRounding(file.forward_date)}
+                      </td>
+                      <td
+                        style={{
+                          padding: "15px 20px",
+                          textAlign: "center",
+                          color: "black",
+                        }}
+                      >
+                        <Flex justify="space-around" gap={10}>
+                          <Button
+                            variant="filled"
+                            color="blue"
+                            onClick={() => navigate(`/programme_curriculum/view_inward_file/?id=${file.id}`)}
                           >
-                            <Button
-                              variant="filled"
-                              color="blue"
-                              onClick={() => {
-                                window.location.href = `/programme_curriculum/view_inward_file/?id=${outward.id}`;
-                              }}
-                            >
-                              View
-                            </Button>
+                            View
+                          </Button>
+                          {activeTab === "OutwardFiles" ? (
                             <Button
                               variant="filled"
                               color="gray"
                               onClick={() =>
-                                handleArchive(outward.id, username, role)
+                                handleArchive(file.id, username, role)
                               }
                             >
                               Archive
                             </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {activeTab === "Finished OutwardFiles" && (
-              <div className="OutwardFiles-table">
-                <table className="courses-table">
-                  <thead className="courses-table-header">
-                    <tr>
-                      <th>Send by</th>
-                      <th>Received as</th>
-                      <th>File id</th>
-                      <th>Remark</th>
-                      <th>Date</th>
-                      <th>View File</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {archivedFiles.map((outward, index) => (
-                      <tr key={index} className="courses-table-row">
-                        <td>
-                          {outward.current_id}-{outward.current_design}
-                        </td>
-                        <td>
-                          {outward.receive_id__username}-
-                          {outward.receive_design__name}
-                        </td>
-                        <td>{outward.file_id}</td>
-                        <td>{outward.remarks}</td>
-                        <td>{formatDateWithRounding(outward.forward_date)}</td>
-                        <td>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-around",
-                            }}
-                          >
-                            <Button
-                              variant="filled"
-                              color="blue"
-                              onClick={() => {
-                                window.location.href = `/programme_curriculum/view_inward_file/?id=${outward.id}`;
-                              }}
-                            >
-                              View
-                            </Button>
+                          ) : (
                             <Button
                               variant="filled"
                               color="green"
                               onClick={() =>
-                                handleUnarchive(outward.id, username, role)
+                                handleUnarchive(file.id, username, role)
                               }
                             >
                               Unarchive
                             </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </ScrollArea>
-        </div>
+                          )}
+                        </Flex>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          </Grid.Col>
 
-        {/* Remove isSearchVisible from className */}
-      </div>
-
-      <style>{`
-        .courses-container {
-          display: flex;
-          gap: 20px;
-          width: 100%;
-          height: 100vh;
-          transition: all 0.3s ease-in-out;
-        }
-
-        .courses-table-section {
-          flex: 3;
-          display: flex;
-          flex-direction: column;
-          transition: all 0.3s ease-in-out;
-          overflow-x: scroll;
-        }
-
-        .full-width {
-          flex: 1;
-        }
-
-        .top-actions {
-          display: flex;
-          gap: 10px;
-          margin-left: auto;
-          align-items: center;
-        }
-
-        .tabs {
-          display: flex;
-          gap: 20px;
-          margin-top: 10px;
-        }
-
-        .courses-scroll-area {
-          margin-top: 20px;
-        }
-
-        // .OutwardFiles-table {
-        //   margin-top: 20px;
-        // }
-
-        .courses-table {
-          width: 100%;
-          border-collapse: collapse;
-          border: 1px solid #d3d3d3;
-        }
-
-        .courses-table th {
-          padding: 15px 20px;
-          background-color: #C5E2F6;
-          color: #3498db;
-          font-size: 16px;
-          text-align: center;
-          border-right: 1px solid #d3d3d3;
-          font-weight: normal;
-        }
-
-        .courses-table th:last-child {
-          border-right: none;
-        }
-
-        .courses-table td {
-          padding: 15px 20px;
-          text-align: center;
-          color: black;
-          border-right: 1px solid #d3d3d3;
-        }
-
-        .courses-table td:last-child {
-          border-right: none;
-        }
-
-        /* Add alternating row colors */
-        .courses-table tbody tr:nth-child(even) {
-          background-color: #15ABFF1C;
-        }
-
-        .courses-table tbody tr:nth-child(odd) {
-          background-color: #fff;
-        }
-
-        .courses-search-section {
-          flex: 1;
-          min-width: 300px;
-          transition: all 0.3s ease-in-out;
-          height: 400px;
-          position: relative;
-        }
-
-        .filter-form {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .breadcrumbs {
-          font-size: 14px;
-          margin-bottom: 10px;
-          color: #333;
-          font-size: 20px;
-        }
-
-        .breadcrumbs > span {
-          margin-right: 5px;
-          font-size: 1.4vw;
-          font-weight: bold;
-        }
-
-        .breadcrumbs > span::after {
-          content: ">";
-          margin-left: 5px;
-        }
-
-        .breadcrumbs > span:last-child::after {
-          content: ""; /* Remove the '>' from the last breadcrumb */
-        }
-      `}</style>
-    </div>
+          {!isMobile && (
+            <Grid.Col span={3}>
+              <ScrollArea type="hover">
+                {[
+                  { label: "Sender", name: "sender" },
+                  { label: "Receiver", name: "receiver" },
+                  { label: "File ID", name: "fileId" },
+                  { label: "Remarks", name: "remarks" },
+                ].map((input, index) => (
+                  <TextInput
+                    key={index}
+                    label={`${input.label}:`}
+                    placeholder={`Filter by ${input.label}`}
+                    value={filter[input.name]}
+                    name={input.name}
+                    mb={5}
+                    onChange={handleInputChange}
+                  />
+                ))}
+              </ScrollArea>
+            </Grid.Col>
+          )}
+        </Grid>
+      </Container>
+    </MantineProvider>
   );
 }
 

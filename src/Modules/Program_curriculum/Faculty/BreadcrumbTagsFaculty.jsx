@@ -3,12 +3,19 @@ import { CaretCircleLeft, CaretCircleRight } from "@phosphor-icons/react";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import classes from "../../Dashboard/Dashboard.module.css";
+import { useSelector } from "react-redux";
 
 function BreadcrumbTabsFaculty() {
+  const role = useSelector((state) => state.user.role);
   const navigate = useNavigate();
   const location = useLocation();
   const tabsListRef = useRef(null);
 
+  // Check if user is HOD or DEAN Academic
+  const isHodOrDean = role && (role.startsWith("HOD") || role === "Dean Academic");
+  const isDean = role && (role === "Dean Academic");
+
+  // Filter breadcrumb items based on role
   const breadcrumbItems = [
     {
       title: "Programme",
@@ -21,18 +28,20 @@ function BreadcrumbTabsFaculty() {
     { title: "Discipline", url: "/programme_curriculum/faculty_discipline" },
     { title: "Batches", url: "/programme_curriculum/faculty_batches" },
     { title: "Courses", url: "/programme_curriculum/faculty_courses" },
-    {
+    // Only show Course Proposal for non-HOD/DEAN roles
+    ...(!isHodOrDean ? [{
       title: "Course Proposal",
       url: "/programme_curriculum/faculty_view_course_proposal",
-    },
-    {
+    }] : []),
+    ...(!isDean ? [{
       title: "Course Proposal Tracking",
       url: "/programme_curriculum/faculty_outward_files",
-    },
-    {
+    }] : []),
+    // Only show Inward Files for HOD/DEAN roles
+    ...(isHodOrDean ? [{
       title: "Inward Files",
       url: "/programme_curriculum/faculty_inward_files",
-    },
+    }] : []),
   ];
 
   // Get initial active tab based on current URL
