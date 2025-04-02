@@ -16,6 +16,30 @@ import { fetchFacultySuperiorData, fetchDisciplinesData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
 function FacultyCourseForwardForm() {
+  function formatDateWithRounding(isoDateString) {
+    const date = new Date(isoDateString);
+    // Round minutes up if seconds > 30
+    const seconds = date.getSeconds();
+    if (seconds > 30) {
+      date.setMinutes(date.getMinutes() + 1);
+    }
+    const options = {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    let formatted = date.toLocaleString("en-US", options);
+    // Handle edge cases (e.g., 11:59 -> 12:00)
+    if (date.getMinutes() === 60) {
+      date.setHours(date.getHours() + 1);
+      date.setMinutes(0);
+      formatted = date.toLocaleString("en-US", options);
+    }
+    return formatted.replace(/(AM|PM)/, (match) => match.toLowerCase());
+  }
   const form = useForm({
     initialValues: {
       fileId: "",
@@ -32,11 +56,12 @@ function FacultyCourseForwardForm() {
   const id = searchParams.get("id");
   const username = useSelector((state) => state.user.roll_no);
   const role = useSelector((state) => state.user.role);
-  //   const courseProposals = JSON.parse(sessionStorage.getItem("courseProposals"));
-  //   const courseProposal = courseProposals.find(
-  //     (proposal) => proposal.pk === parseInt(id, 10),
-  //   );
-  // console.log(courseProposal);
+  const inwardFilesData = JSON.parse(sessionStorage.getItem("inwardFilesData"));
+  const courseProposal = inwardFilesData?.courseProposals?.find(
+    (proposal) => proposal.id === parseInt(id, 10),
+  );
+
+  console.log(courseProposal);
   const [superiorData, setSuperiorData] = useState(null);
   const [receiverOptions, setReceiverOptions] = useState([]);
   const [designationOptions, setDesignationOptions] = useState([]);
@@ -98,9 +123,10 @@ function FacultyCourseForwardForm() {
     if (id) {
       // Fetch data from API and set form values
       form.setValues({
-        fileId: id,
+        fileId: courseProposal.file_id,
         uploader: username,
         uploaderDesignation: role,
+        discipline: JSON.stringify(courseProposal.disciplines),
       });
     }
   }, [role, username]);
@@ -134,7 +160,7 @@ function FacultyCourseForwardForm() {
         discipline: values.discipline,
       };
       const response = await fetch(
-        `${host}/programme_curriculum/api/filetracking/${id}/`,
+        `${host}/programme_curriculum/api/forward_course_forms/${id}/?username=${username}&des=${role}`,
         {
           method: "POST",
           headers: {
@@ -144,13 +170,13 @@ function FacultyCourseForwardForm() {
         },
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit form");
-      }
       if (response.ok) {
         // alert("Form submitted successfully!");
         navigate("/programme_curriculum/faculty_outward_files");
+      }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit form");
       }
 
       const responseData = await response.json();
@@ -203,7 +229,16 @@ function FacultyCourseForwardForm() {
               <Text size="xl" weight={700} align="center">
                 Course Proposal Form
               </Text>
-
+              <h1 style={{ textAlign: "center", fontSize: "20px" }}>
+                Created by - {courseProposal.current_id} -{" "}
+                {courseProposal.current_design}
+              </h1>
+              <div style={{ display: "flex", alignContent: "center" }}>
+                <h1>Receive Date</h1>
+                <Text>
+                  {formatDateWithRounding(courseProposal.receive_date)}
+                </Text>
+              </div>
               <TextInput
                 label="File ID"
                 placeholder="Enter File ID"

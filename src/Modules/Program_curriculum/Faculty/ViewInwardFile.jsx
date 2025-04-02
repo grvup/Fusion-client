@@ -64,6 +64,53 @@ function ViewInward() {
         }
         const data = await response.json();
         console.log(data);
+        setNoteData({
+          createdBy: data.data.tracking?.current_id || "",
+          designation: data.data.tracking?.current_design || "",
+          fileId: data.data.proposal?.id || "",
+          subject: data.data.proposal?.subject || "",
+          description: data.data.proposal?.description || "",
+          sentBy: data.data.tracking?.current_id || "",
+          receivedBy: data.data.tracking?.receive_id || "",
+          receivedByDesignation: data.data.tracking?.receive_design || "",
+          remarks: data.data.tracking?.remarks || "",
+          uploader: data.data.proposal?.uploader || "",
+          uploaderDesignation: data.data.tracking?.current_design || "",
+          discipline: data.data.tracking?.disciplines_name || "",
+          disciplineAcronym: data.data.tracking?.disciplines_acronym || "",
+        });
+        setcourseDetails({
+          code: data.data.proposal?.code || "",
+          name: data.data.proposal?.name || "",
+          // version: data.data.proposal?.version || "1.0",
+          contactHours: {
+            lecture: data.data.proposal?.lecture_hours || "0",
+            tutorial: data.data.proposal?.tutorial_hours || "0",
+            lab: data.data.proposal?.pratical_hours || "0",
+            discussion: data.data.proposal?.discussion_hours || "0",
+            project: data.data.proposal?.project_hours || "0",
+          },
+          credits: data.data.proposal?.credit || "0",
+          prerequisites: {
+            Info: data.data.proposal?.pre_requisits || "None",
+            Courses: data.data.proposal?.pre_requisit_courses?.length
+            ? data.data.proposal.pre_requisit_courses
+                .map((course) => `${course.code} - ${course.name}(v${course.version})`)
+                .join(", ")
+            : "None",
+          },
+          syllabus: data.data.proposal?.syllabus || "",
+          evaluationSchema: {
+            quiz1: data.data.proposal?.percent_quiz_1 || "0%",
+            midSem: data.data.proposal?.percent_midsem || "0%",
+            quiz2: data.data.proposal?.percent_quiz_2 || "0%",
+            endSem: data.data.proposal?.percent_endsem || "0%",
+            project: data.data.proposal?.percent_project || "0%",
+            labEvaluation: data.data.proposal?.percent_lab_evaluation || "0%",
+            attendance: data.data.proposal?.percent_course_attendance || "0%",
+          },
+          references: data.data.proposal?.ref_books || "None",
+        });
         setViewFileData(data.file_data);
         setViewCourseData(data.course_data);
       } catch (error) {
@@ -101,10 +148,10 @@ function ViewInward() {
   };
 
   // Temporary Data for File 2
-  const courseDetails = {
+  const [courseDetails, setcourseDetails] = useState({
     code: "CS101",
     name: "Introduction to Computer Science",
-    version: "1.0",
+    // version: "1.0",
     contactHours: {
       lecture: "3hrs",
       tutorial: "1hr",
@@ -125,12 +172,8 @@ function ViewInward() {
       labEvaluation: "10%",
       attendance: "5%",
     },
-    references: [
-      "Introduction to Computer Science by John Doe",
-      "Data Structures and Algorithms by Jane Smith",
-      "Object-Oriented Programming in Java by Alan Turing",
-    ],
-  };
+    references: "Book1, Book2"
+  });
 
   // Effect to set noteData when the active tab changes
   useEffect(() => {
@@ -167,7 +210,7 @@ function ViewInward() {
         <Group position="apart">
           <Box>
             <Text style={{ fontWeight: "bold", marginLeft: "10px" }}>
-              Created By: {noteData.createdBy}
+              Created By: {noteData.createdBy} - {noteData.designation}
             </Text>
           </Box>
           <Box>
@@ -207,22 +250,27 @@ function ViewInward() {
             <Text
               style={{
                 ...textStyle,
+                border: "1px solid #ddd",
+                borderRadius: "4px",
                 backgroundColor: "#fff",
                 color: "black",
                 padding: "10px",
               }}
             >
-              Subject - {noteData.subject}
+              <b>Subject</b> - {noteData.subject}
             </Text>
-            <Textarea
-              value={`Description: ${noteData.description}`}
-              readOnly
+            <Text
               style={{
+                ...textStyle,
                 backgroundColor: "#fff",
-                marginTop: "10px",
-                border: "none",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                color: "black",
+                padding: "10px",
               }}
-            />
+            >
+              <b>Description</b> - {noteData.description}
+            </Text>
 
             <Box
               style={{
@@ -234,16 +282,27 @@ function ViewInward() {
                 borderRadius: "4px",
               }}
             >
-              <Group position="apart" style={{ marginTop: "10px" }}>
+              {/* <Group position="apart" style={{ marginTop: "10px" }}> */}
                 <Text style={textStyle}>
                   {" "}
-                  <b>Sent By:</b> {noteData.sentBy}
+                  <b>Sent By:</b> {noteData.sentBy} - {noteData.designation}
                 </Text>
+                </Box>
+                <Box
+              style={{
+                border: "1px solid #ddd",
+                padding: "8px",
+                backgroundColor: "#fff",
+                marginBottom: "5px",
+                marginTop: "5px",
+                borderRadius: "4px",
+              }}
+            >
 
                 <Text style={textStyle}>
-                  <b>Received By:</b> {noteData.receivedBy}
+                  <b>Received By:</b> {noteData.receivedBy} - {noteData.receivedByDesignation}
                 </Text>
-              </Group>
+              {/* </Group> */}
             </Box>
             <Box
               style={{
@@ -259,41 +318,44 @@ function ViewInward() {
                 <b>Remarks:</b> {noteData.remarks}
               </Text>
             </Box>
+          {/* </Box> */}
+
+          <Box style={boxStyle}>
+            <Text><b>Uploader:</b> {noteData.uploader}</Text>
           </Box>
 
           <Box style={boxStyle}>
-            <Text style={boldTextStyle}>Uploader: {noteData.uploader}</Text>
-          </Box>
-
-          <Box style={boxStyle}>
-            <Text style={boldTextStyle}>
-              Uploader Designation: {noteData.uploaderDesignation}
+            <Text>
+              <b>Uploader Designation:</b> {noteData.uploaderDesignation}
             </Text>
           </Box>
 
           <Box style={boxStyle}>
-            <Select
+            {/* <Select
               label={<Text style={boldTextStyle}>Disciplines</Text>}
               value={discipline}
               onChange={(value) => {
                 setDiscipline(value);
               }}
               data={disciplinesData}
-            />
+            /> */}
+            <Text>
+              <b>Discipline:</b> {noteData.discipline} - {noteData.disciplineAcronym}
+            </Text>
           </Box>
+        </Box>
         </Box>
       )}
 
       {activeTab === "attachments" && (
         <Card shadow="sm" padding="lg" className="course-card">
           <Text size="lg" weight={700} className="course-title">
-            {courseDetails.code} - {courseDetails.name} - v
-            {courseDetails.version}
+            {courseDetails.code} - {courseDetails.name}
           </Text>
           <hr style={{ width: "80%" }} />
 
           <Text size="lg" padding="lg" className="course-title">
-            Course Proposal Form by - {file1Data.createdBy}
+            Course Proposal Form by - {noteData.createdBy} - {noteData.designation}
           </Text>
 
           <Table className="course-table" striped highlightOnHover>
@@ -309,10 +371,6 @@ function ViewInward() {
                   Course Name
                 </td>
                 <td>{courseDetails.name}</td>
-              </tr>
-              <tr>
-                <td style={{ color: "blue", fontWeight: "bold" }}>Version</td>
-                <td>{courseDetails.version}</td>
               </tr>
 
               <tr>
@@ -616,9 +674,7 @@ function ViewInward() {
                   References & Books
                 </td>
                 <td>
-                  {courseDetails.references.map((reference, index) => (
-                    <div key={index}>{reference}</div>
-                  ))}
+                  {courseDetails.references}
                 </td>
               </tr>
             </tbody>
