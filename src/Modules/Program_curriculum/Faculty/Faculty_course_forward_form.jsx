@@ -10,11 +10,36 @@ import {
   Select,
 } from "@mantine/core";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useForm } from "@mantine/form";
 import { fetchFacultySuperiorData, fetchDisciplinesData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
-function VCourseProposalForm() {
+function FacultyCourseForwardForm() {
+  function formatDateWithRounding(isoDateString) {
+    const date = new Date(isoDateString);
+    // Round minutes up if seconds > 30
+    const seconds = date.getSeconds();
+    if (seconds > 30) {
+      date.setMinutes(date.getMinutes() + 1);
+    }
+    const options = {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    let formatted = date.toLocaleString("en-US", options);
+    // Handle edge cases (e.g., 11:59 -> 12:00)
+    if (date.getMinutes() === 60) {
+      date.setHours(date.getHours() + 1);
+      date.setMinutes(0);
+      formatted = date.toLocaleString("en-US", options);
+    }
+    return formatted.replace(/(AM|PM)/, (match) => match.toLowerCase());
+  }
   const form = useForm({
     initialValues: {
       fileId: "",
@@ -29,11 +54,14 @@ function VCourseProposalForm() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const id = searchParams.get("id");
-  const courseProposals = JSON.parse(sessionStorage.getItem("courseProposals"));
-  const courseProposal = courseProposals.find(
-    (proposal) => proposal.pk === parseInt(id, 10),
+  const username = useSelector((state) => state.user.roll_no);
+  const role = useSelector((state) => state.user.role);
+  const inwardFilesData = JSON.parse(sessionStorage.getItem("inwardFilesData"));
+  const courseProposal = inwardFilesData?.courseProposals?.find(
+    (proposal) => proposal.id === parseInt(id, 10),
   );
-  // console.log(courseProposal);
+
+  console.log(courseProposal);
   const [superiorData, setSuperiorData] = useState(null);
   const [receiverOptions, setReceiverOptions] = useState([]);
   const [designationOptions, setDesignationOptions] = useState([]);
@@ -46,10 +74,7 @@ function VCourseProposalForm() {
   useEffect(() => {
     const fetchSuperiorData = async () => {
       try {
-        const response = await fetchFacultySuperiorData(
-          courseProposal.fields.uploader,
-          courseProposal.fields.designation,
-        );
+        const response = await fetchFacultySuperiorData(username, role);
         const data = await response.json();
         console.log(data);
         setSuperiorData(data.superior_data);
@@ -68,6 +93,7 @@ function VCourseProposalForm() {
           ]);
         }
       } catch (err) {
+        console.log("Error fetching superior data: ", err.message);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -97,12 +123,13 @@ function VCourseProposalForm() {
     if (id) {
       // Fetch data from API and set form values
       form.setValues({
-        fileId: id,
-        uploader: courseProposal.fields.uploader,
-        uploaderDesignation: courseProposal.fields.designation,
+        fileId: courseProposal.file_id,
+        uploader: username,
+        uploaderDesignation: role,
+        discipline: JSON.stringify(courseProposal.disciplines),
       });
     }
-  }, [courseProposal.fields.designation, courseProposal.fields.uploader]);
+  }, [role, username]);
 
   useEffect(() => {
     if (superiorData) {
@@ -115,7 +142,7 @@ function VCourseProposalForm() {
   }, [id]);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  //   if (error) return <div>Error: {error}</div>;
   if (!superiorData) return <div>No superior data found</div>;
 
   const handleSubmit = async (values) => {
@@ -133,7 +160,7 @@ function VCourseProposalForm() {
         discipline: values.discipline,
       };
       const response = await fetch(
-        `${host}/programme_curriculum/api/filetracking/${id}/`,
+        `${host}/programme_curriculum/api/forward_course_forms/${id}/?username=${username}&des=${role}`,
         {
           method: "POST",
           headers: {
@@ -143,13 +170,13 @@ function VCourseProposalForm() {
         },
       );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit form");
-      }
       if (response.ok) {
         // alert("Form submitted successfully!");
         navigate("/programme_curriculum/faculty_outward_files");
+      }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit form");
       }
 
       const responseData = await response.json();
@@ -202,7 +229,16 @@ function VCourseProposalForm() {
               <Text size="xl" weight={700} align="center">
                 Course Proposal Form
               </Text>
-
+              <h1 style={{ textAlign: "center", fontSize: "20px" }}>
+                Created by - {courseProposal.current_id} -{" "}
+                {courseProposal.current_design}
+              </h1>
+              <div style={{ display: "flex", alignContent: "center" }}>
+                <h1>Receive Date</h1>
+                <Text>
+                  {formatDateWithRounding(courseProposal.receive_date)}
+                </Text>
+              </div>
               <TextInput
                 label="File ID"
                 placeholder="Enter File ID"
@@ -317,4 +353,4 @@ function VCourseProposalForm() {
   );
 }
 
-export default VCourseProposalForm;
+export default FacultyCourseForwardForm;

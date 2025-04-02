@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import {
   NumberInput,
   Textarea,
@@ -15,13 +16,12 @@ import { useForm } from "@mantine/form";
 import { useNavigate, useParams } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
 import {
-  fetchDisciplinesData,
   fetchAllCourses,
-  fetchCourseDetails,
+  // fetchCourseDetails,
 } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
-function Admin_edit_course_form() {
+function Faculty_add_course_proposal_form() {
   const form = useForm({
     initialValues: {
       courseName: "",
@@ -45,37 +45,30 @@ function Admin_edit_course_form() {
       project: 10,
       labEvaluation: 15,
       attendance: 5,
+      uploader: "",
+      uploader_name: "",
+      Designation: "",
+      Title: "",
+      Description: "",
     },
   });
-
+  const role = useSelector((state) => state.user.role);
+  console.log(useSelector((state) => state.user));
+  const uploader_fullname = useSelector((state) => state.user.username);
+  const uploader_username = useSelector((state) => state.user.roll_no);
+  console.log(uploader_username);
   const navigate = useNavigate();
   const { id } = useParams();
-  const [disciplines, setDisciplines] = useState([]);
+  // const [disciplines, setDisciplines] = useState([]);
   const [courses, setCourses] = useState([]);
-  const [course, setCourse] = useState([]);
+  // const [course, setCourse] = useState([]);
+  console.log(form.values);
 
   useEffect(() => {
-    const fetchDisciplines = async () => {
-      try {
-        const response = await fetchDisciplinesData();
-        // console.log(response);
-
-        // const data = [...d.name, ...d.acronym, ...d.id];
-
-        const disciplineList = response.map((discipline) => ({
-          name: `${discipline.name} (${discipline.acronym})`,
-          id: discipline.id,
-        }));
-        setDisciplines(disciplineList);
-      } catch (fetchError) {
-        console.error("Error fetching disciplines: ", fetchError);
-      }
-    };
-
     const fetchCourses = async () => {
       try {
         const response = await fetchAllCourses();
-        console.log("Courses data:", response);
+        // console.log("Courses data:", response);
 
         const courseList = response.map((c) => ({
           name: `${c.name} (${c.code})`,
@@ -86,49 +79,26 @@ function Admin_edit_course_form() {
         console.error("Error fetching courses: ", error);
       }
     };
-
-    const loadCourseDetails = async () => {
+    fetchCourses();
+    // loadCourseDetails();
+  }, [id]);
+  useEffect(() => {
+    if (role && uploader_fullname) {
       try {
-        const data = await fetchCourseDetails(id);
-        console.log(data);
-        setCourse(data);
         form.setValues({
-          courseName: course.name,
-          courseCode: course.code,
-          courseCredit: course.credit,
-          courseVersion: course.version,
-          lectureHours: course.lecture_hours,
-          tutorialHours: course.tutorial_hours,
-          practicalHours: course.pratical_hours,
-          discussionHours: course.discussion_hours,
-          projectHours: course.project_hours,
-          discipline: course.disciplines,
-          preRequisites: course.pre_requisits,
-          preRequisiteCourse: course.pre_requisit_courses,
-          syllabus: course.syllabus,
-          references: course.ref_books,
-          quiz1: course.percent_quiz_1,
-          midsem: course.percent_midsem,
-          quiz2: course.percent_quiz_2,
-          endsem: course.percent_endsem,
-          project: course.percent_project,
-          labEvaluation: course.percent_lab_evaluation,
-          attendance: course.percent_course_attendance,
-          maxSeats: course.max_seats,
+          Designation: role,
+          uploader: uploader_username,
+          uploader_name: uploader_fullname,
         });
       } catch (err) {
-        console.error("Error fetching course details: ", err);
+        console.error("Error setting form values: ", err);
       }
-    };
-
-    fetchDisciplines();
-    fetchCourses();
-    loadCourseDetails();
-  }, [id]);
+    }
+  }, [role, uploader_fullname]);
 
   const handleSubmit = async (values) => {
-    const apiUrl = `${host}/programme_curriculum/api/admin_update_course/${id}/`;
-    const token = localStorage.getItem("authToken");
+    const apiUrl = `${host}/programme_curriculum/api/new_course_proposal_file/`;
+    console.log("Form Values:", values);
 
     const payload = {
       name: values.courseName,
@@ -152,28 +122,30 @@ function Admin_edit_course_form() {
       disciplines: values.discipline,
       pre_requisit_courses: values.preRequisiteCourse,
       pre_requisits: values.preRequisites,
+      maxSeats: values.maxSeats,
+      Title: values.Title,
+      Description: values.Description,
+      uploader: values.uploader,
+      Designation: values.Designation,
     };
-
+    console.log("Payload: ", payload);
     try {
       const response = await fetch(apiUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Token ${token}`,
-        },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
       if (response.ok) {
+        // localStorage.setItem("CoursesCachechange", "true");
         const data = await response.json();
-        alert("Course updated successfully!");
-        navigate(`/programme_curriculum/admin_course/${data.course_id}`);
+        alert("Course added successfully!");
+        console.log("Response Data:", data);
+        navigate("/programme_curriculum/faculty_view_course_proposal");
       } else {
-        const errorData = await response.json();
-        console.error("Error:", errorData);
-        alert(
-          `Failed to update course: ${errorData.error || response.statusText}`,
-        );
+        const errorText = await response.text();
+        console.error("Error:", errorText);
+        alert("Failed to add course.");
       }
     } catch (error) {
       console.error("Network Error:", error);
@@ -246,7 +218,55 @@ function Admin_edit_course_form() {
                 >
                   Course Form
                 </Text>
-
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ flex: 1, marginRight: "8px" }}>
+                    <Textarea
+                      label="Uploader"
+                      placeholder=""
+                      value={form.values.uploader_name}
+                      onChange={(event) =>
+                        form.setFieldValue(
+                          "uploader",
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                  <div style={{ flex: 1, marginLeft: "8px" }}>
+                    <Textarea
+                      label="Designation"
+                      placeholder=""
+                      value={form.values.Designation}
+                      onChange={(event) =>
+                        form.setFieldValue(
+                          "Designation",
+                          event.currentTarget.value,
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <Textarea
+                  label="Title"
+                  placeholder="Enter Title"
+                  value={form.values.Title}
+                  onChange={(event) =>
+                    form.setFieldValue("Title", event.currentTarget.value)
+                  }
+                />
+                <Textarea
+                  label="Description"
+                  placeholder="Enter Description"
+                  value={form.values.Description}
+                  onChange={(event) =>
+                    form.setFieldValue("Description", event.currentTarget.value)
+                  }
+                />
                 <Table
                   striped
                   highlightOnHover
@@ -256,7 +276,7 @@ function Admin_edit_course_form() {
                     <tr>
                       <td
                         style={{
-                          border: "2px solid #1976d2",
+                          border: "1px solid #1976d2",
                           padding: "10px",
                           fontWeight: "bold",
                           color: "#1976d2",
@@ -265,7 +285,7 @@ function Admin_edit_course_form() {
                         Course Name:
                       </td>
                       <td
-                        style={{ border: "2px solid #1976d2", padding: "10px" }}
+                        style={{ border: "1px solid #1976d2", padding: "10px" }}
                       >
                         <TextInput
                           placeholder="Discrete Mathematics"
@@ -291,7 +311,7 @@ function Admin_edit_course_form() {
                     <tr>
                       <td
                         style={{
-                          border: "2px solid #1976d2",
+                          border: "1px solid #1976d2",
                           padding: "10px",
                           fontWeight: "bold",
                           color: "#1976d2",
@@ -300,7 +320,7 @@ function Admin_edit_course_form() {
                         Course Code:
                       </td>
                       <td
-                        style={{ border: "2px solid #1976d2", padding: "10px" }}
+                        style={{ border: "1px solid #1976d2", padding: "10px" }}
                       >
                         <TextInput
                           placeholder="NS205c"
@@ -326,7 +346,7 @@ function Admin_edit_course_form() {
                     <tr>
                       <td
                         style={{
-                          border: "2px solid #1976d2",
+                          border: "1px solid #1976d2",
                           padding: "10px",
                           fontWeight: "bold",
                           color: "#1976d2",
@@ -335,7 +355,7 @@ function Admin_edit_course_form() {
                         Credit:
                       </td>
                       <td
-                        style={{ border: "2px solid #1976d2", padding: "10px" }}
+                        style={{ border: "1px solid #1976d2", padding: "10px" }}
                       >
                         <NumberInput
                           placeholder="4"
@@ -358,7 +378,7 @@ function Admin_edit_course_form() {
                     <tr>
                       <td
                         style={{
-                          border: "2px solid #1976d2",
+                          border: "1px solid #1976d2",
                           padding: "10px",
                           fontWeight: "bold",
                           color: "#1976d2",
@@ -367,7 +387,7 @@ function Admin_edit_course_form() {
                         Version:
                       </td>
                       <td
-                        style={{ border: "2px solid #1976d2", padding: "10px" }}
+                        style={{ border: "1px solid #1976d2", padding: "10px" }}
                       >
                         <TextInput
                           placeholder="1.0"
@@ -516,26 +536,6 @@ function Admin_edit_course_form() {
                   />
                 </Group>
                 {/* Discipline and Others */}
-                <MultiSelect
-                  label="From Discipline"
-                  placeholder="Select Discipline"
-                  data={disciplines.map((discipline) => ({
-                    label: discipline.name,
-                    value: discipline.id.toString(), // Ensure value is a string for the MultiSelect component
-                    ...discipline,
-                  }))}
-                  value={
-                    Array.isArray(form.values.discipline)
-                      ? form.values.discipline.map(String) // Convert integers to strings for the MultiSelect component
-                      : []
-                  }
-                  onChange={(value) => {
-                    const integerValues = value ? value.map(Number) : []; // Convert selected strings back to integers
-                    form.setFieldValue("discipline", integerValues);
-                  }}
-                  required
-                  searchable
-                />
                 <Textarea
                   label="Pre-requisites"
                   placeholder="None"
@@ -725,4 +725,4 @@ function Admin_edit_course_form() {
   );
 }
 
-export default Admin_edit_course_form;
+export default Faculty_add_course_proposal_form;

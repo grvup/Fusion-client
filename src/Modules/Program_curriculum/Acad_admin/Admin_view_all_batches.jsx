@@ -330,8 +330,9 @@ function AdminViewAllBatches() {
                                 fontSize: "14px",
                               }}
                             >
-                              {batch.curriculum} &nbsp;v
-                              {batch.curriculumVersion}
+                              {batch.curriculum
+                                ? `${batch.curriculum} v${batch.curriculumVersion}`
+                                : ""}
                             </Link>
                           </td>
                           <td
@@ -498,8 +499,9 @@ function AdminViewAllBatches() {
                               className="course-link"
                               style={{ textDecoration: "none" }}
                             >
-                              {batch.curriculum} &nbsp;v
-                              {batch.curriculumVersion}
+                              {batch.curriculum
+                                ? `${batch.curriculum} v${batch.curriculumVersion}`
+                                : ""}
                             </Link>
                           </td>
                           <td

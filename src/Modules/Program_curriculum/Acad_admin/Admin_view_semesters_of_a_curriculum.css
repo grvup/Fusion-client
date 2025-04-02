@@ -11,7 +11,7 @@
   cursor: pointer;
   z-index: 1;
   transition: background-color 0.5s;
-  width: 14vw;
+  width: 90px;
 }
 
 .options-button:hover {
@@ -28,7 +28,8 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
   z-index: 1;
-  width: 14vw;
+  width: fit-content;
+  max-width: 210px;
   overflow-x: visible;
   opacity: 0;
   transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
@@ -98,6 +99,21 @@
   transition: background-color 0.3s ease;
   font-size: 14px;    
 }
+.Link-slot-button {
+  background-color: #62b6cb;
+  color: black;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  font-size: 14px;    
+  margin-top: 20px;
+}
+.Link-slot-button:hover {
+  background-color: #007bff;
+}
 
 .add-course-slot-button:hover {
   background-color: #007bff;
@@ -122,7 +138,7 @@
 
 .semester-dropdown {
   position: absolute;
-  right: 13.2vw;
+  right: 200px;
   top: 170px;
   background-color: white;
   border: 1px solid #ddd;
@@ -134,8 +150,39 @@
   transition: max-height 0.4s ease-out;
   border-radius: 5px;
 }
-
-.semester-option {
+.editbatch-dropdown {
+  position: absolute;
+  right: 200px;
+  top: 334px;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  z-index: 2;
+  min-width: 150px;
+  overflow-y: auto; /* Scroll if content overflows */
+  transition: max-height 0.4s ease-out;
+  border-radius: 5px;
+  font-size: 15px;
+  /* width: 100%; */
+}
+.Linkbatch-dropdown {
+  position: absolute;
+  right: 200px;
+  top: 384px;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 5px;
+  z-index: 2;
+  min-width: 150px;
+  overflow-y: auto; /* Scroll if content overflows */
+  transition: max-height 0.4s ease-out;
+  border-radius: 5px;
+  font-size: 15px;
+  /* width: 100%; */
+}
+.Linkbatch-option {
   display: flex;
   justify-content: space-between;
   padding: 5px;
@@ -145,13 +192,37 @@
   z-index: 2;
 }
 
+.editbatch-option {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  cursor: pointer;
+  /* border-bottom: 1px solid #ddd; */
+  overflow-x: visible;
+  z-index: 2;
+}
+.semester-option {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  cursor: pointer;
+  border-bottom: 1px solid #ddd;
+  overflow-x: visible;
+  z-index: 2;
+}
+.editbatch-option:hover {
+  background-color: #f1f1f1;
+}
+.Linkbatch-option:hover {
+  background-color: #f1f1f1;
+}
 .semester-option:hover {
   background-color: #f1f1f1;
 }
 
 .instigate-semester-dropdown {
   position: absolute;
-  right: 13.2vw;
+  right: 200px;
   top: 118px;
   background-color: white;
   border: 1px solid #ddd;
@@ -206,7 +277,7 @@
   align-items: center;
   gap: 20px;
   padding: 10px 0;
-  font-size: 0.8vw;
+  font-size: 10px;
   border-bottom: 1px solid #e0e0e0;
 }
 
@@ -247,7 +318,7 @@
   width: 100%;
   border-collapse: collapse; /* Collapse borders for cleaner look */
   margin-top: 20px; /* Space above the table */
-  font-size: 0.9vw; /* Responsive font size */
+  font-size: 10px; /* Responsive font size */
 }
 
 .table-container th, .table-container td {
@@ -281,7 +352,7 @@
 
 .table-container h2, .table-container h4 {
   margin: 0; /* Reset margin */
-  font-size: 1vw; /* Responsive font size */
+  font-size: 12px; /* Responsive font size */
   color: #007bff; /* Color for headings */
   text-align: center; /* Centered headings */
 }
@@ -291,7 +362,7 @@
 }
 
 .table-container td p {
-  font-size: 0.8vw; /* Smaller font for content inside cells */
+  font-size: 10px; /* Smaller font for content inside cells */
 }
 
 .table-container td div {
@@ -311,7 +382,7 @@
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .table-container table {
-      font-size: 1.2vw; /* Larger font size on smaller screens */
+      font-size: 10px; /* Larger font size on smaller screens */
   }
 
   .table-container th, .table-container td {
@@ -319,6 +390,22 @@
   }
 
   .table-container h2, .table-container h4 {
-      font-size: 1.5vw; /* Adjust heading size for mobile */
+      font-size: 12px; /* Adjust heading size for mobile */
+  }
+}
+
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 900px) {
+  .table-container {
+    max-width: 100%;
+  }
+  
+  .table-container table {
+    min-width: 800px; /* Ensures the table doesn't shrink too much */
   }
 }

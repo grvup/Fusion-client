@@ -98,8 +98,8 @@ function Admin_add_course_slot_form() {
   // const { semesterid, curriculumid } = useParams();
   const [searchParams] = useSearchParams();
   // Get the values from the URL
-  const semesterid = searchParams.get("semesterid");
-  const curriculumid = searchParams.get("curriculumid");
+  const semesterid = searchParams.get("semester");
+  const curriculumid = searchParams.get("curriculum");
   console.log(semesterid, curriculumid);
 
   useEffect(() => {

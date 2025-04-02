@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom"; // Assuming you're using react-router for routing
+import { Link, useSearchParams, useNavigate } from "react-router-dom"; // Assuming you're using react-router for routingimport { Link, useSearchParams, useNavigate } from "react-router-dom"; // Added useNavigate for redirection
 import "./CourseSlotDetails.css"; // Separate CSS file for styling
+import axios from "axios"; // Import axios for making HTTP requests
 import { fetchCourseSlotData } from "./api/api";
+import { host } from "../../routes/globalRoutes"; // Adjust the import path as needed
+// import { Modal, Button, Group, Text } from "@mantine/core"; // Import Mantine components
 
 function CourseSlotDetails() {
   const [courseSlot, setCourseSlot] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
   const courseslotId = searchParams.get("course_slot");
+  const curriculumId = searchParams.get("curriculum");
+  const semesterId = searchParams.get("semester");
 
   // Simulate fetching the course slot data from a server with dummy data
   useEffect(() => {
@@ -28,13 +34,37 @@ function CourseSlotDetails() {
     loadCourseSlotData();
   }, [courseslotId]);
 
-  if (loading) return <div>Loading...</div>;
-  console.log(courseSlot);
-  const handleDelete = () => {
-    setShowModal(false);
-    alert("Course Slot Deleted (simulation).");
+  const handleDeleteCourseSlot = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.delete(
+        `${host}/programme_curriculum/api/admin_delete_courseslot/${courseslotId}/`,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        alert("Course slot deleted successfully!");
+        navigate(
+          `/programme_curriculum/view_curriculum?curriculum=${curriculumId}`,
+        ); // Redirect after deletion
+      }
+    } catch (error) {
+      console.error("Error deleting course slot:", error);
+      alert("Failed to delete course slot.");
+    } finally {
+      setShowModal(false); // Close the modal
+    }
   };
 
+  const handleDelete = () => {
+    handleDeleteCourseSlot();
+  };
+
+  if (loading) return <div>Loading...</div>;
   if (!courseSlot) return <div className="loading">Loading...</div>;
 
   return (
@@ -93,7 +123,7 @@ function CourseSlotDetails() {
                       <td>Course Code</td>
                       <td>Course Name</td>
                       <td>Credits</td>
-                      <td />
+                      {/* <td /> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -111,7 +141,7 @@ function CourseSlotDetails() {
                         <td>{course.credit}</td>
                         <td>
                           <Link
-                            to={`/edit-course/${course.id}`}
+                            to={`/programme_curriculum/acad_admin_edit_course_form/${course.id}`}
                             className="edit-btn"
                           >
                             Edit
@@ -131,7 +161,7 @@ function CourseSlotDetails() {
         {/* Action Buttons */}
         <div className="button-container">
           <Link
-            to={`/programme_curriculum/admin_edit_course_slot_form?course_slot_id=${courseSlot.id}`}
+            to={`/programme_curriculum/admin_edit_course_slot_form/${courseslotId}`}
             className="edit-course-slot-btn"
           >
             Edit Course Slot
@@ -143,7 +173,7 @@ function CourseSlotDetails() {
             Remove Course Slot
           </button>
           <Link
-            to={`/programme_curriculum/acad_admin_add_courseslot_form?semester_id=${courseSlot.semester}`}
+            to={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${semesterId}&curriculum=${curriculumId}`}
             className="add-course-slot-btn"
           >
             Add Course Slot

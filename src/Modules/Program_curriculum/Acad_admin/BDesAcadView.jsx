@@ -64,6 +64,7 @@ function BDesAcadView() {
 
   // New States for Filtering
   const [searchName, setSearchName] = useState("");
+  const [batchName, setBatchName] = useState("");
   const [searchVersion, setSearchVersion] = useState("");
   const [program, setProgram] = useState(null);
   const [workingCurriculums, setWorkingCurriculums] = useState([]);
@@ -87,7 +88,9 @@ function BDesAcadView() {
         );
 
         setProgram(response.data.program);
+        setBatchName(response.data.name);
         setWorkingCurriculums(response.data.working_curriculums);
+        console.log("working curriculums: ", response.data.working_curriculums);
         setPastCurriculums(response.data.past_curriculums);
         // setLoading(false);
         console.log("response data: ", response.data);
@@ -338,7 +341,7 @@ function BDesAcadView() {
                         )}
                       </React.Fragment>
                     ))} */}
-                  {curr.batch}
+                  {batchName} {curr.year}
                 </td>
                 <td
                   style={{
