@@ -100,7 +100,8 @@ export default function ProgrammeCurriculumRoutes() {
         // Immediate check for other roles
         setHasAccess(allowedRoles.includes(role));
         setIsLoading(false);
-      } 
+      }
+      
       return () => {
         if (timer) clearTimeout(timer);
       };
@@ -116,19 +117,15 @@ export default function ProgrammeCurriculumRoutes() {
 
   // Determine which navigation tabs to show based on role
   const NavTab = () => {
-    const role = useSelector((state) => state.user.role);
+    const TabComponent = 
+      STUDENT_ROLES.includes(role)
+        ? BreadcrumbTabs
+        : FACULTY_ROLES.includes(role)
+          ? BreadcrumbTabsFaculty
+          : ADMIN_ROLES.includes(role)
+            ? BreadcrumbTabsAcadadmin
+            : () => null;
     
-    let TabComponent;
-    if (STUDENT_ROLES.includes(role)) {
-      TabComponent = BreadcrumbTabs;
-    } else if (FACULTY_ROLES.includes(role)) {
-      TabComponent = BreadcrumbTabsFaculty;
-    } else if (ADMIN_ROLES.includes(role)) {
-      TabComponent = BreadcrumbTabsAcadadmin;
-    } else {
-      TabComponent = () => null;
-    }
-  
     return (
       <>
         <Breadcrumb />
