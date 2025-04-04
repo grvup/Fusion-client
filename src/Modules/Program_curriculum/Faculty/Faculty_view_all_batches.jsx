@@ -66,12 +66,12 @@ function Batches() {
   const applyFilters = (data) => {
     return data.filter((batch) => {
       return (
-        batch.name.toLowerCase().includes(filter.name.toLowerCase()) &&
-        batch.discipline
+        (filter.name==="" || batch.name.toLowerCase().includes(filter.name.toLowerCase())) &&
+        (filter.discipline==="" || batch.discipline
           .toLowerCase()
-          .includes(filter.discipline.toLowerCase()) &&
-        batch.year.toString().includes(filter.year) &&
-        batch.curriculum.toLowerCase().includes(filter.curriculum.toLowerCase())
+          .includes(filter.discipline.toLowerCase())) &&
+        (filter.year==="" || batch.year.toString().includes(filter.year)) &&
+        (filter.curriculum==="" || batch.curriculum.toLowerCase().includes(filter.curriculum.toLowerCase()))
       );
     });
   };

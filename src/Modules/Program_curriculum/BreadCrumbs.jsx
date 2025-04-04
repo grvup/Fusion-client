@@ -38,18 +38,81 @@ const capitalizeWords = (text) => {
 };
 
 // Function to format breadcrumb name with capitalized words & query parameters
-const formatBreadcrumbName = (path) => {
-  const [pageName, queryParams] = path.split("?");
-  let formattedPageName = capitalizeWords(pageName.replace(/_/g, " ")); // Capitalized base page name
+const pageNameMappings = {
+  "acad_view_all_programme": "Programme",
+  "acad_view_all_working_curriculums": "Curriculum",
+  "acad_discipline_view": "Discipline",
+  "admin_batches": "Batches",
+  "admin_courses": "Courses",
+  "admin_course_instructor": "Course Instructor",
+  "acad_view": "Programme-Details",
+  "admin_edit_curriculum_form": "Edit Curriculum Form",
+  "acad_admin_add_curriculum_form": "Add Curriculum Form",
+  "acad_admin_replicate_curriculum": "Replicate Curriculum Form",
+  "admin_edit_programme_form": "Edit Programme Form",
+  "view_curriculum": "Curriculum-Details",
+  "course_slot_details": "Course Slot Details",
+  "acad_admin_instigate_form": "Instigate Semester Form",
+  "acad_admin_add_courseslot_form": "Add Course Slot Form",
+  "admin_edit_batch_form": "Edit Batch Form",
+  "acad_admin_add_batch_form": "Add Batch Form",
+  "acad_admin_add_programme_form": "Add Programme Form",
+  "acad_admin_replicate_curriculum_form": "Replicate Curriculum Form",
+  "acad_admin_add_discipline_form": "Add Discipline Form",
+  "acad_admin_edit_discipline_form": "Edit Discipline Form",
+  "admin_course": "Course-Details",
+  "acad_admin_add_course_proposal_form": "Add Course Proposal Form",
+  "acad_admin_edit_course_form": "Edit Course Form",
+  "acad_admin_add_course_instructor": "Add Course Instructor Form",
+  "admin_edit_course_instructor": "Edit Course Instructor Form",
+  "faculty_view_all_programmes": "Programme",
+  "faculty_view_all_working_curriculums": "Curriculum",
+  "faculty_discipline": "Discipline",
+  "faculty_batches": "Batches",
+  "faculty_courses": "Courses",
+  "faculty_view_course_proposal": "Course Proposal",
+  "faculty_outward_files": "Course Proposal Tracking",
+  "faculty_inward_files": "Inward Files",
+  "stud_curriculum_view": "Curriculum-Details",
+  "stud_semester_info": "Semester Information",
+  "stud_course_slot_details": "Course-Slot Details",
+  "faculty_course_view": "Course Details",
+  "faculty_forward_form": "Edit Course Form",
+  "new_course_proposal_form": "New Course Proposal Form",
+  "view_a_course_proposal_form": "View Course Proposal Form",
+  "filetracking": "File-Tracking",
+  "view_inward_file": "View Inward File",
+  "forward_course_forms": "Forward Course Form",
+  "forward_course_forms_II": "Forward Course Form",
+  "view_all_programmes": "Programme",
+  "view_all_working_curriculums": "Curriculum",
+  "stud_discipline_view": "Discipline",
+  "student_batches": "Batches",
+  "student_courses": "Courses",
+  "student_course": "Course-Details",
+  
+  // Add more mappings as needed...
+};
 
-  if (!queryParams) return formattedPageName;
+const formatBreadcrumbName = (path) => {
+  const [fullPageName, queryParams] = path.split("?");
+  const pageName = fullPageName.split("/")[0]; // Extract only the base page name before any slashes
+
+  // Use mapped name if available, otherwise format the name
+  if (pageNameMappings[pageName]) {
+    return pageNameMappings[pageName]; 
+  }
+
+  const primaryName = capitalizeWords(pageName.replace(/_/g, " "));
+
+  if (!queryParams) return primaryName;
 
   const formattedParams = queryParams
     .split("&")
-    .map(param => capitalizeWords(param.replace("=", ": "))) // Capitalize query parameters
+    .map(param => capitalizeWords(param.replace("=", ": ")))
     .join(", ");
 
-  return `${formattedPageName} (${formattedParams})`;
+  return `${primaryName} (${formattedParams})`;
 };
 
 const Breadcrumb = () => {

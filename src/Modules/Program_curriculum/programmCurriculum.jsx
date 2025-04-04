@@ -343,6 +343,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
+              <NavTab />
                 <ViewInwardFile />
               </Layout>
             </ProtectedRoute>
@@ -375,6 +376,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
+              <NavTab />
                 <BDesView />
               </Layout>
             </ProtectedRoute>
@@ -730,7 +732,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
-                <BreadcrumbTabsFaculty />
+              <NavTab />
                 <FacultyCourseProposalFinalForm />
               </Layout>
             </ProtectedRoute>
