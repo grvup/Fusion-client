@@ -11,9 +11,9 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { useNavigate } from "react-router-dom";
 import { fetchFacultyInwardFilesData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
-import { useNavigate } from "react-router-dom";
 
 function InwardFilesTable({ inwardFiles, username, role, onArchive }) {
   const navigate = useNavigate();
@@ -85,7 +85,11 @@ function InwardFilesTable({ inwardFiles, username, role, onArchive }) {
                       variant="filled"
                       style={{ backgroundColor: "#2ecc71" }}
                       onClick={() => {
-                        navigate(`/programme_curriculum/forward_course_forms/?id=${inward.id}`);
+                        if (role === "Dean Academic") {
+                          window.location.href = `/programme_curriculum/forward_course_forms_II/?id=${inward.id}`;
+                        } else {
+                          window.location.href = `/programme_curriculum/forward_course_forms/?id=${inward.id}`;
+                        }
                       }}
                     >
                       Submit
@@ -115,9 +119,40 @@ function InwardFilesTable({ inwardFiles, username, role, onArchive }) {
 }
 
 function ArchivedFilesTable({ archivedFiles, username, role, onUnarchive }) {
+  function formatDateWithRoundingA(isoDateString) {
+    const date = new Date(isoDateString);
+    // Round minutes up if seconds > 30
+    const seconds = date.getSeconds();
+    if (seconds > 30) {
+      date.setMinutes(date.getMinutes() + 1);
+    }
+    const options = {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    let formatted = date.toLocaleString("en-US", options);
+    // Handle edge cases (e.g., 11:59 -> 12:00)
+    if (date.getMinutes() === 60) {
+      date.setHours(date.getHours() + 1);
+      date.setMinutes(0);
+      formatted = date.toLocaleString("en-US", options);
+    }
+    return formatted.replace(/(AM|PM)/, (match) => match.toLowerCase());
+  }
   const navigate = useNavigate();
   return (
-    <div style={{ maxHeight: "61vh", overflowY: "auto", border: "1px solid #d3d3d3", borderRadius: "10px" }}>
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+      }}
+    >
       <style>
         {`
           div::-webkit-scrollbar {
@@ -128,23 +163,28 @@ function ArchivedFilesTable({ archivedFiles, username, role, onUnarchive }) {
       <Table style={{ backgroundColor: "white", padding: "20px", flexGrow: 1 }}>
         <thead>
           <tr>
-            {["Received as", "Send by", "File ID", "Remark", "Date", "Actions"].map(
-              (header, index) => (
-                <th
-                  key={index}
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    fontSize: "16px",
-                    textAlign: "center",
-                    borderRight: "1px solid #d3d3d3",
-                  }}
-                >
-                  {header}
-                </th>
-              ),
-            )}
+            {[
+              "Received as",
+              "Send by",
+              "File ID",
+              "Remark",
+              "Date",
+              "Actions",
+            ].map((header, index) => (
+              <th
+                key={index}
+                style={{
+                  padding: "15px 20px",
+                  backgroundColor: "#C5E2F6",
+                  color: "#3498db",
+                  fontSize: "16px",
+                  textAlign: "center",
+                  borderRight: "1px solid #d3d3d3",
+                }}
+              >
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -152,30 +192,76 @@ function ArchivedFilesTable({ archivedFiles, username, role, onUnarchive }) {
             archivedFiles.map((inward, index) => (
               <tr
                 key={index}
-                style={{ backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff" }}
+                style={{
+                  backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff",
+                }}
               >
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {inward.receive_id__username}-{inward.receive_design__name}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {inward.current_id}-{inward.current_design}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {inward.file_id}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {inward.remarks}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
-                  {formatDateWithRounding(inward.receive_date)}
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
+                  {formatDateWithRoundingA(inward.receive_date)}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   <Flex justify="space-around" gap={5}>
                     <Button
                       variant="filled"
                       style={{ backgroundColor: "#3498db" }}
                       onClick={() => {
-                        navigate(`/programme_curriculum/view_inward_file/?id=${inward.id}`);
+                        navigate(
+                          `/programme_curriculum/view_inward_file/?id=${inward.id}`,
+                        );
                       }}
                     >
                       View
@@ -193,7 +279,10 @@ function ArchivedFilesTable({ archivedFiles, username, role, onUnarchive }) {
             ))
           ) : (
             <tr>
-              <td colSpan="6" style={{ textAlign: "center", padding: "15px 20px" }}>
+              <td
+                colSpan="6"
+                style={{ textAlign: "center", padding: "15px 20px" }}
+              >
                 No archived files available.
               </td>
             </tr>
@@ -331,7 +420,9 @@ function InwardFile() {
   const applyFilters = (data) => {
     return data.filter((file) => {
       return (
-        `${file.current_id}-${file.current_design}`.toLowerCase().includes(filter.sender.toLowerCase()) &&
+        `${file.current_id}-${file.current_design}`
+          .toLowerCase()
+          .includes(filter.sender.toLowerCase()) &&
         file.file_id.toLowerCase().includes(filter.fileId.toLowerCase()) &&
         file.remarks.toLowerCase().includes(filter.remarks.toLowerCase())
       );
@@ -342,7 +433,11 @@ function InwardFile() {
   const filteredArchivedFiles = applyFilters(archivedFiles);
 
   return (
-    <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles withNormalizeCSS>
+    <MantineProvider
+      theme={{ colorScheme: "light" }}
+      withGlobalStyles
+      withNormalizeCSS
+    >
       <Container style={{ padding: "20px", maxWidth: "100%" }}>
         <Flex justify="flex-start" align="center" mb={10}>
           <Button
@@ -360,9 +455,7 @@ function InwardFile() {
             Archived Files
           </Button>
         </Flex>
-        
         <hr />
-        
         <Grid mt={20}>
           {isMobile && (
             <Grid.Col span={12} mb={20}>
@@ -385,27 +478,26 @@ function InwardFile() {
               </ScrollArea>
             </Grid.Col>
           )}
-          
           <Grid.Col span={isMobile ? 12 : 9}>
             <div style={{ backgroundColor: "#f5f7f8", borderRadius: "10px" }}>
               {activeTab === "InwardFiles" ? (
-                <InwardFilesTable 
-                  inwardFiles={filteredInwardFiles} 
-                  username={username} 
-                  role={role} 
+                <InwardFilesTable
+                  inwardFiles={filteredInwardFiles}
+                  username={username}
+                  role={role}
                   onArchive={handleArchive}
                 />
               ) : (
-                <ArchivedFilesTable 
-                  archivedFiles={filteredArchivedFiles} 
-                  username={username} 
-                  role={role} 
+                <ArchivedFilesTable
+                  archivedFiles={filteredArchivedFiles}
+                  username={username}
+                  role={role}
                   onUnarchive={handleUnarchive}
                 />
               )}
             </div>
           </Grid.Col>
-          
+
           {!isMobile && (
             <Grid.Col span={3}>
               <ScrollArea type="hover">

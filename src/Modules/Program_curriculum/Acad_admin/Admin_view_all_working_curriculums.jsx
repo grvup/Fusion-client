@@ -129,6 +129,21 @@ function Admin_view_all_working_curriculums() {
           </Button>
         </Link>
       </td>
+      <td
+        style={{
+          padding: "15px 20px",
+          textAlign: "center",
+        }}
+      >
+        {/* Edit button as a link */}
+        <Link
+          to={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${element.id}`}
+        >
+          <Button variant="filled" color="green" radius="sm">
+            Edit
+          </Button>
+        </Link>
+      </td>
     </tr>
   ));
 
@@ -263,6 +278,18 @@ function Admin_view_all_working_curriculums() {
                       }}
                     >
                       Actions
+                    </th>
+                    <th
+                      style={{
+                        padding: "15px 20px",
+                        backgroundColor: "#C5E2F6",
+                        color: "#3498db",
+                        fontSize: "16px",
+                        textAlign: "center",
+                        borderRight: "1px solid #d3d3d3",
+                      }}
+                    >
+                      Edit
                     </th>
                   </tr>
                 </thead>

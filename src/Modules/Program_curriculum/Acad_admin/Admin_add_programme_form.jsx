@@ -19,8 +19,8 @@ function Admin_add_programme_form() {
   const form = useForm({
     initialValues: {
       category: "",
-      programmeName: "",
-      year: 2024,
+      name: "",
+      programme_begin_year: 2024,
     },
   });
 
@@ -29,13 +29,14 @@ function Admin_add_programme_form() {
 
   const handleSubmit = async (values) => {
     const apiUrl = `${host}/programme_curriculum/api/admin_add_programme/`;
-
+    const token = localStorage.getItem("token");
+    console.log(values)
     try {
       setLoading(true);
       const response = await fetch(apiUrl, {
         method: "POST",
         body: JSON.stringify(values),
-        headers: { "Content-Type": "application/json" },
+        // headers: {Authorization: `Token ${token}`,},
       });
 
       if (response.ok) {
@@ -108,17 +109,17 @@ function Admin_add_programme_form() {
               <Input
                 label="Programme Name"
                 placeholder="Enter Programme Name"
-                value={form.values.programmeName}
+                value={form.values.name}
                 onChange={(event) =>
-                  form.setFieldValue("programmeName", event.target.value)
+                  form.setFieldValue("name", event.target.value)
                 }
                 required
               />
 
               <NumberInput
                 label="Programme Begin Year"
-                value={form.values.year}
-                onChange={(value) => form.setFieldValue("year", value)}
+                value={form.values.programme_begin_year}
+                onChange={(value) => form.setFieldValue("programme_begin_year", value)}
                 required
               />
             </Stack>

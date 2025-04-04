@@ -485,7 +485,7 @@ export default function SemesterInfo() {
             }}
           >
             <Group>
-              <a
+              {/* <a
                 href={`/programme_curriculum/acad_admin_instigate_form?semester=
                   ${semcourseSlots.semester_no}`}
               >
@@ -500,12 +500,10 @@ export default function SemesterInfo() {
                 >
                   Instigate Semester
                 </Button>
-              </a>
+              </a> */}
               {/* <Link to="/programme_curriculum/acad_admin_add_courseslot_form"> */}
               <Link
-                to={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${
-                  semesterId
-                }&curriculum=${curriculumId}`}
+                to={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${semesterId}&curriculum=${curriculumId}`}
               >
                 <Button
                   variant="filled"
@@ -543,7 +541,7 @@ export default function SemesterInfo() {
             }}
           >
             <Group>
-              <a
+              {/* <a
                 href={`/programme_curriculum/acad_admin_instigate_form?semester=
                   ${semcourseSlots.semester_no}`}
               >
@@ -553,22 +551,21 @@ export default function SemesterInfo() {
                   spacing="md"
                   direction="column"
                   style={{ width: "12vw" }}
-                  // onClick={handleInstigateSemester}
-                  // style={{ marginBottom: "10px" }}
                 >
                   Instigate Semester
                 </Button>
-              </a>
-              <a href="/programme_curriculum/acad_admin_add_courseslot_form">
+              </a> */}
+              <Link
+                to={`/programme_curriculum/acad_admin_add_courseslot_form?semester=${semesterId}&curriculum=${curriculumId}`}
+              >
                 <Button
                   variant="filled"
                   color="green"
-                  // onClick={handleAddCourseSlot}
                   style={{ width: "12vw" }}
                 >
                   Add Course Slot
                 </Button>
-              </a>
+              </Link>
             </Group>
           </div>
         </div>

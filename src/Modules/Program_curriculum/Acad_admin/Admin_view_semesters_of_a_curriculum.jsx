@@ -121,7 +121,7 @@ function Admin_view_semesters_of_a_curriculum() {
                 EDIT CURRICULUM
               </button>
             </Link>
-            <div
+            {/* <div
               className="instigate-semester"
               onMouseEnter={() => setIsInstigateSemesterHovered(true)}
               onMouseLeave={() => setIsInstigateSemesterHovered(false)}
@@ -130,7 +130,6 @@ function Admin_view_semesters_of_a_curriculum() {
                 INSTIGATE SEMESTER
               </button>
 
-              {/* Semester options visible on hover */}
               {isInstigateSemesterHovered && (
                 <div className="instigate-semester-dropdown">
                   {semesterscnt.map((semester, index) => (
@@ -150,7 +149,7 @@ function Admin_view_semesters_of_a_curriculum() {
                   ))}
                 </div>
               )}
-            </div>
+            </div> */}
 
             <div
               className="add-course-slot"
