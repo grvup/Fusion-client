@@ -11,6 +11,23 @@ function BreadcrumbTabsFaculty() {
   const location = useLocation();
   const tabsListRef = useRef(null);
 
+  // Store role in localStorage and track changes
+  useEffect(() => {
+    const storedRole = localStorage.getItem('userRole');
+    
+    // If role exists and is different from stored role, update localStorage
+    if (role) {
+      if (storedRole !== role) {
+        localStorage.setItem('userRole', role);
+        
+        // If storedRole exists and is different (role changed), redirect to first URL
+        if (storedRole && storedRole !== role) {
+          navigate(breadcrumbItems[0].url);
+        }
+      }
+    }
+  }, [role, navigate]);
+
   // Check if user is HOD or DEAN Academic
   const isHodOrDean = role && (role.startsWith("HOD") || role === "Dean Academic");
   const isDean = role && (role === "Dean Academic");
@@ -44,23 +61,48 @@ function BreadcrumbTabsFaculty() {
     }] : []),
   ];
 
-  // Get initial active tab based on current URL
+  // Helper function to get cached tab from localStorage
+  const getCachedTab = () => localStorage.getItem("facultyActiveTab") || "0";
+
+  // Get initial active tab based on current URL or from localStorage
   const initialActiveTab = () => {
-    const index = breadcrumbItems.findIndex(
-      (item) => item.url === location.pathname,
-    );
-    return index !== -1 ? index.toString() : "0";
+    const currentPath = location.pathname;
+    const index = breadcrumbItems.findIndex((item) => item.url === currentPath);
+    return index !== -1 ? index.toString() : getCachedTab();
   };
 
   const [activeTab, setActiveTab] = useState(initialActiveTab());
 
+  // Save active tab to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("facultyActiveTab", activeTab);
+  }, [activeTab]);
+
   // Update active tab on URL change
   useEffect(() => {
-    const index = breadcrumbItems.findIndex(
-      (item) => item.url === location.pathname,
-    );
-    if (index !== -1) setActiveTab(index.toString());
+    const currentPath = location.pathname;
+    const index = breadcrumbItems.findIndex((item) => item.url === currentPath);
+    if (index !== -1) {
+      setActiveTab(index.toString());
+    }
   }, [location.pathname]);
+
+  // Effect to check for role changes during the component's lifecycle
+  useEffect(() => {
+    const checkRoleChange = () => {
+      const storedRole = localStorage.getItem('userRole');
+      if (storedRole && role && storedRole !== role) {
+        localStorage.setItem('userRole', role);
+        navigate(breadcrumbItems[0].url);
+      }
+    };
+
+    // Set interval to periodically check role changes
+    const intervalId = setInterval(checkRoleChange, 1000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [role, navigate, breadcrumbItems]);
 
   // Handle tab switching via buttons
   const handleTabChange = (direction) => {
