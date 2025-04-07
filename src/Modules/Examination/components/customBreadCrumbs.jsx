@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 const breadcrumbMap = {
   "/examination/submit-grades": "Submit Grades",
   "/examination/verify-grades": "Verify Grades",
-  "/examination/generate-transcript": "Generate Transcript",
+  "/examination/generate-transcript": "Transcript",
   "/examination/generate-transcript/:rollNumber": "Student Transcript",
   "/examination/seating-plan": "Seating Plan",
   "/examination/announcement": "Announcement",
@@ -23,7 +23,10 @@ function CustomBreadExam() {
 
   const breadcrumbs = pathSegments.map((segment, index) => {
     const fullPath = `/${pathSegments.slice(0, index + 1).join("/")}`;
-    const title = breadcrumbMap[fullPath] || segment;
+    let title = breadcrumbMap[fullPath] || segment;
+
+    // Capitalize the first letter
+    title = title.charAt(0).toUpperCase() + title.slice(1);
 
     return (
       <Text

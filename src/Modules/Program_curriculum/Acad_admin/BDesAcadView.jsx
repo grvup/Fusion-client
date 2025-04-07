@@ -360,8 +360,7 @@ function BDesAcadView() {
                   }}
                 >
                   <Link
-                    to={`/programme_curriculum/admin_edit_curriculum_form?curriculum=
-                        ${curr.name}`}
+                    to={`/programme_curriculum/admin_edit_curriculum_form?curriculum=${curr.id}`}
                   >
                     <Button variant="filled" color="green" radius="sm">
                       Edit
@@ -625,10 +624,11 @@ function BDesAcadView() {
                     maxWidth: "170px",
                   }}
                 >
-                  {CURRICULUM_DATA.workingCurriculums.map((curr, index) => (
+                  {workingCurriculums.length > 0 ? (
+                    workingCurriculums.map((curr, index) => (
                     <Link
                       key={index}
-                      to={`/programme_curriculum/acad_admin_replicate_curriculum?curriculum=${curr.name}`}
+                      to={`/programme_curriculum/acad_admin_replicate_curriculum_form?curriculum=${curr.id}`}
                       style={{ textDecoration: "none" }}
                     >
                       <div
@@ -648,7 +648,17 @@ function BDesAcadView() {
                         <Copy size={20} color="#000" weight="bold" />
                       </div>
                     </Link>
-                  ))}
+                  ))) : (
+                    <div
+                      style={{
+                        padding: "5px 10px",
+                        textAlign: "center",
+                        color: "#999",
+                      }}
+                    >
+                      No curriculums available
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -667,7 +677,7 @@ function BDesAcadView() {
             Programe Options:
           </p>
           <Link
-            to="/programme_curriculum/admin_edit_programme_form"
+            to={`/programme_curriculum/admin_edit_programme_form/${programmeId}`}
             style={{ textDecoration: "none" }}
           >
             <Button

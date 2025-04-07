@@ -116,8 +116,7 @@ function Admin_edit_discipline_form() {
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Token ${token}`,
         },
         body: JSON.stringify(payload),
       });

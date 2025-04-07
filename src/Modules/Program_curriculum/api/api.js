@@ -215,6 +215,7 @@ export const fetchCourseDetails = async (id) => {
         },
       },
     );
+    // console.log(response.data);
     return response.data; // Return the fetched course details
   } catch (error) {
     console.error("Error fetching course details:", error);

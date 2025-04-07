@@ -1,224 +1,415 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-
-const styles = {
-  container: {
-    fontSize: "13px",
-    maxWidth: "800px",
-    margin: "0 auto",
-    padding: "20px",
-    fontFamily: "Arial, sans-serif",
-    border: "1px solid #ccc",
-    borderRadius: "15px",
-    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.15)",
-    borderLeft: "10px solid #1E90FF",
-  },
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: "20px",
-    gap: "20px",
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-    marginBottom: "20px",
-  },
-  th: {
-    border: "1px solid #ddd",
-    textAlign: "center",
-    padding: "8px",
-    fontWeight: "bold",
-    backgroundColor: "rgb(220, 220, 220)",
-  },
-  td: {
-    border: "1px solid #ddd",
-    textAlign: "center",
-    padding: "8px",
-  },
-  button: {
-    padding: "10px 20px",
-    backgroundColor: "#1E90FF",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
+import axios from "axios";
+import { generate_transcript, get_courses } from "../routes/examinationRoutes";
+import {
+  Container,
+  Title,
+  Paper,
+  Table,
+  Text,
+  Group,
+  Button,
+  Divider,
+  Badge,
+  Loader,
+  Box,
+  Card,
+  Grid,
+  Alert,
+} from "@mantine/core";
+import {
+  IconDownload,
+  IconPrinter,
+  IconAlertCircle,
+  IconArrowLeft,
+} from "@tabler/icons-react";
+import { useSelector } from "react-redux";
+// Grade point mapping - matching the Django template
+const gradePoints = {
+  O: 10,
+  "A+": 10,
+  A: 9,
+  "B+": 8,
+  B: 7,
+  "C+": 6,
+  C: 5,
+  "D+": 4,
+  D: 3,
+  F: 2,
 };
 
-function StudentTranscript() {
-  const studentData = {
-    rollNo: "20BCS143",
-    name: "Kshitiz Verma",
-    programme: "Bachelor of Technology",
-    discipline: "Computer Science & Engineering",
-    semester: "VI",
-    academicYear: "2023-24",
-    courses: [
-      {
-        courseNo: "CS1001",
-        courseTitle: "DSA",
-        credits: "4",
-        grade: "A",
-      },
-      {
-        courseNo: "CS1002",
-        courseTitle: "DBMS",
-        credits: "4",
-        grade: "A+",
-      },
-      {
-        courseNo: "CS1003",
-        courseTitle: "Computer Networks",
-        credits: "4",
-        grade: "A+",
-      },
-      {
-        courseNo: "CS1004",
-        courseTitle: "Operating System",
-        credits: "4",
-        grade: "A",
-      },
-      {
-        courseNo: "CS1005",
-        courseTitle: "Software Engineering",
-        credits: "4",
-        grade: "A",
-      },
-    ],
-    semesterPerformance: [
-      { semester: "I", spi: "7.5", cpi: "7.5" },
-      { semester: "II", spi: "6.7", cpi: "7.0" },
-      { semester: "III", spi: "6.7", cpi: "6.9" },
-      { semester: "IV", spi: "6.4", cpi: "6.8" },
-      { semester: "V", spi: "7.6", cpi: "6.9" },
-      { semester: "VI", spi: "6.4", cpi: "6.8" },
-      { semester: "VII", spi: "4.1", cpi: "6.5" },
-      { semester: "VIII", spi: "7.6", cpi: "6.6" },
-    ],
-    finalCPI: "9",
+function StudentTranscript(props) {
+  const userRole = useSelector((state) => state.user.role);
+  const location = useLocation();
+  const student = props.student;
+  const semester = props.semester;
+  const [transcriptData, setTranscriptData] = useState(null);
+  const [courseData, setCourseData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [spi, setSpi] = useState("N/A");
+  const [cpi, setCpi] = useState("N/A");
+  const [dataReady, setDataReady] = useState(false);
+  // Fetch both transcript and course data simultaneously
+  useEffect(() => {
+    if (!student || !student.id_id || !semester) {
+      setError("Invalid student data");
+      setLoading(false);
+      return;
+    }
+
+    const fetchAllData = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        setError("No authentication token found!");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        
+        // Fetch both data sets in parallel
+        const [courseResponse, transcriptResponse] = await Promise.all([
+          axios.post(
+            get_courses, 
+            { Role:userRole, academic_year: "2024" },
+            { headers: { Authorization: `Token ${token}` }}
+          ),
+          axios.post(
+            generate_transcript, 
+            { Role: userRole, student: student.id_id, semester },
+            { headers: { Authorization: `Token ${token}` }}
+          )
+        ]);
+        
+        const courses = courseResponse.data.courses;
+        const transcript = transcriptResponse.data;
+        
+        setCourseData(courses);
+        setTranscriptData(transcript);
+        
+        // Set a flag indicating both data sets are loaded
+        setDataReady(true);
+        setLoading(false);
+      } catch (err) {
+        setError(`Error fetching data: ${err.message}`);
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, [student, semester]);
+
+  // Calculate SPI and CPI only when both data sets are ready
+  useEffect(() => {
+    if (dataReady && transcriptData?.courses_grades && courseData) {
+      calculateSPIAndCPI();
+    }
+  }, [dataReady, transcriptData, courseData]);
+
+  // Calculate SPI and CPI
+  const calculateSPIAndCPI = () => {
+    // Calculate SPI (Semester Performance Index)
+    let totalCredits = 0;
+    let totalGradePoints = 0;
+    let creditsDebug = [];
+
+    // We need to add credit information to each course
+    Object.values(transcriptData.courses_grades).forEach((course) => {
+      // Find credit information for the course
+      const courseInfo = courseData.find((c) => c.code === course.course_code);
+      const credit = courseInfo?.credit || 3; // Default to 3 if not found
+      
+      // Debug information
+      creditsDebug.push({
+        course_code: course.course_code,
+        credit: credit,
+        found: !!courseInfo
+      });
+
+      // Calculate grade points
+      const gradePoint = gradePoints[course.grade] || 0;
+
+      totalGradePoints += gradePoint * credit;
+      totalCredits += credit;
+    });
+    
+    console.log("Credits debugging info:", creditsDebug);
+    console.log("Total grade points:", totalGradePoints);
+    console.log("Total credits:", totalCredits);
+    console.log("SPI calculation:", totalGradePoints / totalCredits);
+    
+    const calculatedSPI =
+      totalCredits > 0 ? (totalGradePoints / totalCredits).toFixed(2) : "N/A";
+    setSpi(calculatedSPI);
+
+    // Calculate CPI (Cumulative Performance Index) using total_courses_registered
+    let totalCreditsCPI = 0;
+    let totalGradePointsCPI = 0;
+    let cpiDebug = [];
+
+    if (
+      transcriptData.total_courses_registered &&
+      Array.isArray(transcriptData.total_courses_registered)
+    ) {
+      transcriptData.total_courses_registered.forEach((course) => {
+        // For CPI calculation, we need to find the course by ID
+        const courseInfo = courseData.find((c) => c.id === course.course_id);
+        const credit = courseInfo?.credit || 3;
+        
+        // Debug information
+        cpiDebug.push({
+          course_id: course.course_id,
+          credit: credit,
+          found: !!courseInfo
+        });
+
+        // Calculate grade points
+        const gradePoint = gradePoints[course.grade] || 0;
+
+        totalGradePointsCPI += gradePoint * credit;
+        totalCreditsCPI += credit;
+      });
+
+      console.log("CPI credits debugging info:", cpiDebug);
+      console.log("Total CPI grade points:", totalGradePointsCPI);
+      console.log("Total CPI credits:", totalCreditsCPI);
+      console.log("CPI calculation:", totalGradePointsCPI / totalCreditsCPI);
+      
+      const calculatedCPI =
+        totalCreditsCPI > 0
+          ? (totalGradePointsCPI / totalCreditsCPI).toFixed(2)
+          : "N/A";
+      setCpi(calculatedCPI);
+    }
   };
 
+  // Generate PDF
   const generatePDF = () => {
-    // eslint-disable-next-line new-cap
     const doc = new jsPDF();
-    doc.setFont("helvetica");
-
-    // Header with student info
-    doc.setFontSize(13);
-    doc.text("Student Transcript", 105, 10, null, null, "center");
+    doc.setFontSize(18);
+    doc.text("Student Transcript", 105, 15, { align: "center" });
 
     doc.setFontSize(12);
-    doc.text(`Roll No: ${studentData.rollNo}`, 20, 20);
-    doc.text(`Student Name: ${studentData.name}`, 20, 30);
-    doc.text(`Programme: ${studentData.programme}`, 120, 20);
-    doc.text(`Discipline: ${studentData.discipline}`, 120, 30);
-    doc.text(`Semester: ${studentData.semester}`, 120, 40);
-    doc.text(`Academic Year: ${studentData.academicYear}`, 120, 50);
+    doc.text(`Student ID: ${student?.id_id || "N/A"}`, 14, 30);
+    doc.text(`Name: ${student?.name || "Student"}`, 14, 40);
+    doc.text(`Semester: ${semester || "N/A"}`, 14, 50);
+    doc.text(`SPI: ${spi}`, 14, 60);
+    doc.text(`CPI: ${cpi}`, 14, 70);
 
-    // Courses Table
+    const tableColumn = ["Course Code", "Course Name", "Credits", "Grade"];
+    const tableRows = [];
+
+    if (transcriptData?.courses_grades) {
+      Object.entries(transcriptData.courses_grades).forEach(
+        ([courseId, course]) => {
+          // Find credit information
+          const courseInfo = courseData?.find((c) => c.code === course.course_code);
+          const credit = courseInfo?.credit || 3;
+
+          const courseRow = [
+            course.course_code,
+            course.course_name,
+            credit.toString(),
+            course.grade,
+          ];
+          tableRows.push(courseRow);
+        },
+      );
+    }
+
     doc.autoTable({
-      startY: 60,
-      head: [["Course No.", "Course Title", "Credits", "Grade"]],
-      body: studentData.courses.map((course) => [
-        course.courseNo,
-        course.courseTitle,
-        course.credits,
-        course.grade,
-      ]),
+      head: [tableColumn],
+      body: tableRows,
+      startY: 80,
       theme: "grid",
-      styles: { fontSize: 10, halign: "center" },
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [66, 139, 202] },
     });
 
-    // Semester Performance Table
-    doc.autoTable({
-      startY: doc.lastAutoTable.finalY + 10,
-      head: [
-        [
-          "Semester",
-          ...studentData.semesterPerformance.map((sem) => sem.semester),
-          "Final",
-        ],
-      ],
-      body: [
-        ["SPI", ...studentData.semesterPerformance.map((sem) => sem.spi), ""],
-        [
-          "CPI",
-          ...studentData.semesterPerformance.map((sem) => sem.cpi),
-          studentData.finalCPI,
-        ],
-      ],
-      theme: "grid",
-      styles: { fontSize: 10, halign: "center" },
-    });
-
-    doc.save(`Transcript_${studentData.rollNo}.pdf`);
+    doc.save("student_transcript.pdf");
   };
 
-  return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <div>
-          <p>
-            <strong>Roll No:</strong> {studentData.rollNo}
-          </p>
-          <p>
-            <strong>Student Name:</strong> {studentData.name}
-          </p>
-          <p>
-            <strong>Programme:</strong> {studentData.programme}
-          </p>
-        </div>
-        <div>
-          <p>
-            <strong>Discipline:</strong> {studentData.discipline}
-          </p>
-          <p>
-            <strong>Semester:</strong> {studentData.semester}
-          </p>
-          <p>
-            <strong>Academic Year:</strong> {studentData.academicYear}
-          </p>
-        </div>
-      </div>
+  if (loading) {
+    return (
+      <Container size="md" py="xl">
+        <Paper p="md" shadow="sm" radius="md">
+          <Group position="center">
+            <Loader size="lg" />
+            <Text>Loading transcript data...</Text>
+          </Group>
+        </Paper>
+      </Container>
+    );
+  }
 
-      {/* Courses Table */}
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.th}>Course No.</th>
-            <th style={styles.th}>Course Title</th>
-            <th style={styles.th}>Credits</th>
-            <th style={styles.th}>Grade</th>
-          </tr>
-        </thead>
-        <tbody>
-          {studentData.courses.map((course, index) => (
-            <tr key={index}>
-              <td style={styles.td}>{course.courseNo}</td>
-              <td style={styles.td}>{course.courseTitle}</td>
-              <td style={styles.td}>{course.credits}</td>
-              <td style={styles.td}>{course.grade}</td>
+  if (error) {
+    return (
+      <Container size="md" py="xl">
+         <Button
+  leftIcon={<IconArrowLeft size={16} />} // Ensure this is correctly formatted
+  onClick={props.onBack}
+  variant="outline"
+  style={{ marginTop: "16px" }} // Add some margin for better spacing
+>
+  Back to List
+</Button>
+        <Alert icon={<IconAlertCircle size={16} />} title="Error" color="red">
+          {error}
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (
+    !transcriptData?.courses_grades ||
+    Object.keys(transcriptData.courses_grades).length === 0
+  ) {
+    return (
+      <Container size="md" py="xl">
+          <Button
+  leftIcon={<IconArrowLeft size={16} />} // Ensure this is correctly formatted
+  onClick={props.onBack}
+  variant="outline"
+  style={{ marginTop: "16px" }} // Add some margin for better spacing
+>
+  Back to List
+</Button>
+        <Paper p="md" shadow="sm" radius="md">
+          <Text size="lg" align="center">
+            Marks not yet submitted.
+          </Text>
+        </Paper>
+      </Container>
+    );
+  }
+
+  return (
+    <Container size="md" py="xl">
+       <Button
+  leftIcon={<IconArrowLeft size={16} />} // Ensure this is correctly formatted
+  onClick={props.onBack}
+  variant="outline"
+  style={{ marginTop: "16px" }} // Add some margin for better spacing
+>
+  Back to List
+</Button>
+      <Card shadow="sm" p="lg" radius="md" withBorder>
+        <Card.Section withBorder inheritPadding py="xs">
+          <Group position="apart">
+            <Title order={2}>Student Transcript</Title>
+            <Group>
+              <Button
+                leftIcon={<IconPrinter size={16} />}
+                onClick={() => window.print()}
+                variant="outline"
+              >
+                Print
+              </Button>
+              <Button
+                leftIcon={<IconDownload size={16} />}
+                onClick={generatePDF}
+              >
+                Download PDF
+              </Button>
+            </Group>
+          </Group>
+        </Card.Section>
+
+        <Box mt="md">
+          <Grid>
+            <Grid.Col span={6}>
+              <Text weight={500}>Student ID: {student?.id_id || "N/A"}</Text>
+              <Text weight={500}>Name: {student?.name || "Student"}</Text>
+            </Grid.Col>
+            <Grid.Col span={6} style={{ textAlign: "right" }}>
+              <Text weight={500}>Semester: {semester || "N/A"}</Text>
+            </Grid.Col>
+          </Grid>
+        </Box>
+
+        <Divider my="md" />
+
+        <Table striped highlightOnHover>
+          <thead>
+            <tr>
+              <th>Course Name</th>
+              <th>Course Code</th>
+              <th>Credits</th>
+              <th>Grade</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <p
-        style={{
-          padding: "10px",
-          backgroundColor: "rgb(220, 220, 220)",
-          display: "flex",
-          alignContent: "center",
-          gap: "30px",
-        }}
-      >
-        SPI <span> 9.4 </span>
-      </p>
-      <button onClick={generatePDF} style={styles.button}>
-        Download as PDF
-      </button>
-    </div>
+          </thead>
+          <tbody>
+            {transcriptData?.courses_grades &&
+              Object.entries(transcriptData.courses_grades).map(
+                ([courseId, course], index) => {
+                  // Find credit information
+                  const courseInfo = courseData?.find(
+                    (c) => c.code === course.course_code
+                  );
+                  const credit = courseInfo?.credit || 3;
+
+                  return (
+                    <tr key={index}>
+                      <td>{course.course_name}</td>
+                      <td>{course.course_code}</td>
+                      <td>{credit}</td>
+                      <td>
+                        <Badge
+                          color={
+                            course.grade === "O" || course.grade.startsWith("A")
+                              ? "green"
+                              : course.grade.startsWith("B")
+                                ? "blue"
+                                : course.grade.startsWith("C")
+                                  ? "yellow"
+                                  : "red"
+                          }
+                        >
+                          {course.grade}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                },
+              )}
+          </tbody>
+        </Table>
+
+        <Divider my="md" />
+
+        <Grid>
+          <Grid.Col span={6}>
+            <Paper p="md" withBorder>
+              <Title order={4}>Semester Performance Index (SPI)</Title>
+              <Text weight={700} size="xl" mt="md">
+                {spi}
+              </Text>
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <Paper p="md" withBorder>
+              <Title order={4}>Cumulative Performance Index (CPI)</Title>
+              <Text weight={700} size="xl" mt="md">
+                {cpi}
+              </Text>
+            </Paper>
+          </Grid.Col>
+        </Grid>
+
+        <Divider my="md" />
+
+        <Group position="right">
+          <Text size="sm" color="dimmed">
+            Generated on: {new Date().toLocaleDateString()}
+          </Text>
+        </Group>
+      </Card>
+    </Container>
   );
 }
 

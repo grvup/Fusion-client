@@ -58,10 +58,6 @@ function Admin_edit_course_form() {
     const fetchDisciplines = async () => {
       try {
         const response = await fetchDisciplinesData();
-        // console.log(response);
-
-        // const data = [...d.name, ...d.acronym, ...d.id];
-
         const disciplineList = response.map((discipline) => ({
           name: `${discipline.name} (${discipline.acronym})`,
           id: discipline.id,
@@ -93,28 +89,28 @@ function Admin_edit_course_form() {
         console.log(data);
         setCourse(data);
         form.setValues({
-          courseName: course.name,
-          courseCode: course.code,
-          courseCredit: course.credit,
-          courseVersion: course.version,
-          lectureHours: course.lecture_hours,
-          tutorialHours: course.tutorial_hours,
-          practicalHours: course.pratical_hours,
-          discussionHours: course.discussion_hours,
-          projectHours: course.project_hours,
-          discipline: course.disciplines,
-          preRequisites: course.pre_requisits,
-          preRequisiteCourse: course.pre_requisit_courses,
-          syllabus: course.syllabus,
-          references: course.ref_books,
-          quiz1: course.percent_quiz_1,
-          midsem: course.percent_midsem,
-          quiz2: course.percent_quiz_2,
-          endsem: course.percent_endsem,
-          project: course.percent_project,
-          labEvaluation: course.percent_lab_evaluation,
-          attendance: course.percent_course_attendance,
-          maxSeats: course.max_seats,
+          courseName: data.name,
+          courseCode: data.code,
+          courseCredit: data.credit,
+          courseVersion: data.version,
+          lectureHours: data.lecture_hours,
+          tutorialHours: data.tutorial_hours,
+          practicalHours: data.pratical_hours,
+          discussionHours: data.discussion_hours,
+          projectHours: data.project_hours,
+          discipline: data.disciplines.length>0?data.disciplines.map((d) => JSON.stringify(d)):[],
+          preRequisites: data.pre_requisits,
+          preRequisiteCourse: data.pre_requisit_courses.length>0?data.pre_requisit_courses.map((c) => JSON.stringify(c)):[],
+          syllabus: data.syllabus,
+          references: data.ref_books,
+          quiz1: data.percent_quiz_1,
+          midsem: data.percent_midsem,
+          quiz2: data.percent_quiz_2,
+          endsem: data.percent_endsem,
+          project: data.percent_project,
+          labEvaluation: data.percent_lab_evaluation,
+          attendance: data.percent_course_attendance,
+          maxSeats: data.max_seats,
         });
       } catch (err) {
         console.error("Error fetching course details: ", err);
@@ -125,7 +121,7 @@ function Admin_edit_course_form() {
     fetchCourses();
     loadCourseDetails();
   }, [id]);
-
+  // console.log(form.values);
   const handleSubmit = async (values) => {
     const apiUrl = `${host}/programme_curriculum/api/admin_update_course/${id}/`;
     const token = localStorage.getItem("authToken");
@@ -158,7 +154,6 @@ function Admin_edit_course_form() {
       const response = await fetch(apiUrl, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Token ${token}`,
         },
         body: JSON.stringify(payload),
@@ -180,32 +175,11 @@ function Admin_edit_course_form() {
       alert("An error occurred. Please try again.");
     }
   };
-
-  // const breadcrumbItems = [
-  //   { title: "Program and Curriculum", href: "#" },
-  //   { title: "Curriculums", href: "#" },
-  //   { title: "CSE UG Curriculum", href: "#" },
-  // ].map((item, index) => (
-  //   <Anchor href={item.href} key={index}>
-  //     {item.title}
-  //   </Anchor>
-  // ));
-  // console.log(form);
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
-      {/* {console.log("Fin : ", disciplines)}
-      {console.log("CourFin: ", courses)} */}
-      {/* <Breadcrumbs>{breadcrumbItems}</Breadcrumbs>
-
-      <Group spacing="xs" className="program-options" position="center" mt="md">
-        <Text>Programmes</Text>
-        <Text className="active">Curriculums</Text>
-        <Text>Courses</Text>
-        <Text>Disciplines</Text>
-        <Text>Batches</Text>
-      </Group> */}
+     
 
       <Container
         fluid
