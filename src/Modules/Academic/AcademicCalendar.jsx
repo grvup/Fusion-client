@@ -198,9 +198,18 @@ function AcademicCalendar() {
       </Text>
 
       {loading ? (
-        <Group position="center" py="xl">
-          <Loader variant="dots" />
-        </Group>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+          }}
+        >
+          <Group position="center" py="xl">
+            <Loader variant="dots" />
+          </Group>
+        </div>
       ) : error ? (
         <Alert color="red">{error}</Alert>
       ) : (

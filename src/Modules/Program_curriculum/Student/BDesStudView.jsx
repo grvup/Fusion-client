@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
+  MantineProvider,
+  Flex,
   Table,
   ScrollArea,
   Container,
   Button,
   Grid,
-  Paper,
   TextInput,
-  Text,
 } from "@mantine/core";
-
+import { useMediaQuery } from "@mantine/hooks";
 import { fetchCurriculumData } from "../api/api";
 
 function BDesStudView() {
@@ -18,10 +19,12 @@ function BDesStudView() {
   const [curriculumData, setCurriculumData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("info");
-  // New States for Filtering
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  
+  // States for filtering
   const [searchName, setSearchName] = useState("");
   const [searchVersion, setSearchVersion] = useState("");
-  // const [filteredWorkingCurriculums, setWorkingCurriculum] = useState("");
+  const [batchName, setBatchName] = useState("");
 
   useEffect(() => {
     const loadCurriculumData = async () => {
@@ -30,14 +33,20 @@ function BDesStudView() {
         const cachedData = localStorage.getItem(cacheKey);
         const timestamp = localStorage.getItem(`${cacheKey}_timestamp`);
         const isCacheValid =
-          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000;
-        // 10 min cache
+          timestamp && Date.now() - parseInt(timestamp, 10) < 10 * 60 * 1000; // 10 min cache
 
         if (cachedData && isCacheValid) {
-          setCurriculumData(JSON.parse(cachedData) || {});
+          const data = JSON.parse(cachedData);
+          setCurriculumData(data || {});
+          if (data && data.name) {
+            setBatchName(data.name);
+          }
         } else {
           const data = await fetchCurriculumData(id);
           setCurriculumData(data || {});
+          if (data && data.name) {
+            setBatchName(data.name);
+          }
 
           localStorage.setItem(cacheKey, JSON.stringify(data));
           localStorage.setItem(`${cacheKey}_timestamp`, Date.now().toString());
@@ -65,117 +74,105 @@ function BDesStudView() {
     ? curriculumData.working_curriculums.filter(
         (curr) =>
           curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-          curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
+          curr.version.toLowerCase().includes(searchVersion.toLowerCase())
       )
-    : []; // Default to an empty array if undefined
+    : [];
 
   // Filter Logic for Obsolete Curriculums
-  const filteredObsoleteCurriculums = curriculumData.obsoleteCurriculums
-    ? curriculumData.obsoleteCurriculums.filter(
+  const filteredObsoleteCurriculums = curriculumData.past_curriculums
+    ? curriculumData.past_curriculums.filter(
         (curr) =>
           curr.name.toLowerCase().includes(searchName.toLowerCase()) &&
-          curr.version.toLowerCase().includes(searchVersion.toLowerCase()),
+          curr.version.toLowerCase().includes(searchVersion.toLowerCase())
       )
-    : []; // Default to an empty array if undefined
-
-  const handleSearch = () => {
-    // Implement search functionality if needed (currently using live filtering)
-    console.log(
-      "Search initiated with Name:",
-      searchName,
-      "and Version:",
-      searchVersion,
-    );
-  };
-  // const [isHovered, setIsHovered] = useState(false);
-  // const [isAddCourseSlotHovered, setIsAddCourseSlotHovered] = useState(false);
-  // const [isInstigateSemesterHovered, setIsInstigateSemesterHovered] = useState(false);
+    : [];
 
   const renderInfo = () => (
-    <div style={{ marginBottom: "20px", display: "flex" }}>
-      <Table
-        highlightOnHover
-        verticalSpacing="sm"
-        style={{
-          border: "2px solid #1e90ff",
-          borderCollapse: "collapse",
-          width: "65vw",
-          marginTop: "20px", // Margin for the table
-        }}
-      >
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+        scrollbarWidth: "none",
+      }}
+    >
+      <style>
+        {`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
+      <Table style={{ backgroundColor: "white", padding: "20px" }}>
         <tbody>
-          <tr
-            style={{
-              backgroundColor: "#15ABFF54",
-              borderBottom: "1px solid #1e90ff",
-            }}
-          >
+          <tr>
             <td
               colSpan="2"
               style={{
-                fontWeight: "bold",
-                padding: "5px",
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
                 textAlign: "center",
-                fontSize: "20px",
+                fontWeight: "bold",
               }}
             >
-              {curriculumData.program.name}
+              {curriculumData.program ? curriculumData.program.name : ""}
             </td>
           </tr>
 
-          <tr
-            style={{
-              backgroundColor: "#fff",
-              borderBottom: "1px solid #1e90ff",
-            }}
-          >
+          <tr>
             <td
               style={{
                 fontWeight: "bold",
-                padding: "10px",
+                backgroundColor: "#FFFFFF",
+                color: "#3498db",
+                padding: "15px 20px",
                 textAlign: "left",
-                borderRight: "1px solid #1e90ff",
+                borderRight: "1px solid #d3d3d3",
               }}
             >
               Programme Name
             </td>
-            <td style={{ padding: "10px" }}>{curriculumData.program.name}</td>
+            <td style={{ padding: "20px 20px", backgroundColor: "#FFFFFF" }}>
+              {curriculumData.program ? curriculumData.program.name : ""}
+            </td>
           </tr>
 
-          <tr
-            style={{
-              backgroundColor: "#15ABFF1C",
-              borderBottom: "1px solid #1e90ff",
-            }}
-          >
+          <tr>
             <td
               style={{
                 fontWeight: "bold",
-                padding: "10px",
+                backgroundColor: "#E6F7FF",
+                color: "#3498db",
+                padding: "15px 20px",
                 textAlign: "left",
-                borderRight: "1px solid #1e90ff",
+                borderRight: "1px solid #d3d3d3",
               }}
             >
               Programme Category
             </td>
-            <td style={{ padding: "10px" }}>
-              {curriculumData.program.category}
+            <td style={{ padding: "20px 20px", backgroundColor: "#E6F7FF" }}>
+              {curriculumData.program ? curriculumData.program.category : ""}
             </td>
           </tr>
 
-          <tr style={{ backgroundColor: "#fff" }}>
+          <tr>
             <td
               style={{
                 fontWeight: "bold",
-                padding: "10px",
+                backgroundColor: "#FFFFFF",
+                color: "#3498db",
+                padding: "15px 20px",
                 textAlign: "left",
-                borderRight: "1px solid #1e90ff",
+                borderRight: "1px solid #d3d3d3",
               }}
             >
               Programme Begin Year
             </td>
-            <td style={{ padding: "10px" }}>
-              {curriculumData.program.programme_begin_year}
+            <td style={{ padding: "20px 20px", backgroundColor: "#FFFFFF" }}>
+              {curriculumData.program ? curriculumData.program.programme_begin_year : ""}
             </td>
           </tr>
         </tbody>
@@ -184,315 +181,330 @@ function BDesStudView() {
   );
 
   const renderWorkingCurriculums = () => (
-    <div style={{ marginTop: "20px", display: "flex" }}>
-      <ScrollArea style={{ flex: 1 }}>
-        <Table
-          highlightOnHover
-          verticalSpacing="sm"
-          style={{
-            border: "2px solid #1e90ff",
-            borderCollapse: "collapse",
-            width: "65vw",
-          }}
-        >
-          <thead>
-            <tr
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+        scrollbarWidth: "none",
+      }}
+    >
+      <style>
+        {`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
+      <Table style={{ backgroundColor: "white", padding: "20px" }}>
+        <thead>
+          <tr
+            style={{
+              backgroundColor: "#15ABFF54",
+              borderBottom: "1px solid #d3d3d3",
+            }}
+          >
+            <th
               style={{
-                backgroundColor: "#15ABFF54",
-                borderBottom: "1px solid #1e90ff",
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
               }}
             >
-              <th
+              Name
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Version
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Batch
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              No. of Semesters
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredWorkingCurriculums.length > 0 ? (
+            filteredWorkingCurriculums.map((curr, idx) => (
+              <tr
+                key={idx}
                 style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
+                  backgroundColor: idx % 2 === 0 ? "#FFFFFF" : "#E6F7FF",
                 }}
               >
-                Name
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                Version
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                Batch
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                No. of Semesters
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredWorkingCurriculums.length > 0 ? (
-              filteredWorkingCurriculums.map((curr, idx) => (
-                <tr
-                  key={idx}
+                <td
                   style={{
-                    backgroundColor: idx % 2 === 0 ? "#fff" : "#15ABFF1C",
-                    transition: "background-color 0.3s",
-                    borderBottom: "1px solid #1e90ff",
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
                   }}
                 >
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
+                  <Link
+                    to={`/programme_curriculum/stud_curriculum_view/${curr.id}`}
+                    style={{ color: "#3498db", textDecoration: "none" }}
                   >
-                    <a
-                      href={`/programme_curriculum/stud_curriculum_view/${curr.id}`}
-                      style={{ textDecoration: "none" }}
-                    >
-                      {curr.name}
-                    </a>
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.version}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.batches.map((b, i) => (
+                    {curr.name}
+                  </Link>
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
+                  }}
+                >
+                  {curr.version}
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
+                  {curr.batches ? (
+                    curr.batches.map((b, i) => (
                       <React.Fragment key={i}>
-                        <span
-                          style={{
-                            marginRight: "10px",
-                          }}
-                        >
+                        <span style={{ marginRight: "10px" }}>
                           {`${b.name} ${b.year}`}
                         </span>
                         {i < curr.batches.length - 1 && (
                           <span style={{ margin: "0 10px" }}>|</span>
                         )}
                       </React.Fragment>
-                    ))}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.no_of_semester}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
+                    ))
+                  ) : (
+                    `${batchName} ${curr.year}`
+                  )}
+                </td>
                 <td
-                  colSpan="5"
-                  style={{ textAlign: "center", padding: "10px" }}
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
+                  }}
                 >
-                  No results found
+                  {curr.no_of_semester}
                 </td>
               </tr>
-            )}
-          </tbody>
-        </Table>
-      </ScrollArea>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="4"
+                style={{ textAlign: "center", padding: "15px 20px" }}
+              >
+                No results found
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     </div>
   );
 
   const renderObsoleteCurriculums = () => (
-    <div style={{ marginTop: "20px", display: "flex" }}>
-      <ScrollArea style={{ flex: 1 }}>
-        <Table
-          highlightOnHover
-          verticalSpacing="sm"
-          style={{
-            border: "2px solid #1e90ff",
-            borderCollapse: "collapse",
-            width: "65vw",
-          }}
-        >
-          <thead>
-            <tr
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+        scrollbarWidth: "none",
+      }}
+    >
+      <style>
+        {`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
+      <Table style={{ backgroundColor: "white", padding: "20px" }}>
+        <thead>
+          <tr
+            style={{
+              backgroundColor: "#15ABFF54",
+              borderBottom: "1px solid #d3d3d3",
+            }}
+          >
+            <th
               style={{
-                backgroundColor: "#15ABFF54",
-                borderBottom: "1px solid #1e90ff",
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
               }}
             >
-              <th
+              Name
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Version
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Batch
+            </th>
+            <th
+              style={{
+                padding: "15px 20px",
+                backgroundColor: "#C5E2F6",
+                color: "#3498db",
+                fontSize: "16px",
+                textAlign: "center",
+                fontWeight: "bold",
+              }}
+            >
+              No. of Semesters
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredObsoleteCurriculums.length > 0 ? (
+            filteredObsoleteCurriculums.map((curr, idx) => (
+              <tr
+                key={idx}
                 style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
+                  backgroundColor: idx % 2 === 0 ? "#FFFFFF" : "#E6F7FF",
                 }}
               >
-                Name
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                Version
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                Batch
-              </th>
-              <th
-                style={{
-                  padding: "10px",
-                  textAlign: "left",
-                  borderRight: "1px solid #1e90ff",
-                }}
-              >
-                No. of Semesters
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredObsoleteCurriculums.length > 0 ? (
-              filteredObsoleteCurriculums.map((curr, idx) => (
-                <tr
-                  key={idx}
+                <td
                   style={{
-                    backgroundColor: idx % 2 === 0 ? "#fff" : "#15ABFF1C",
-                    transition: "background-color 0.3s",
-                    borderBottom: "1px solid #1e90ff",
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
                   }}
                 >
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.name}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.version}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.batch.map((b, i) => (
-                      <React.Fragment key={i}>
-                        <span
-                          style={{
-                            marginRight: "10px",
-                            color: "black", // Set the text color to black or any color of your choice
-                            textDecoration: "none", // Remove the underline
-                          }}
-                        >
-                          {b}
-                        </span>
-                        {i < curr.batch.length - 1 && (
-                          <span style={{ margin: "0 10px" }}>|</span>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </td>
-                  <td
-                    style={{
-                      padding: "10px",
-                      borderRight: "1px solid #1e90ff",
-                    }}
-                  >
-                    {curr.semesters}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
+                  {curr.name}
+                </td>
                 <td
-                  colSpan="4"
-                  style={{ textAlign: "center", padding: "10px" }}
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
+                  }}
                 >
-                  No results found
+                  {curr.version}
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
+                  {curr.batch ? curr.batch : `${batchName} ${curr.year}`}
+                </td>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    borderRight: "1px solid #d3d3d3",
+                    textAlign: "center",
+                  }}
+                >
+                  {curr.no_of_semester || curr.semesters}
                 </td>
               </tr>
-            )}
-          </tbody>
-        </Table>
-      </ScrollArea>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="4"
+                style={{ textAlign: "center", padding: "15px 20px" }}
+              >
+                No results found
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     </div>
   );
 
-  // Single Filter Section
+  // Filter Section
   const renderFilterSection = () => (
-    <Paper
-      shadow="xs"
-      p="md"
-      style={{ marginTop: "20px", margin: "1vw 0vw 0 1.5vw", width: "15vw" }}
-    >
-      <Text weight={700} mb={10}>
-        FILTER SEARCH
-      </Text>
+    <ScrollArea>
+      <div>
+        
+        <TextInput
+          label="Name:"
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          placeholder="Search by Name"
+          mb={10}
+          style={{ marginBottom: "15px" }}
+        />
 
-      <TextInput
-        label="Name contains:"
-        value={searchName}
-        onChange={(e) => setSearchName(e.target.value)}
-        placeholder="Search by Name"
-        mb={10}
-      />
-
-      <TextInput
-        label="Version"
-        value={searchVersion}
-        onChange={(e) => setSearchVersion(e.target.value)}
-        placeholder="Search by Version"
-        mb={10}
-      />
-
-      <Button onClick={handleSearch} variant="outline" fullWidth>
-        Search
-      </Button>
-    </Paper>
+        <TextInput
+          label="Version:"
+          value={searchVersion}
+          onChange={(e) => setSearchVersion(e.target.value)}
+          placeholder="Search by Version"
+          mb={5}
+        />
+      </div>
+    </ScrollArea>
   );
 
   return (
-    <Container fluid>
-      <Grid gutter="lg" style={{ margin: "20px 0" }}>
-        <Grid.Col span={12}>
+    <MantineProvider
+      theme={{ colorScheme: "light" }}
+      withGlobalStyles
+      withNormalizeCSS
+    >
+      <Container style={{ padding: "20px", maxWidth: "100%" }}>
+        <Flex justify="flex-start" align="center" mb={10}>
           <Button
             onClick={() => setActiveTab("info")}
             variant={activeTab === "info" ? "filled" : "outline"}
@@ -510,27 +522,35 @@ function BDesStudView() {
           <Button
             onClick={() => setActiveTab("obsolete")}
             variant={activeTab === "obsolete" ? "filled" : "outline"}
+            style={{ marginRight: "10px" }}
           >
             Obsolete Curriculums
           </Button>
-        </Grid.Col>
-
-        <Grid.Col span={12}>
-          {/* Render Filter Section Conditionally */}
-          <div style={{ display: "flex" }}>
+        </Flex>
+        <hr />
+        <Grid>
+          {isMobile && (
+            <Grid.Col span={12}>
+              {(activeTab === "working" || activeTab === "obsolete") &&
+                renderFilterSection()}
+            </Grid.Col>
+          )}
+          <Grid.Col span={isMobile ? 12 : 9}>
             <div>
               {activeTab === "info" && renderInfo()}
               {activeTab === "working" && renderWorkingCurriculums()}
               {activeTab === "obsolete" && renderObsoleteCurriculums()}
             </div>
-            <div>
+          </Grid.Col>
+          {!isMobile && (
+            <Grid.Col span={3}>
               {(activeTab === "working" || activeTab === "obsolete") &&
                 renderFilterSection()}
-            </div>
-          </div>
-        </Grid.Col>
-      </Grid>
-    </Container>
+            </Grid.Col>
+          )}
+        </Grid>
+      </Container>
+    </MantineProvider>
   );
 }
 

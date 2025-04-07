@@ -98,7 +98,7 @@ function AdminViewAllBatches() {
             .includes(filter.curriculum.toLowerCase()))
       );
     });
-  };
+  }; 
 
   const filteredBatches = applyFilters(batches);
   const filteredFinishedBatches = applyFilters(finishedBatches);

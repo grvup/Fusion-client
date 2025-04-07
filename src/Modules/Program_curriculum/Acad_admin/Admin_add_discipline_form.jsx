@@ -65,7 +65,7 @@ function Admin_add_discipline_form() {
   }, []);
   const handleSubmit = async (values) => {
     const apiUrl = `${host}/programme_curriculum/api/admin_add_discipline/`;
-
+    const token = localStorage.getItem("authToken");
     console.log("Form Values:", values);
 
     const payload = {
@@ -79,6 +79,9 @@ function Admin_add_discipline_form() {
       setLoading(true);
       const response = await fetch(apiUrl, {
         method: "POST",
+        headers:{
+          Authorization: `Token ${token}`,
+        },
         body: JSON.stringify(payload),
       });
 

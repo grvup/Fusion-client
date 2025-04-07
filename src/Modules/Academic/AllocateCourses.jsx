@@ -5,115 +5,110 @@ import {
   Button,
   TextInput,
   Alert,
-  Modal,
-  Group,
   NumberInput,
+  Loader,
 } from "@mantine/core";
-import FusionTable from "../../components/FusionTable";
-
-const mockAllocationsAPIResponse = [
-  {
-    batch: "2022",
-    semester: 6,
-    year: 2024,
-    courses: [
-      {
-        regId: "2022-CS301",
-        courseId: "CS301",
-        courseName: "Computer Networks",
-        version: "1.0",
-        credits: 3,
-        professorCode: "P001",
-      },
-      {
-        regId: "2022-CS302",
-        courseId: "CS302",
-        courseName: "Operating Systems",
-        version: "1.0",
-        credits: 3,
-        professorCode: "P002",
-      },
-    ],
-  },
-];
+import axios from "axios";
+import {
+  checkAllocationRoute,
+  startAllocationRoute,
+} from "../../routes/academicRoutes";
 
 function AllocateCourses() {
   const [batch, setBatch] = useState("");
   const [semester, setSemester] = useState("");
   const [year, setYear] = useState("");
-  const [allocationData, setAllocationData] = useState(null);
   const [error, setError] = useState("");
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const [newCourse, setNewCourse] = useState({
-    regId: "",
-    courseId: "",
-    courseName: "",
-    version: "",
-    credits: 0,
-    professorCode: "",
-  });
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showStartButton, setShowStartButton] = useState(false);
 
-  // Simulate API Call
-  const fetchAllocations = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockAllocationsAPIResponse);
-      }, 500);
-    });
-  };
-
-  const handleGetAllocations = async () => {
+  const handleCheckAllocation = async () => {
     setError("");
-    setAllocationData(null);
+    setSuccess("");
+    setLoading(true);
+    setShowStartButton(false);
 
-    const data = await fetchAllocations();
-    const allocationFound = data.find(
-      (allocation) =>
-        allocation.batch === batch &&
-        allocation.semester === parseInt(semester, 10) &&
-        allocation.year === parseInt(year, 10),
-    );
-
-    if (!allocationFound) {
-      setError("No allocations found.");
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No token found");
+      setLoading(false);
       return;
     }
 
-    setAllocationData(allocationFound);
-  };
+    try {
+      const response = await axios.post(
+        checkAllocationRoute,
+        { batch, sem: semester, year },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-  const handleStartAllocation = () => {
-    setAllocationData({
-      batch,
-      semester: parseInt(semester, 10),
-      year: parseInt(year, 10),
-      courses: [],
-    });
-    setError("");
-  };
+      const result = response.data;
 
-  const handleAddCourse = () => {
-    if (allocationData) {
-      setAllocationData({
-        ...allocationData,
-        courses: [...allocationData.courses, newCourse],
-      });
-      setAddModalOpen(false);
-      setNewCourse({
-        regId: "",
-        courseId: "",
-        courseName: "",
-        version: "",
-        credits: 0,
-        professorCode: "",
-      });
+      if (result.status === 2) {
+        setSuccess("Courses are successfully allocated.");
+      } else if (result.status === 1) {
+        setError("Courses not yet allocated. Start allocation.");
+        setShowStartButton(true);
+      } else if (result.status === -1) {
+        setError("Registration is under process.");
+      } else if (result.status === -2) {
+        setError("Registration didn't start.");
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      setError("Error checking allocation.");
     }
+
+    setLoading(false);
+  };
+
+  const handleStartAllocation = async () => {
+    setLoading(true);
+    setSuccess("");
+    setError("");
+
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError("No token found");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        startAllocationRoute,
+        { batch, semester, year },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (response.data.status === 1) {
+        setSuccess("Course allocation successful!");
+        setShowStartButton(false);
+      } else {
+        setError(response.data.message || "Allocation failed");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Error starting allocation.");
+    }
+    setLoading(false);
   };
 
   return (
     <Card shadow="sm" p="lg" radius="md" withBorder>
       <Text size="lg" weight={700} mb="md" align="center" color="blue">
-        Allocated Courses
+        Allocate Courses
       </Text>
 
       <TextInput
@@ -139,140 +134,47 @@ function AllocateCourses() {
       />
       <Button
         style={{ backgroundColor: "#3B82F6", color: "white" }}
-        onClick={handleGetAllocations}
+        onClick={handleCheckAllocation}
         mb="md"
       >
-        Fetch Allocations
+        Check Allocation
       </Button>
 
-      {/* Show error message */}
+      {loading && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "1rem",
+          }}
+        >
+          <Loader variant="dots" />
+        </div>
+      )}
+
       {error && (
-        <Alert title="No Data Found" color="red" mt="lg">
-          No allocation data found. Please start allocation for batch {batch},
-          semester {semester}, year {year}.
+        <Alert title="Notice" color="red" mt="lg">
+          {error}
         </Alert>
       )}
 
-      {/* Show Start Allocation button only if no data exists */}
-      {error && (
+      {success && (
+        <Alert title="Success" color="green" mt="lg">
+          {success}
+        </Alert>
+      )}
+
+      {showStartButton && (
         <Button
           style={{ backgroundColor: "#4CBB17", color: "white" }}
           mt="md"
           onClick={handleStartAllocation}
+          loading={loading}
         >
           Start Allocation
         </Button>
       )}
-
-      {/* Show Allocations when data exists */}
-      {allocationData && (
-        <>
-          <Text weight={500} mt="lg">
-            Batch: {allocationData.batch}
-          </Text>
-          <Text weight={500} mt="lg">
-            Semester: {allocationData.semester}
-          </Text>
-          <Text weight={500} mt="lg">
-            Year: {allocationData.year}
-          </Text>
-
-          <div style={{ overflowX: "auto" }}>
-            <FusionTable
-              columnNames={[
-                "Reg ID",
-                "Course Code",
-                "Course Name",
-                "Version",
-                "Credits",
-                "Professor Code",
-              ]}
-              elements={allocationData.courses.map((course) => ({
-                "Reg ID": course.regId,
-                "Course Code": course.courseId,
-                "Course Name": course.courseName,
-                Version: course.version,
-                Credits: course.credits,
-                "Professor Code": course.professorCode,
-              }))}
-              width="100%"
-            />
-          </div>
-
-          <Button
-            style={{ backgroundColor: "#4CBB17", color: "white" }}
-            mt="lg"
-            onClick={() => setAddModalOpen(true)}
-          >
-            Allocate Course
-          </Button>
-        </>
-      )}
-
-      {/* Add Course Modal */}
-      <Modal
-        opened={addModalOpen}
-        onClose={() => setAddModalOpen(false)}
-        title="Allocate New Course"
-      >
-        <TextInput
-          label="Reg ID"
-          placeholder="Enter Reg ID"
-          value={newCourse.regId}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, regId: e.target.value })
-          }
-          mb="sm"
-        />
-        <TextInput
-          label="Course ID"
-          placeholder="Enter Course ID"
-          value={newCourse.courseId}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, courseId: e.target.value })
-          }
-          mb="sm"
-        />
-        <TextInput
-          label="Course Name"
-          placeholder="Enter Course Name"
-          value={newCourse.courseName}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, courseName: e.target.value })
-          }
-          mb="sm"
-        />
-        <TextInput
-          label="Version"
-          placeholder="Enter Version"
-          value={newCourse.version}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, version: e.target.value })
-          }
-          mb="sm"
-        />
-        <NumberInput
-          label="Credits"
-          placeholder="Enter Credits"
-          value={newCourse.credits}
-          onChange={(value) => setNewCourse({ ...newCourse, credits: value })}
-          mb="sm"
-        />
-        <TextInput
-          label="Professor Code"
-          placeholder="Enter Professor Code"
-          value={newCourse.professorCode}
-          onChange={(e) =>
-            setNewCourse({ ...newCourse, professorCode: e.target.value })
-          }
-          mb="sm"
-        />
-        <Group position="right">
-          <Button color="green" onClick={handleAddCourse}>
-            Allocate
-          </Button>
-        </Group>
-      </Modal>
     </Card>
   );
 }

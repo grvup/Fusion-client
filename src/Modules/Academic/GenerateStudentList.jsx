@@ -8,45 +8,155 @@ import {
   Tabs,
   Box,
   Space,
+  TextInput,
+  Loader,
 } from "@mantine/core";
-import FusionTable from "../../components/FusionTable";
-
-const hardcodedStudents = [
-  { id: "22BDS001", name: "A S THARUNV ARSHAN", program: "Design" },
-  { id: "22BDS002", name: "AADI ABHAY KULKARNI", program: "Design" },
-  { id: "22BDS003", name: "AADISH AMARDEEP PATIL", program: "Design" },
-  { id: "22BDS004", name: "ABHIRAM VIJAYARAGHAVAN", program: "Design" },
-  { id: "22BDS005", name: "AISHWARYA NITIN GHATOLE", program: "Design" },
-];
-
-const hardcodedCourses = {
-  2024: ["DS3010 - Sustainable Design", "DS3011 - Another Course"],
-  2023: ["DS2023 - Legacy Course"],
-  2022: ["DS2022 - Foundation Course"],
-};
+import axios from "axios";
+import {
+  generatexlsheet,
+  getAllCourses,
+  batchesRoute,
+  generateprereport,
+} from "../../routes/academicRoutes";
 
 function GenerateStudentList() {
   const [activeTab, setActiveTab] = useState("rolllist");
   const [academicYear, setAcademicYear] = useState("");
   const [course, setCourse] = useState("");
-  const [showRollList, setShowRollList] = useState(false);
-  const [students, setStudents] = useState([]);
-  const [courseOptions, setCourseOptions] = useState({});
+  const [batch, setBatch] = useState("");
+  const [semester, setSemester] = useState("");
+  const [batchOptions, setBatchOptions] = useState([]);
+  const [courseOptions, setCourseOptions] = useState([]);
+  const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
-    setCourseOptions(hardcodedCourses);
-  }, []);
+    const getCourses = async () => {
+      setLoading(true); // Start loading
+      const token = localStorage.getItem("authToken"); // Get token from local storage
+      if (!token) {
+        setLoading(false); // Stop loading
+        throw new Error("No token found"); // Handle the case where the token is not available
+      }
 
-  const handleGenerateList = () => {
-    setTimeout(() => {
-      setStudents(hardcodedStudents);
-      setShowRollList(true);
-    }, 1000);
+      try {
+        const response = await axios.get(getAllCourses, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        console.log(response.data);
+        setCourseOptions(response.data);
+      } catch (error) {
+        console.error("Error getting all courses:", error);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+    const fetchBatches = async () => {
+      setLoading(true); // Start loading
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        setLoading(false); // Stop loading
+        return;
+      }
+      try {
+        const response = await axios.get(batchesRoute, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        console.log("Fetched Batches:", response.data);
+        setBatchOptions(response.data.batches);
+      } catch (fetchError) {
+        console.error(fetchError);
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+    if (activeTab === "rolllist") {
+      getCourses();
+    } else {
+      fetchBatches();
+    }
+  }, [activeTab]);
+
+  const handleGenerateList = async () => {
+    setLoading(true); // Start loading
+    const token = localStorage.getItem("authToken"); // Get token from local storage
+    if (!token) {
+      setLoading(false); // Stop loading
+      throw new Error("No token found"); // Handle the case where the token is not available
+    }
+
+    try {
+      const response = await axios.post(
+        generatexlsheet,
+        {
+          course,
+          batch: academicYear,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+          responseType: "blob",
+        },
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${course}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error getting roll list:", error);
+    } finally {
+      setLoading(false); // Stop loading
+    }
+  };
+
+  const generatePreRegistrationReport = async () => {
+    setLoading(true); // Start loading
+    const token = localStorage.getItem("authToken"); // Get token from local storage
+    if (!token) {
+      setLoading(false); // Stop loading
+      throw new Error("No token found"); // Handle the case where the token is not available
+    }
+
+    try {
+      const response = await axios.post(
+        generateprereport,
+        {
+          semester_no: semester,
+          batch_branch: batch,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+          responseType: "blob",
+        },
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${batch}-${semester}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error getting roll list:", error);
+    } finally {
+      setLoading(false); // Stop loading
+    }
   };
 
   return (
     <Card shadow="sm" p="lg" radius="md" withBorder>
-      <Tabs value={activeTab} onTabChange={setActiveTab}>
+      <Tabs value={activeTab} onChange={(value) => setActiveTab(value)}>
         <Tabs.List style={{ justifyContent: "center" }}>
           <Tabs.Tab
             value="rolllist"
@@ -82,16 +192,13 @@ function GenerateStudentList() {
           </Text>
 
           <Group position="center" grow style={{ marginBottom: 16 }}>
-            <Select
+            <TextInput
               label="Running Year"
               placeholder="Select year"
               value={academicYear}
-              onChange={(val) => {
-                setAcademicYear(val);
-                setCourse("");
-                setShowRollList(false);
+              onChange={(e) => {
+                setAcademicYear(e.target.value);
               }}
-              data={Object.keys(courseOptions)}
               style={{ flex: 1 }}
             />
 
@@ -101,9 +208,16 @@ function GenerateStudentList() {
               value={course}
               onChange={(val) => {
                 setCourse(val);
-                setShowRollList(false);
               }}
-              data={courseOptions[academicYear] || []}
+              data={
+                courseOptions
+                  ? courseOptions.map((cour) => ({
+                      value: cour.id.toString(),
+                      label: `${cour.code} - ${cour.name}`,
+                    }))
+                  : []
+              }
+              searchable
               style={{ flex: 1 }}
             />
           </Group>
@@ -125,57 +239,82 @@ function GenerateStudentList() {
               >
                 Generate Student List
               </Button>
-
-              {showRollList && (
-                <Button
-                  size="sm"
-                  radius="sm"
-                  onClick={() =>
-                    console.log("Excel functionality will be added later")
-                  }
-                  style={{
-                    backgroundColor: "#22C55E",
-                    color: "white",
-                    width: "100%",
-                  }}
-                >
-                  Generate Excel Sheet
-                </Button>
-              )}
             </Box>
           )}
 
           <Space h="md" />
-
-          {showRollList && (
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                marginTop: "20px",
-              }}
-            >
-              <Box sx={{ maxWidth: 600, width: "100%" }}>
-                <FusionTable
-                  columnNames={["ID", "Name", "Program"]}
-                  elements={students.map((student) => ({
-                    ID: student.id,
-                    Name: student.name,
-                    Program: student.program,
-                  }))}
-                  width="100%"
-                />
-              </Box>
-            </Box>
-          )}
         </Tabs.Panel>
 
         <Tabs.Panel value="preregistration" pt="xs">
-          <Text align="center" size="lg" weight={500}>
-            Pre-Registration Report content will go here.
+          <Text
+            size="lg"
+            weight={700}
+            mb="md"
+            align="center"
+            style={{ color: "#3B82F6" }}
+          >
+            Pre Registration Report
           </Text>
+
+          <Group position="center" grow style={{ marginBottom: 16 }}>
+            <TextInput
+              label="Semester"
+              placeholder="Select Semester"
+              value={semester}
+              onChange={(e) => {
+                setSemester(e.target.value);
+              }}
+              style={{ flex: 1 }}
+            />
+
+            <Select
+              label="Batch"
+              placeholder="Select Batch"
+              value={batch}
+              onChange={(val) => {
+                setBatch(val);
+              }}
+              data={
+                batchOptions
+                  ? batchOptions.map((bat) => ({
+                      value: bat.batch_id.toString(),
+                      label: `${bat.name} ${bat.discipline} ${bat.year}`,
+                    }))
+                  : []
+              }
+              searchable
+              style={{ flex: 1 }}
+            />
+          </Group>
+          <Box>
+            <Button
+              size="sm"
+              radius="sm"
+              onClick={generatePreRegistrationReport}
+              style={{
+                backgroundColor: "#3B82F6",
+                color: "white",
+                width: "100%",
+                marginBottom: "10px",
+              }}
+            >
+              Generate Pre Registration Report
+            </Button>
+          </Box>
         </Tabs.Panel>
       </Tabs>
+      {loading && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "1rem",
+          }}
+        >
+          <Loader variant="dots" />
+        </div>
+      )}
     </Card>
   );
 }

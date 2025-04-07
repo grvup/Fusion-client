@@ -101,7 +101,7 @@ function ViewSemesterOfACurriculum() {
                       >
                         <p>
                           <strong style={{ fontSize: "13px" }}>
-                            {slotRow[index].courses[0].name}
+                            {slotRow[index].courses[0].code}
                           </strong>
                           <br />
                           (L: {slotRow[index].courses[0].lecture_hours}, T:{" "}

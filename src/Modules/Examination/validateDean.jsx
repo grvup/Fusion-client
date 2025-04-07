@@ -1,70 +1,137 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Select,
   Button,
-  TextInput,
+  FileInput,
   Grid,
   Paper,
   Container,
   ScrollArea,
   Box,
   Table,
+  Alert,
+  LoadingOverlay
 } from "@mantine/core";
+import { useSelector } from "react-redux";
+import axios from "axios";
 import "./styles/submit.css";
-
-const courses = [
-  "Software Engineering - CS3010",
-  "Introduction to Programming in C - IT1001",
-  "Artificial Intelligence - CS3001",
-  "IOT - CS3010",
-  "Database Management System(DBMS) - CS3010",
-  "Data Structures and Algorithms - CS3010",
-];
-
-const years = ["2020-2021", "2021-2022", "2022-2023", "2023-2024"];
-
-const studentData = [
-  {
-    id: "22bcs184",
-    batch: 2022,
-    sem: "SEM 4",
-    courseid: "CS2003",
-    remarks: "S",
-    gradesDB: "A+",
-    gradesCSV: "A",
-  },
-  {
-    id: "22bcs164",
-    batch: 2022,
-    sem: "SEM 4",
-    courseid: "CS2004",
-    remarks: "S",
-    gradesDB: "A+",
-    gradesCSV: "B",
-  },
-  {
-    id: "22bcs183",
-    batch: 2022,
-    sem: "SEM 4",
-    courseid: "CS2004",
-    remarks: "S",
-    gradesDB: "B+",
-    gradesCSV: "A",
-  },
-];
-
+import {validate_dean,validate_dean_submit} from "./routes/examinationRoutes"
 function ValidateDean() {
+  const [courses, setCourses] = useState([]);
+  const [years, setYears] = useState([]);
   const [course, setCourse] = useState("");
   const [year, setYear] = useState("");
-  const [excelFile, setExcelFile] = useState(null);
-  const [unmatch, setUnmatch] = useState(false);
+  const [csvFile, setCsvFile] = useState(null);
+  const [mismatches, setMismatches] = useState([]);
+  const [showMismatches, setShowMismatches] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const userRole = useSelector((state) => state.user.role);
 
-  const handleFileChange = (event) => {
-    setExcelFile(event.target.files[0]);
+  useEffect(() => {
+    // Fetch courses and academic years when component mounts
+    fetchCoursesAndYears();
+  }, []);
+
+  const fetchCoursesAndYears = async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      const token = localStorage.getItem("authToken"); // Assuming token is stored in localStorage
+      const response = await axios.post(
+        validate_dean,
+        { Role:userRole },
+        {
+          headers: {
+            Authorization: `Token ${token}`
+          }
+        }
+      );
+      
+      // Format courses for Select component
+      const formattedCourses = response.data.courses_info.map(course => ({
+        value: course.id.toString(),
+        label: `${course.name} - ${course.code}`
+      }));
+      
+      // Format years for Select component
+      const formattedYears = response.data.working_years.map(year => ({
+        value: year.working_year.toString(),
+        label: year.working_year.toString()
+      }));
+      
+      setCourses(formattedCourses);
+      setYears(formattedYears);
+    } catch (err) {
+      console.error("Error fetching courses and years:", err);
+      
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error);
+      } else {
+        setError("Failed to load courses and academic years. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileChange = (file) => {
+    setCsvFile(file);
   };
 
   const isFormComplete = () => {
-    return course && year && excelFile;
+    return course && year && csvFile;
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError("");
+    setSuccess("");
+    setMismatches([]);
+    setShowMismatches(false);
+    
+    try {
+      const token = localStorage.getItem("authToken");
+      
+      // Create form data
+      const formData = new FormData();
+      formData.append("Role", userRole);
+      formData.append("course", course);
+      formData.append("year", year);
+      formData.append("csv_file", csvFile);
+      
+      const response = await axios.post(
+        validate_dean_submit,
+        formData,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+      
+      // If there are mismatches, display them
+      if (response.data.mismatches && response.data.mismatches.length > 0) {
+        setMismatches(response.data.mismatches);
+        setShowMismatches(true);
+      } else {
+        // If no mismatches were found
+        setSuccess("There are no mismatches in the submitted grades.");
+      }
+    } catch (err) {
+      console.error("Error submitting file:", err);
+      
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error);
+      } else {
+        setError("An error occurred while validating the grades. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -74,12 +141,41 @@ function ValidateDean() {
         borderRadius: "15px",
         padding: "0 20px",
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.15)",
-        borderLeft: "10px solid #1E90FF",
+        // borderLeft: "10px solid #1E90FF",
         backgroundColor: "white",
+        position: "relative"
       }}
     >
+      <LoadingOverlay visible={loading} overlayBlur={2} />
+      
       <Paper p="md">
         <h1>Validate Grades</h1>
+        
+        {error && (
+          <Alert 
+             
+            title="Error" 
+            color="red" 
+            mb="md"
+            withCloseButton
+            onClose={() => setError("")}
+          >
+            {error}
+          </Alert>
+        )}
+        
+        {success && (
+          <Alert 
+             
+            title="Success" 
+            color="green" 
+            mb="md"
+            withCloseButton
+            onClose={() => setSuccess("")}
+          >
+            {success}
+          </Alert>
+        )}
 
         <Grid>
           <Grid.Col xs={12} sm={6}>
@@ -90,6 +186,7 @@ function ValidateDean() {
               value={course}
               onChange={setCourse}
               required
+              searchable
             />
           </Grid.Col>
           <Grid.Col xs={12} sm={6}>
@@ -105,13 +202,19 @@ function ValidateDean() {
         </Grid>
 
         <Box mt="md">
-          <TextInput
-            type="file"
-            label="Upload Excel Sheet"
+          <FileInput
+            label="Upload CSV File"
+            placeholder="Click to upload CSV file"
+            
+            value={csvFile}
             onChange={handleFileChange}
-            accept=".xlsx, .xls"
+            accept=".csv"
             required
+            clearable
           />
+          <small style={{ color: 'gray' }}>
+            File must include columns: roll_no, grade, remarks
+          </small>
         </Box>
 
         <Box mt="md" className="btn-div">
@@ -119,37 +222,38 @@ function ValidateDean() {
             size="sm"
             color={isFormComplete() ? "blue" : "gray"}
             disabled={!isFormComplete()}
-            onClick={() => setUnmatch(true)}
+            onClick={handleSubmit}
+            loading={loading}
           >
-            Submit
+            Validate Grades
           </Button>
         </Box>
 
-        {unmatch && (
-          <ScrollArea>
-            <h3>Mis-Matched Student Grades</h3>
+        {showMismatches && mismatches.length > 0 && (
+          <ScrollArea mt="lg">
+            <h3>Mismatched Student Grades</h3>
             <Table striped highlightOnHover>
               <thead>
                 <tr>
-                  <th>Student ID</th>
+                  <th>Roll Number</th>
                   <th>Batch</th>
                   <th>Semester</th>
                   <th>Course ID</th>
+                  <th>Grade in DB</th>
+                  <th>Grade in CSV</th>
                   <th>Remarks</th>
-                  <th>Grades in DB</th>
-                  <th>Grades in CSV</th>
                 </tr>
               </thead>
               <tbody>
-                {studentData.map((student, index) => (
+                {mismatches.map((mismatch, index) => (
                   <tr key={index}>
-                    <td>{student.id}</td>
-                    <td>{student.batch}</td>
-                    <td>{student.sem}</td>
-                    <td>{student.courseid}</td>
-                    <td>{student.remarks}</td>
-                    <td>{student.gradesDB}</td>
-                    <td>{student.gradesCSV}</td>
+                    <td>{mismatch.roll_no}</td>
+                    <td>{mismatch.batch}</td>
+                    <td>{mismatch.semester}</td>
+                    <td>{mismatch.course_id}</td>
+                    <td>{mismatch.db_grade}</td>
+                    <td>{mismatch.csv_grade}</td>
+                    <td>{mismatch.remarks}</td>
                   </tr>
                 ))}
               </tbody>

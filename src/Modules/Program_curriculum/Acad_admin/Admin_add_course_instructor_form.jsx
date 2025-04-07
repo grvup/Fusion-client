@@ -12,6 +12,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
+import * as XLSX from 'xlsx';
 import { fetchAllCourses, fetchFacultiesData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
 
@@ -82,6 +83,8 @@ function Admin_add_course_instructor() {
 
   const handleSubmit = async (values) => {
     console.log(values);
+    const token = localStorage.getItem("authToken");
+  
     const apiUrl = `${host}/programme_curriculum/api/admin_add_course_instructor/`;
 
     const payload = {
@@ -95,7 +98,7 @@ function Admin_add_course_instructor() {
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { Authorization: `Token ${token}`,"Content-Type": "application/json", },
         body: JSON.stringify(payload),
       });
 
@@ -113,19 +116,52 @@ function Admin_add_course_instructor() {
     }
   };
 
-  const handleUpload = () => {
-    if (file) {
-      setIsUploading(true);
-      setTimeout(() => {
-        setUploadedFile(file);
-        alert(`File "${file.name}" uploaded successfully!`);
-        setIsUploading(false);
-      }, 1000);
-    } else {
+  const handleUpload = async () => {
+    if (!file) {
       alert("Please choose a file to upload.");
+      return;
+    }
+  
+    // Validate file type
+    if (!file.name.match(/\.(xls|xlsx)$/i)) {
+      alert("Only Excel files (.xls, .xlsx) are allowed.");
+      return;
+    }
+  
+    setIsUploading(true);
+    const token = localStorage.getItem("authToken");
+    const apiUrl = `${host}/programme_curriculum/api/admin_add_course_instructor/`;
+    
+    try {
+      const formData = new FormData();
+      formData.append("manual_instructor_xsl", file);
+      formData.append("excel_submit", "true");
+  
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Token ${token}`, // Required for Django CSRF
+        },
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.success || "File processed successfully!");
+        navigate("/programme_curriculum/admin_course_instructor");
+      }
+      if (!response.ok) {
+        throw new Error(data.error || "Upload failed");
+      }
+
+  
+      setUploadedFile(file);
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    } finally {
+      setIsUploading(false);
     }
   };
-
   const handleCancel = () => {
     setFile(null);
     setUploadedFile(null);
@@ -264,18 +300,38 @@ function Admin_add_course_instructor() {
                       Upload Course Instructors via Excel
                     </Text>
 
-                    <FileInput
-                      label="Choose File"
-                      placeholder="No file chosen"
-                      onChange={setFile}
-                      disabled={uploadedFile !== null}
-                      style={{
-                        width: "250px", // Set a fixed width
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    />
+                    <Group spacing="sm" mb="md">
+                      <FileInput
+                        label="Choose File"
+                        placeholder="No file chosen"
+                        onChange={setFile}
+                        disabled={uploadedFile !== null}
+                        style={{
+                          width: "250px", // Set a fixed width
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      />
+                      <Button 
+                        variant="outline" 
+                        onClick={() => {
+                          const sampleData = [
+                            ['Course Code', 'Course Version','Instructor Id', 'Year', 'Semester no'],
+                            ['NS205i', '1', 'amitv', '2023', '5'],
+                            ['CS3010', '1', 'atul', '2023', '5'],
+                          ];
+                          
+                          const ws = XLSX.utils.aoa_to_sheet(sampleData);
+                          const wb = XLSX.utils.book_new();
+                          XLSX.utils.book_append_sheet(wb, ws, "Instructors");
+                          XLSX.writeFile(wb, 'instructors_sample.xls', { bookType: 'biff8' });
+                        }}
+                        style={{ marginTop: '24px' }}
+                      >
+                        Download Sample
+                      </Button>
+                    </Group>
 
                     <Group position="right" mt="lg">
                       <Button
@@ -286,7 +342,7 @@ function Admin_add_course_instructor() {
                         Cancel
                       </Button>
 
-                      {!uploadedFile ? (
+                    
                         <Button
                           onClick={handleUpload}
                           variant="filled"
@@ -295,17 +351,7 @@ function Admin_add_course_instructor() {
                         >
                           {isUploading ? "Uploading..." : "Upload"}
                         </Button>
-                      ) : (
-                        <Button
-                          component="a"
-                          to={URL.createObjectURL(uploadedFile)}
-                          download={uploadedFile.name}
-                          variant="filled"
-                          color="green"
-                        >
-                          See Uploaded File
-                        </Button>
-                      )}
+              
                     </Group>
                   </>
                 )}

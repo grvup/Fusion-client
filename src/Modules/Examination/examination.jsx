@@ -1,66 +1,141 @@
-import { Routes, Route, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux"; // Assuming you're using Redux
-import { useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
 import SubmitGrades from "./submitGrades.jsx";
 import VerifyGrades from "./verifyGrades.jsx";
 import GenerateTranscript from "./generateTranscript.jsx";
-import Nav from "./components/nav.jsx";
+import Nav from "./components/nav2.jsx";
 import { Layout } from "../../components/layout.jsx";
 import StudentTranscript from "./components/studentTranscript.jsx";
 import Announcement from "./announcement.jsx";
 import VerifyDean from "./verifyDean.jsx";
 import ValidateDean from "./validateDean.jsx";
 import CheckResult from "./checkResult.jsx";
+import CheckResultProf from "./checkResultsProf.jsx";
 import CustomBreadExam from "./components/customBreadCrumbs.jsx";
+import SubmitGradesProf from "./submitGradesProf.jsx";
+import ProtectedRoute from "./routes/protectedRoutes.jsx";
+import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
 
 export default function Examination() {
-  const role = useSelector((state) => state.user.role); // Replace with actual state slice for role
-  const navigate = useNavigate();
+  const userRole = useSelector((state) => state.user.role);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Set the default route based on the role
-  const getDefaultRoute = () => {
-    switch (role) {
+  useEffect(() => {
+    if (userRole !== undefined && userRole !== null) {
+      setIsLoaded(true);
+    }
+  }, [userRole]);
+
+  if (!isLoaded) return null;
+
+  const defaultRedirectPath = () => {
+    switch (userRole) {
+      case "Associate Professor":
+      case "Assistant Professor":
+      case "Professor":
+        return "/examination/submit-grades-prof";
       case "acadadmin":
         return "/examination/submit-grades";
-      case "Dean Academic":
-        return "/examination/update";
-      case "Professor":
-        return "/examination/submit-grades"; // Assuming submit-grades is for faculty as well
       case "student":
         return "/examination/result";
+      case "Dean Academic":
+        return "/examination/update";
       default:
-        return "/examination/submit-grades"; // Default if no role is found
+        return "/examination/submit-grades"; // Fallback
     }
   };
-
-  // Perform the redirection on component mount
-  useEffect(() => {
-    navigate(getDefaultRoute());
-  }, [role]);
 
   return (
     <div>
       <Layout>
         <CustomBreadExam />
         <Nav />
-        <div style={{ marginTop: "20px" }}>
-          <Routes>
-            <Route path="/submit-grades" element={<SubmitGrades />} />
-            <Route path="/verify-grades" element={<VerifyGrades />} />
-            <Route path="/update" element={<VerifyDean />} />
-            <Route path="/validate" element={<ValidateDean />} />
-            <Route path="/result" element={<CheckResult />} />
-            <Route
-              path="/generate-transcript"
-              element={<GenerateTranscript />}
-            />
-            <Route
-              path="/generate-transcript/:rollNumber"
-              element={<StudentTranscript />}
-            />
-            <Route path="/announcement" element={<Announcement />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route
+            path="/"
+            element={<Navigate to={defaultRedirectPath()} replace />}
+          />
+          <Route
+            path="/submit-grades"
+            element={
+              <ProtectedRoute roles={["acadadmin"]}>
+                <SubmitGrades />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/verify-grades"
+            element={
+              <ProtectedRoute roles={["acadadmin"]}>
+                <VerifyGrades />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/generate-transcript"
+            element={
+              <ProtectedRoute roles={["acadadmin"]}>
+                <GenerateTranscript />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/generate-transcript/:rollNumber"
+            element={
+              <ProtectedRoute roles={["acadadmin"]}>
+                <StudentTranscript />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/announcement"
+            element={
+              <ProtectedRoute roles={["acadadmin"]}>
+                <Announcement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/update"
+            element={
+              <ProtectedRoute roles={["Dean Academic"]}>
+                <VerifyDean />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/validate"
+            element={
+              <ProtectedRoute roles={["Dean Academic"]}>
+                <ValidateDean />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/result"
+            element={
+              <ProtectedRoute roles={["student"]}>
+                <CheckResult />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/submit-grades-prof"
+            element={
+              <ProtectedRoute roles={["Associate Professor", "Assistant Professor", "Professor"]}>
+                <SubmitGradesProf />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/download-grades-prof"
+            element={
+              <ProtectedRoute roles={["Associate Professor", "Assistant Professor", "Professor"]}>
+                <CheckResultProf />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </Layout>
     </div>
   );

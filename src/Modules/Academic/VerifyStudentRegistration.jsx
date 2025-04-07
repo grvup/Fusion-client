@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Card,
   Text,
@@ -12,9 +12,19 @@ import {
   Loader,
   Notification,
 } from "@mantine/core";
+import axios from "axios";
+import { saveAs } from "file-saver";
+import {
+  batchesRoute,
+  courseListRoute,
+  studentListRoute,
+  verifyRegistrationRoute,
+} from "../../routes/academicRoutes";
+import { mediaRoute } from "../../routes/globalRoutes";
 
 function VerifyStudentRegistration() {
   const [batch, setBatch] = useState("");
+  const [batches, setBatches] = useState([]);
   const [students, setStudents] = useState([]);
   const [opened, setOpened] = useState(false);
   const [selectedCourses, setSelectedCourses] = useState([]);
@@ -22,9 +32,39 @@ function VerifyStudentRegistration() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const containerRef = useRef(null);
+  const [remarks, setRemarks] = useState({});
+  const [dataFetched, setDataFetched] = useState(false); // New state to track if data is fetched
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      setLoading(true);
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        setError(new Error("No token found"));
+        setLoading(false);
+        return;
+      }
+      try {
+        const response = await axios.get(batchesRoute, {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        });
+        console.log("Fetched Batches:", response.data.batches);
+        setBatches(response.data.batches);
+      } catch (fetchError) {
+        setError(fetchError);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBatches();
+    console.log(batches, loading);
+  }, []);
 
   // Fetch student data from API
-  const handleFetch = async () => {
+  const handleFetch = async (excel) => {
     if (!batch) {
       setError("Please select a batch before fetching data.");
       return;
@@ -33,15 +73,33 @@ function VerifyStudentRegistration() {
     setLoading(true);
     setShowNoRecords(false);
     setError(null);
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError(new Error("No token found"));
+      setLoading(false);
+      return;
+    }
 
     try {
-      const response = await fetch(
-        `https://your-api.com/students?batch=${batch}`,
+      const response = await axios.post(
+        `${studentListRoute}?excel_export=${excel}&batch=${batch}`,
+        {
+          batch,
+        },
+        {
+          headers: { Authorization: `Token ${token}` },
+          responseType: excel ? "blob" : "json",
+        },
       );
-      if (!response.ok) throw new Error("Failed to fetch students");
-
-      const data = await response.json();
-      setStudents(data);
+      if (excel) {
+        const blob = new Blob([response.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(blob, `Student_List_${batch}.xlsx`);
+      } else {
+        setStudents(response.data.students);
+        setDataFetched(true); // Mark data as fetched
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -50,46 +108,85 @@ function VerifyStudentRegistration() {
   };
 
   // Fetch registered courses dynamically
-  const handleShowCourses = async (rollNo) => {
+  const handleShowCourses = async (rollNo, semesterNo) => {
     setLoading(true);
-
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError(new Error("No token found"));
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await fetch(
-        `https://your-api.com/students/${rollNo}/courses`,
+      const response = await axios.post(
+        courseListRoute,
+        {
+          student_id: rollNo,
+          semester_no: semesterNo,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        },
       );
-      if (!response.ok) throw new Error("Failed to fetch courses");
-
-      const courses = await response.json();
-      setSelectedCourses(courses);
+      console.log("Fetched Course sata:", response.data);
+      setSelectedCourses(response.data.final_registration);
       setOpened(true);
-    } catch (err) {
-      setError(err.message);
+    } catch (fetchError) {
+      setError(fetchError);
     } finally {
       setLoading(false);
     }
   };
 
   // Handle Approve/Decline action
-  const handleAction = async (rollNo, action, remarks = "") => {
+  const handleAction = async (rollNo, action, index) => {
+    setLoading(true);
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setError(new Error("No token found"));
+      setLoading(false);
+      return;
+    }
     try {
-      const response = await fetch(
-        `https://your-api.com/students/${rollNo}/${action}`,
+      // const formData = new FormData();
+      // formData.append('status_req', action);
+      // console.log(remarks[index]);
+      // const remark = remarks[index];
+      // formData.append('reason', remark);
+      // formData.append('student_id', rollNo);
+      const response = await axios.post(
+        verifyRegistrationRoute,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ remarks }),
+          status_req: action,
+          student_id: rollNo,
+          reason: remarks[index] || "",
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
         },
       );
-
-      if (!response.ok) throw new Error(`Failed to ${action} student`);
-
-      setStudents((prev) =>
-        prev.filter((student) => student.rollNo !== rollNo),
-      );
-      if (students.length === 1) setShowNoRecords(true);
-    } catch (err) {
-      setError(err.message);
+      console.log("Fetched response:", response.data);
+      if (action === "accept") {
+        setStudents((prev) =>
+          prev.filter((stu) => stu.student_id__id !== rollNo),
+        );
+      } else {
+        setStudents((prevStudents) =>
+          prevStudents.filter((_, i) => i !== index),
+        );
+      }
+    } catch (fetchError) {
+      setError(fetchError);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleRemarkChange = (index, value) => {
+    setRemarks((prev) => ({ ...prev, [index]: value })); // Update remarks for a particular student
   };
 
   return (
@@ -105,20 +202,34 @@ function VerifyStudentRegistration() {
 
       <Select
         label="Batch"
-        placeholder="Select Batch"
+        placeholder={loading ? "Loading batches..." : "Select Batch"}
         value={batch}
-        onChange={setBatch}
-        data={["2019", "2020", "2021", "2022", "2023", "2024"].map((year) => ({
-          value: year,
-          label: year,
+        onChange={(val) => {
+          setBatch(val);
+        }}
+        data={batches.map((bat) => ({
+          value: bat.batch_id.toString(),
+          label: `${bat.name} ${bat.discipline} ${bat.year}`,
         }))}
+        disabled={loading}
+        searchable
       />
 
       <Group position="center" mt="md">
-        <Button color="blue" onClick={handleFetch} disabled={loading}>
+        <Button
+          color="blue"
+          onClick={() => handleFetch(false)}
+          disabled={loading}
+        >
           {loading ? <Loader size="xs" /> : "Fetch"}
         </Button>
-        <Button color="green">Fetch Excel Sheet</Button>
+        <Button
+          color="green"
+          onClick={() => handleFetch(true)}
+          disabled={loading || !dataFetched} // Disable until data is fetched
+        >
+          {loading ? <Loader size="xs" /> : "Fetch Excel Sheet"}
+        </Button>
       </Group>
 
       {error && (
@@ -150,64 +261,68 @@ function VerifyStudentRegistration() {
               }}
             >
               <Text size="md" weight={600} align="center">
-                Roll No: {student.rollNo}
+                Roll No: {student.student_id__id}
               </Text>
 
               {/* Student Details in 3:3:3 Format */}
               <Grid gutter="xs" mt="sm">
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Full Name:</b> {student.fullName}
+                    <b>Full Name:</b> {student.student_id__id__user__first_name}{" "}
+                    {student.student_id__id__user__last_name}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Department:</b> {student.department}
+                    <b>Department:</b>{" "}
+                    {student.student_id__id__department__name}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Programme:</b> {student.programme}
+                    <b>Programme:</b> {student.student_id__programme}
                   </Text>
                 </Grid.Col>
 
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Gender:</b> {student.gender}
+                    <b>Gender:</b> {student.student_id__id__sex}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Mobile:</b> {student.mobileNumber}
+                    <b>Mobile:</b> {student.student_id__id__phone_no}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Batch:</b> {student.batch}
+                    <b>Batch:</b> {student.student_id__batch}
                   </Text>
                 </Grid.Col>
 
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Semester:</b> {student.semester}
+                    <b>Semester:</b> {student.student_id__curr_semester_no}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Category:</b> {student.category}
+                    <b>Category:</b> {student.student_id__category}
                   </Text>
                 </Grid.Col>
-                <Grid.Col span={4}>
+                {/* <Grid.Col span={4}>
                   <Text size="sm">
                     <b>PWD Status:</b> {student.PWDStatus}
                   </Text>
-                </Grid.Col>
+                </Grid.Col> */}
               </Grid>
 
               <Group position="center" mt="md">
                 <Button
                   color="green"
-                  onClick={() => handleAction(student.rollNo, "approve")}
+                  onClick={() =>
+                    handleAction(student.student_id__id, "accept", index)
+                  }
                 >
                   Approve
                 </Button>
@@ -217,33 +332,38 @@ function VerifyStudentRegistration() {
               <Grid gutter="xs" mt="md">
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Payment Mode:</b> {student.paymentMode}
+                    <b>Payment Mode:</b> {student.mode}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Transaction ID:</b> {student.transactionId}
+                    <b>Transaction ID:</b> {student.transaction_id}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Deposit Date:</b> {student.depositDate}
+                    <b>Deposit Date:</b> {student.deposit_date}
                   </Text>
                 </Grid.Col>
 
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Actual Fee:</b> ₹{student.actualFee}
+                    <b>Actual Fee:</b> ₹{student.actual_fee}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>Fee Paid:</b> ₹{student.feePaid}
+                    <b>Fee Paid:</b> ₹{student.fee_paid}
                   </Text>
                 </Grid.Col>
                 <Grid.Col span={4}>
                   <Text size="sm">
-                    <b>UTR Number:</b> {student.utrNumber}
+                    <b>UTR Number:</b> {student.utr_number}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  <Text size="sm">
+                    <b>Reason for less/more fee:</b> {student.reason}
                   </Text>
                 </Grid.Col>
               </Grid>
@@ -251,7 +371,7 @@ function VerifyStudentRegistration() {
               <Text size="sm" weight={700} mt="md">
                 Fee Receipt:{" "}
                 <a
-                  href={student.feeReceipt}
+                  href={`${mediaRoute}/${student.fee_receipt}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -262,17 +382,29 @@ function VerifyStudentRegistration() {
               <Group position="center" mt="md">
                 <Button
                   color="indigo"
-                  onClick={() => handleShowCourses(student.rollNo)}
+                  onClick={() =>
+                    handleShowCourses(
+                      student.student_id__id,
+                      student.student_id__curr_semester_no + 1,
+                    )
+                  }
                 >
                   View Registered Courses
                 </Button>
               </Group>
 
-              <Textarea placeholder="Enter remarks" mt="md" />
+              <Textarea
+                placeholder="Enter remarks"
+                value={remarks[index] || ""}
+                onChange={(e) => handleRemarkChange(index, e.target.value)}
+                mt="md"
+              />
               <Group position="center" mt="md">
                 <Button
                   color="red"
-                  onClick={() => handleAction(student.rollNo, "decline")}
+                  onClick={() =>
+                    handleAction(student.student_id__id, "reject", index)
+                  }
                 >
                   Decline
                 </Button>
@@ -298,7 +430,8 @@ function VerifyStudentRegistration() {
           <List spacing="sm" size="sm">
             {selectedCourses.map((course, index) => (
               <List.Item key={index}>
-                {course.name} ({course.code}) - {course.credits} credits
+                {course.course_id.name} ({course.course_id.code}) -{" "}
+                {course.course_id.credit} credits
               </List.Item>
             ))}
           </List>
