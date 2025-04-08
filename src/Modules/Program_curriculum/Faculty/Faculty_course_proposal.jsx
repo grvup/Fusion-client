@@ -11,16 +11,17 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 import { fetchFacultyCourseProposalData } from "../api/api";
 import { host } from "../../../routes/globalRoutes";
-import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
 
 function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
   const navigate = useNavigate();
   const handleNavigation = (id) => {
-    navigate(`/programme_curriculum/view_a_course_proposal_form?proposalid=${id}`);
+    navigate(
+      `/programme_curriculum/view_a_course_proposal_form?proposalid=${id}`,
+    );
   };
 
   const handleArchive = async (id) => {
@@ -36,7 +37,7 @@ function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
         },
       );
       const data = await response.json();
-      
+
       if (response.ok) {
         onArchiveSuccess(id);
         alert("Course archived successfully");
@@ -50,7 +51,14 @@ function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
   };
 
   return (
-    <div style={{ maxHeight: "61vh", overflowY: "auto", border: "1px solid #d3d3d3", borderRadius: "10px" }}>
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+      }}
+    >
       <style>
         {`
           div::-webkit-scrollbar {
@@ -61,23 +69,28 @@ function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
       <Table style={{ backgroundColor: "white", padding: "20px", flexGrow: 1 }}>
         <thead>
           <tr>
-            {["Created By", "Course Name", "Course Code", "View", "Submit", "Archive"].map(
-              (header, index) => (
-                <th
-                  key={index}
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    fontSize: "16px",
-                    textAlign: "center",
-                    borderRight: "1px solid #d3d3d3",
-                  }}
-                >
-                  {header}
-                </th>
-              ),
-            )}
+            {[
+              "Created By",
+              "Course Name",
+              "Course Code",
+              "View",
+              "Submit",
+              "Archive",
+            ].map((header, index) => (
+              <th
+                key={index}
+                style={{
+                  padding: "15px 20px",
+                  backgroundColor: "#C5E2F6",
+                  color: "#3498db",
+                  fontSize: "16px",
+                  textAlign: "center",
+                  borderRight: "1px solid #d3d3d3",
+                }}
+              >
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -87,18 +100,48 @@ function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
               .map((proposal, index) => (
                 <tr
                   key={index}
-                  style={{ backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff" }}
+                  style={{
+                    backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff",
+                  }}
                 >
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     {proposal.fields.uploader}
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     {proposal.fields.name}
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     {proposal.fields.code}
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     <Button
                       onClick={() => handleNavigation(proposal.pk)}
                       variant="filled"
@@ -107,8 +150,17 @@ function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
                       View
                     </Button>
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
-                    <Link to={`/programme_curriculum/filetracking?id=${proposal.pk}`}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
+                    <Link
+                      to={`/programme_curriculum/filetracking?id=${proposal.pk}`}
+                    >
                       <Button
                         variant="filled"
                         style={{ backgroundColor: "#2ecc71" }}
@@ -117,7 +169,14 @@ function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
                       </Button>
                     </Link>
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     <Button
                       onClick={() => handleArchive(proposal.pk)}
                       variant="filled"
@@ -130,7 +189,10 @@ function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
               ))
           ) : (
             <tr>
-              <td colSpan="6" style={{ textAlign: "center", padding: "15px 20px" }}>
+              <td
+                colSpan="6"
+                style={{ textAlign: "center", padding: "15px 20px" }}
+              >
                 No course proposals available.
               </td>
             </tr>
@@ -175,7 +237,14 @@ function ArchivedCoursesTable({ courseProposals, onRestoreSuccess }) {
   };
 
   return (
-    <div style={{ maxHeight: "61vh", overflowY: "auto", border: "1px solid #d3d3d3", borderRadius: "10px" }}>
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+      }}
+    >
       <style>
         {`
           div::-webkit-scrollbar {
@@ -186,23 +255,27 @@ function ArchivedCoursesTable({ courseProposals, onRestoreSuccess }) {
       <Table style={{ backgroundColor: "white", padding: "20px", flexGrow: 1 }}>
         <thead>
           <tr>
-            {["Created By", "Course Name", "Course Code", "View", "Restore"].map(
-              (header, index) => (
-                <th
-                  key={index}
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    fontSize: "16px",
-                    textAlign: "center",
-                    borderRight: "1px solid #d3d3d3",
-                  }}
-                >
-                  {header}
-                </th>
-              ),
-            )}
+            {[
+              "Created By",
+              "Course Name",
+              "Course Code",
+              "View",
+              "Restore",
+            ].map((header, index) => (
+              <th
+                key={index}
+                style={{
+                  padding: "15px 20px",
+                  backgroundColor: "#C5E2F6",
+                  color: "#3498db",
+                  fontSize: "16px",
+                  textAlign: "center",
+                  borderRight: "1px solid #d3d3d3",
+                }}
+              >
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -212,18 +285,48 @@ function ArchivedCoursesTable({ courseProposals, onRestoreSuccess }) {
               .map((proposal, index) => (
                 <tr
                   key={index}
-                  style={{ backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff" }}
+                  style={{
+                    backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff",
+                  }}
                 >
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     {proposal.fields.uploader}
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     {proposal.fields.name}
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     {proposal.fields.code}
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     <Button
                       onClick={() => handleNavigation(proposal.fields.code)}
                       variant="filled"
@@ -232,7 +335,14 @@ function ArchivedCoursesTable({ courseProposals, onRestoreSuccess }) {
                       View
                     </Button>
                   </td>
-                  <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                  <td
+                    style={{
+                      padding: "15px 20px",
+                      textAlign: "center",
+                      color: "black",
+                      borderRight: "1px solid #d3d3d3",
+                    }}
+                  >
                     <Button
                       onClick={() => handleRestore(proposal.pk)}
                       variant="filled"
@@ -245,7 +355,10 @@ function ArchivedCoursesTable({ courseProposals, onRestoreSuccess }) {
               ))
           ) : (
             <tr>
-              <td colSpan="5" style={{ textAlign: "center", padding: "15px 20px" }}>
+              <td
+                colSpan="5"
+                style={{ textAlign: "center", padding: "15px 20px" }}
+              >
                 No archived course proposals available.
               </td>
             </tr>
@@ -263,8 +376,14 @@ function FormSection({
   formType,
   onArchiveSuccess,
   onRestoreSuccess,
-  filteredProposals,
+  proposals,
 }) {
+  // Get the appropriate proposals based on formType
+  const filteredProposals =
+    formType === "new-forms"
+      ? proposals.newProposals
+      : proposals.updateProposals;
+
   return (
     <Container style={{ padding: "20px", maxWidth: "100%" }}>
       <Flex justify="flex-start" align="center" mb={10}>
@@ -282,10 +401,10 @@ function FormSection({
         >
           Archived Files
         </Button>
-        
+
         {formType === "new-forms" && (
-          <Button 
-            component={Link} 
+          <Button
+            component={Link}
             to="/programme_curriculum/new_course_proposal_form"
             variant="outline"
             style={{ marginLeft: "auto" }}
@@ -293,9 +412,9 @@ function FormSection({
             Add Course Proposal Form
           </Button>
         )}
-        
+
         {formType === "updated-forms" && (
-          <Button 
+          <Button
             component={Link}
             to="/programme_curriculum/faculty_courses"
             variant="outline"
@@ -305,7 +424,7 @@ function FormSection({
           </Button>
         )}
       </Flex>
-      
+
       <Grid mt={20}>
         <Grid.Col span={12}>
           {activeTab === "new-courses" ? (
@@ -328,7 +447,10 @@ function FormSection({
 function Admin_course_proposal_form() {
   const [activeForm, setActiveForm] = useState("new-forms");
   const [activeTab, setActiveTab] = useState("new-courses");
-  const [courseProposals, setCourseProposals] = useState([]);
+  const [proposals, setProposals] = useState({
+    newProposals: [],
+    updateProposals: [],
+  });
   const [filter, setFilter] = useState({
     uploader: "",
     name: "",
@@ -347,7 +469,14 @@ function Admin_course_proposal_form() {
             "courseProposals",
             JSON.stringify(response.courseProposals),
           );
-          setCourseProposals(response.courseProposals);
+          sessionStorage.setItem(
+            "updateProposals",
+            JSON.stringify(response.updateProposals),
+          );
+          setProposals({
+            newProposals: response.courseProposals,
+            updateProposals: response.updateProposals,
+          });
         } catch (error) {
           console.error("Error fetching courses: ", error);
         }
@@ -357,23 +486,33 @@ function Admin_course_proposal_form() {
   }, [username, role]);
 
   const handleArchiveSuccess = (archivedId) => {
-    setCourseProposals((prevProposals) =>
-      prevProposals.map((proposal) =>
+    setProposals((prev) => ({
+      newProposals: prev.newProposals.map((proposal) =>
         proposal.pk === archivedId
           ? { ...proposal, fields: { ...proposal.fields, is_archive: true } }
           : proposal,
       ),
-    );
+      updateProposals: prev.updateProposals.map((proposal) =>
+        proposal.pk === archivedId
+          ? { ...proposal, fields: { ...proposal.fields, is_archive: true } }
+          : proposal,
+      ),
+    }));
   };
 
   const handleRestoreSuccess = (restoredId) => {
-    setCourseProposals((prevProposals) =>
-      prevProposals.map((proposal) =>
+    setProposals((prev) => ({
+      newProposals: prev.newProposals.map((proposal) =>
         proposal.pk === restoredId
           ? { ...proposal, fields: { ...proposal.fields, is_archive: false } }
           : proposal,
       ),
-    );
+      updateProposals: prev.updateProposals.map((proposal) =>
+        proposal.pk === restoredId
+          ? { ...proposal, fields: { ...proposal.fields, is_archive: false } }
+          : proposal,
+      ),
+    }));
   };
 
   const handleFormSwitch = (form) => {
@@ -392,19 +531,28 @@ function Admin_course_proposal_form() {
   const applyFilters = (data) => {
     return data.filter((proposal) => {
       return (
-        proposal.fields.uploader.toLowerCase().includes(filter.uploader.toLowerCase()) &&
-        proposal.fields.name.toLowerCase().includes(filter.name.toLowerCase()) &&
+        proposal.fields.uploader
+          .toLowerCase()
+          .includes(filter.uploader.toLowerCase()) &&
+        proposal.fields.name
+          .toLowerCase()
+          .includes(filter.name.toLowerCase()) &&
         proposal.fields.code.toLowerCase().includes(filter.code.toLowerCase())
       );
     });
   };
 
-  const filteredProposals = applyFilters(courseProposals);
+  const filteredNewProposals = applyFilters(proposals.newProposals);
+  const filteredUpdateProposals = applyFilters(proposals.updateProposals);
 
   return (
-    <MantineProvider theme={{ colorScheme: "light" }} withGlobalStyles withNormalizeCSS>
+    <MantineProvider
+      theme={{ colorScheme: "light" }}
+      withGlobalStyles
+      withNormalizeCSS
+    >
       <Container style={{ padding: "20px", maxWidth: "100%" }}>
-      <Flex justify="flex-start" align="center" mb={10}>
+        <Flex justify="flex-start" align="center" mb={10}>
           <Button
             onClick={() => handleFormSwitch("new-forms")}
             variant={activeForm === "new-forms" ? "outline" : "subtle"}
@@ -420,9 +568,9 @@ function Admin_course_proposal_form() {
             Updated Forms
           </Button>
         </Flex>
-        
+
         <hr />
-        
+
         <Grid mt={20}>
           {isMobile && (
             <Grid.Col span={12} mb={20}>
@@ -445,7 +593,7 @@ function Admin_course_proposal_form() {
               </ScrollArea>
             </Grid.Col>
           )}
-          
+
           <Grid.Col span={isMobile ? 12 : 9}>
             <div style={{ backgroundColor: "#f5f7f8", borderRadius: "10px" }}>
               {activeForm === "new-forms" && (
@@ -454,10 +602,12 @@ function Admin_course_proposal_form() {
                   setActiveTab={setActiveTab}
                   title="New Course Proposal Forms"
                   formType="new-forms"
-                  courseProposals={courseProposals}
                   onArchiveSuccess={handleArchiveSuccess}
                   onRestoreSuccess={handleRestoreSuccess}
-                  filteredProposals={filteredProposals}
+                  proposals={{
+                    newProposals: filteredNewProposals,
+                    updateProposals: filteredUpdateProposals,
+                  }}
                 />
               )}
 
@@ -467,15 +617,17 @@ function Admin_course_proposal_form() {
                   setActiveTab={setActiveTab}
                   title="Updated Course Proposal Forms"
                   formType="updated-forms"
-                  courseProposals={courseProposals}
                   onArchiveSuccess={handleArchiveSuccess}
                   onRestoreSuccess={handleRestoreSuccess}
-                  filteredProposals={filteredProposals}
+                  proposals={{
+                    newProposals: filteredNewProposals,
+                    updateProposals: filteredUpdateProposals,
+                  }}
                 />
               )}
             </div>
           </Grid.Col>
-          
+
           {!isMobile && (
             <Grid.Col span={3}>
               <ScrollArea type="hover">
@@ -508,8 +660,10 @@ FormSection.propTypes = {
   setActiveTab: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   formType: PropTypes.string.isRequired,
-  courseProposals: PropTypes.array.isRequired,
-  filteredProposals: PropTypes.array.isRequired,
+  proposals: PropTypes.shape({
+    newProposals: PropTypes.array.isRequired,
+    updateProposals: PropTypes.array.isRequired,
+  }).isRequired,
   onArchiveSuccess: PropTypes.func,
   onRestoreSuccess: PropTypes.func,
 };
