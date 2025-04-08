@@ -1,4 +1,3 @@
-// src/programmeCurriculum.jsx
 import React, { useState, useEffect } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -39,6 +38,8 @@ import BDesView from "./Faculty/BDesView";
 import Discipline from "./Faculty/Discipline";
 import StudCourseSlotDetails from "./Student/StudCourseSlotDetails";
 import StudSemesterInfo from "./Student/StudSemesterinfo";
+import FacultyEditCourseProposalForm from "./Faculty/Faculty_edit_course_proposal_form";
+
 // forms
 import AdminAddBatchForm from "./Acad_admin/Admin_add_batch_form";
 import AdminAddCourseProposalForm from "./Acad_admin/Admin_add_course_proposal_form";
@@ -82,22 +83,19 @@ export default function ProgrammeCurriculumRoutes() {
   ];
   const STUDENT_ROLES = ["student", "Guest-User"];
 
-  // Protected route component
-  // Modified ProtectedRoute component with timeout
+  // Protected route component with timeout
   const ProtectedRoute = ({ allowedRoles, children }) => {
     const [isLoading, setIsLoading] = useState(role === "Guest-User");
     const [hasAccess, setHasAccess] = useState(allowedRoles.includes(role));
 
     useEffect(() => {
       let timer;
-      // Only apply delay if role is Guest-User
       if (role === "Guest-User") {
         timer = setTimeout(() => {
           setHasAccess(allowedRoles.includes(role));
           setIsLoading(false);
         }, 2000);
       } else {
-        // Immediate check for other roles
         setHasAccess(allowedRoles.includes(role));
         setIsLoading(false);
       }
@@ -116,15 +114,14 @@ export default function ProgrammeCurriculumRoutes() {
 
   // Determine which navigation tabs to show based on role
   const NavTab = () => {
-    const TabComponent = 
-      STUDENT_ROLES.includes(role)
-        ? BreadcrumbTabs
-        : FACULTY_ROLES.includes(role)
-          ? BreadcrumbTabsFaculty
-          : ADMIN_ROLES.includes(role)
-            ? BreadcrumbTabsAcadadmin
-            : () => null;
-    
+    const TabComponent = STUDENT_ROLES.includes(role)
+      ? BreadcrumbTabs
+      : FACULTY_ROLES.includes(role)
+        ? BreadcrumbTabsFaculty
+        : ADMIN_ROLES.includes(role)
+          ? BreadcrumbTabsAcadadmin
+          : () => null;
+
     return (
       <>
         <Breadcrumb />
@@ -342,7 +339,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
-              <NavTab />
+                <NavTab />
                 <ViewInwardFile />
               </Layout>
             </ProtectedRoute>
@@ -375,7 +372,7 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
-              <NavTab />
+                <NavTab />
                 <BDesView />
               </Layout>
             </ProtectedRoute>
@@ -731,8 +728,19 @@ export default function ProgrammeCurriculumRoutes() {
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
-              <NavTab />
+                <NavTab />
                 <FacultyCourseProposalFinalForm />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit_course_proposal_form/:id"
+          element={
+            <ProtectedRoute allowedRoles={FACULTY_ROLES}>
+              <Layout>
+                <NavTab />
+                <FacultyEditCourseProposalForm />
               </Layout>
             </ProtectedRoute>
           }
