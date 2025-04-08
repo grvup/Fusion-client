@@ -425,6 +425,17 @@ export default function ProgrammeCurriculumRoutes() {
             </ProtectedRoute>
           }
         />
+          <Route
+          path="/faculty_course_instructor"
+          element={
+            <ProtectedRoute allowedRoles={[...FACULTY_ROLES, ...ADMIN_ROLES]}>
+              <Layout>
+                <NavTab />
+                <AdminViewAllCourseInstructors />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
 
         {/* Student Routes (also accessible to faculty) */}
         <Route

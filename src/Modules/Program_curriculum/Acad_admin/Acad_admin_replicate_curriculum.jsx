@@ -211,6 +211,9 @@ function Admin_replicate_curriculum_form({ existingData }) {
   //   console.log(values);
   //   // Add your logic to handle the edited data submission here
   // };
+  const handleCancel = () => {
+    navigate("/programme_curriculum/acad_view_all_working_curriculums");
+  };
 
   return (
     <div
@@ -324,7 +327,11 @@ function Admin_replicate_curriculum_form({ existingData }) {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
+                <Button
+                  variant="outline"
+                  className="cancel-btn"
+                  onClick={handleCancel}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn">

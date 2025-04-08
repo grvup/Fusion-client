@@ -51,6 +51,9 @@ function Admin_add_programme_form() {
       setLoading(false);
     }
   };
+  const handleCancel = () => {
+    navigate("/programme_curriculum/acad_view_all_programme");
+  };
 
   return (
     <Container fluid style={{ minHeight: "100vh", padding: "2rem" }}>
@@ -125,9 +128,13 @@ function Admin_add_programme_form() {
             </Stack>
 
             <Group position="right" mt="lg">
-              <Button variant="outline" onClick={() => form.reset()}>
-                Cancel
-              </Button>
+              <Button
+                                                                                   variant="outline"
+                                                                                   className="cancel-btn"
+                                                                                   onClick={handleCancel}
+                                                                                 >
+                                                                                   Cancel
+                                                                                 </Button>
               <Button type="submit" loading={loading}>
                 Submit
               </Button>

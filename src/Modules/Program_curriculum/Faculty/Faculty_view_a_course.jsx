@@ -1,5 +1,6 @@
 import { Button, Card, Grid, Table, Text } from "@mantine/core";
 import React from "react";
+import { Link } from "react-router-dom";
 
 function CourseDetail() {
   const courseDetails = {
@@ -369,14 +370,14 @@ function CourseDetail() {
         {/* Buttons Grid */}
         <Grid className="button-grid" style={{ margin: "0 3vw 0 1vw" }}>
           <Grid.Col span={15}>
-            <a
-              href={`/programme_curriculum/faculty_forward_form?course=${courseDetails.code}`}
+            <Link
+              to={`/programme_curriculum/faculty_forward_form?course=${courseDetails.code}`}
               style={{ textDecoration: "none" }}
             >
               <Button fullWidth variant="filled" color="blue">
                 EDIT COURSE
               </Button>
-            </a>
+            </Link>
           </Grid.Col>
         </Grid>
       </div>

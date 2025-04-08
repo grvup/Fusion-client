@@ -93,6 +93,9 @@ function Admin_edit_programme_form() {
     }
     // Add API call or logic for submitting the updated programme data
   };
+  const handleCancel = () => {
+    navigate("/programme_curriculum/acad_view_all_programme");
+  };
 
   return (
     <div
@@ -181,7 +184,11 @@ function Admin_edit_programme_form() {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
+                <Button
+                  variant="outline"
+                  className="cancel-btn"
+                  onClick={handleCancel}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn">

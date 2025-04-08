@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button, Table, Flex } from "@mantine/core";
 import PropTypes from "prop-types";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { studentFetchSemesterData } from "../api/api";
 
 export default function StudSemesterInfo({ curriculum }) {
@@ -115,12 +115,12 @@ export default function StudSemesterInfo({ curriculum }) {
                   borderBottom: "1px solid #d3d3d3",
                 }}
               >
-                <a
-                  href={`/programme_curriculum/student_course/${course.id}`}
+                <Link
+                  to={`/programme_curriculum/student_course/${course.id}`}
                   style={{ textDecoration: "none" }}
                 >
                   {course.code}
-                </a>
+                </Link>
               </td>
               <td
                 style={{
