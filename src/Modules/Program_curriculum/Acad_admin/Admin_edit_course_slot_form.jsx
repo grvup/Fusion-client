@@ -12,7 +12,7 @@ import {
   MultiSelect,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   fetchAllCourses,
@@ -35,6 +35,7 @@ function Admin_edit_course_slot_form() {
   const [curriculumid, setCurriculumid] = useState("");
   const [semesterOptions, setSemesterOptions] = useState([]);
   const [initialData, setInitialData] = useState(null);
+  const navigate = useNavigate();
   console.log(searchValue);
   console.log(initialData);
 
@@ -203,6 +204,11 @@ function Admin_edit_course_slot_form() {
   if (error) {
     return <div>{error}</div>;
   }
+  const handleCancel = () => {
+    navigate(
+      `/programme_curriculum/view_curriculum?curriculum=${curriculumid}`,
+    );
+  };
 
   return (
     <div
@@ -328,9 +334,13 @@ function Admin_edit_course_slot_form() {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
-                  Cancel
-                </Button>
+                 <Button
+                                                 variant="outline"
+                                                 className="cancel-btn"
+                                                 onClick={handleCancel}
+                                               >
+                                                 Cancel
+                                               </Button>
                 <Button type="submit" className="submit-btn">
                   Update
                 </Button>

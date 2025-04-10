@@ -140,7 +140,7 @@
 .semester-dropdown {
   position: absolute;
   right: 200px;
-  top: 170px;
+  top: 110px;
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -154,7 +154,7 @@
 .editbatch-dropdown {
   position: absolute;
   right: 200px;
-  top: 334px;
+  top: 260px;
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -170,7 +170,7 @@
 .Linkbatch-dropdown {
   position: absolute;
   right: 200px;
-  top: 384px;
+  top: 310px;
   background-color: white;
   border: 1px solid #ddd;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -376,6 +376,10 @@
 }
 
 .dropdown-btn.blue-btn:disabled {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
   background-color: #ccc;
   cursor: not-allowed;
 }

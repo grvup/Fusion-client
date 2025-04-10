@@ -19,6 +19,7 @@ const basePages = [
   "faculty_view_course_proposal",
   "faculty_outward_files",
   "faculty_inward_files",
+  "faculty_course_instructor",
   
   "view_all_programmes",
   "view_all_working_curriculums",
@@ -90,6 +91,7 @@ const pageNameMappings = {
   "student_batches": "Batches",
   "student_courses": "Courses",
   "student_course": "Course-Details",
+  "admin_edit_course_slot_form": "Edit Course Slot Form",
   
   // Add more mappings as needed...
 };

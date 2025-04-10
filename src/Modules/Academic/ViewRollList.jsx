@@ -1,66 +1,72 @@
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { Card, Text, Button, Alert } from "@mantine/core";
 import FusionTable from "../../components/FusionTable";
-
-const mockCoursesAPIResponse = [
-  {
-    id: 1,
-    name: "Computer Networks",
-    code: "CS301",
-    version: "1.0",
-    year: 2024,
-    semester: 5,
-  },
-  {
-    id: 2,
-    name: "Operating Systems",
-    code: "CS302",
-    version: "1.0",
-    year: 2024,
-    semester: 5,
-  },
-  {
-    id: 3,
-    name: "Database Management",
-    code: "CS303",
-    version: "1.0",
-    year: 2024,
-    semester: 6,
-  },
-];
+import {
+  generatexlsheet,
+  academicProceduresFaculty,
+} from "../../routes/academicRoutes";
 
 function ViewRollList() {
   const [courses, setCourses] = useState([]);
   const [fetchError, setFetchError] = useState("");
 
-  // Simulate an API call to fetch courses
-  const fetchCourses = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockCoursesAPIResponse);
-      }, 500);
-    });
-  };
-
   useEffect(() => {
-    fetchCourses().then((data) => {
-      setCourses(data);
-    });
+    const fetchCourses = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        setFetchError("No authentication token found.");
+        return;
+      }
+
+      try {
+        const response = await axios.get(academicProceduresFaculty, {
+          headers: { Authorization: `Token ${token}` },
+        });
+
+        setCourses(response.data.assigned_courses || []);
+      } catch (error) {
+        setFetchError(
+          error.response?.data?.error || "Failed to fetch courses.",
+        );
+      }
+    };
+
+    fetchCourses();
   }, []);
 
-  const handleDownloadRollList = async (courseId) => {
+  const handleDownloadRollList = async (courseId, courseCode) => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      setFetchError("No authentication token found.");
+      return;
+    }
+
     try {
-      const response = await fetch(
-        `https://example.com/api/download/roll-list/${courseId}`,
+      const response = await axios.post(
+        generatexlsheet,
+        { course: courseId },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+          responseType: "blob",
+        },
       );
-      if (!response.ok) {
-        throw new Error("Download link is not attached yet");
-      }
-      const data = await response.json();
-      const { downloadLink } = data;
-      window.location.href = downloadLink;
-    } catch (downloadError) {
-      setFetchError(downloadError.message);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${courseCode}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      setFetchError(
+        error.response?.data?.error || "Failed to download roll list.",
+      );
     }
   };
 
@@ -68,19 +74,22 @@ function ViewRollList() {
     "Course Name",
     "Course Code",
     "Version",
-    "Working Year",
+    "Year",
     "Semester",
     "Action",
   ];
+
   const elements = courses.map((course) => ({
-    "Course Name": course.name,
-    "Course Code": course.code,
-    Version: course.version,
-    "Working Year": course.year,
-    Semester: course.semester,
+    "Course Name": course.course_id__name,
+    "Course Code": course.course_id__code,
+    Version: course.course_id__version,
+    Year: course.year,
+    Semester: course.semester_no,
     Action: (
       <Button
-        onClick={() => handleDownloadRollList(course.id)}
+        onClick={() =>
+          handleDownloadRollList(course.course_id__id, course.course_id__code)
+        }
         variant="outline"
         color="blue"
         size="xs"
@@ -96,9 +105,9 @@ function ViewRollList() {
         size="lg"
         weight={700}
         mb="md"
-        style={{ textAlign: "center", width: "100%", color: "#3B82F6" }}
+        style={{ textAlign: "center", color: "#3B82F6" }}
       >
-        Courses Assigned
+        Assigned Courses
       </Text>
       <div style={{ overflowX: "auto" }}>
         <FusionTable

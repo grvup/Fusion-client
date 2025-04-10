@@ -10,6 +10,7 @@ import {
   Grid,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { useSelector } from "react-redux";
 import { adminFetchCourseInstructorData } from "../api/api";
 
 function Admin_view_all_course_instructors() {
@@ -24,6 +25,19 @@ function Admin_view_all_course_instructors() {
   const [instructors, setInstructors] = useState([]);
   const [loading, setLoading] = useState(true);
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const reduxRole = useSelector((state) => state.user.role);
+
+  // Get role from sessionStorage (fallback)
+  const sessionData = JSON.parse(sessionStorage.getItem("sessionData"));
+  const sessionRole = sessionData?.last_selected_role;
+
+  // Determine which role to use (Redux takes precedence)
+  const role = reduxRole || sessionRole;
+  console.log("Role from Redux or sessionStorage: ", role);
+
+  // Check if user is acadadmin
+  const isAcadAdmin = role === "acadadmin";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,26 +99,33 @@ function Admin_view_all_course_instructors() {
     borderRight: "1px solid #d3d3d3",
   };
 
-  // Define alternating row colors
-  const rows = filteredData.map((element, index) => (
-    <tr
-      key={element.id}
-      style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#E6F7FF" }}
-    >
-      <td style={cellStyle}>{element.course_code}</td>
-      <td style={cellStyle}>{element.course_name}</td>
-      <td style={cellStyle}>{element.course_version}</td>
-      <td style={cellStyle}>
-        {element.faculty_first_name} {element.faculty_last_name}
-      </td>
-      <td style={cellStyle}>{element.year}</td>
-      <td
-        style={{
-          padding: "15px 20px",
-          textAlign: "center",
-        }}
-      >
-        {/* Edit button as a link */}
+  // Base columns that are always shown
+  const baseColumns = [
+    { key: "course_code", label: "Code" },
+    { key: "course_name", label: "Course Name" },
+    { key: "course_version", label: "Version" },
+    { key: "faculty", label: "Instructor" },
+    { key: "year", label: "Year" },
+  ];
+
+  // Add actions column only for acadadmin
+  const tableColumns = isAcadAdmin
+    ? [...baseColumns, { key: "actions", label: "Actions" }]
+    : baseColumns;
+  const rows = filteredData.map((element, index) => {
+    const baseCells = (
+      <>
+        <td style={cellStyle}>{element.course_code}</td>
+        <td style={cellStyle}>{element.course_name}</td>
+        <td style={cellStyle}>{element.course_version}</td>
+        <td style={cellStyle}>
+          {element.faculty_first_name} {element.faculty_last_name}
+        </td>
+        <td style={cellStyle}>{element.year}</td>
+      </>
+    );
+    const actionCell = isAcadAdmin ? (
+      <td style={{ padding: "15px 20px", textAlign: "center" }}>
         <Link
           to={`/programme_curriculum/admin_edit_course_instructor/${element.id}`}
         >
@@ -113,8 +134,18 @@ function Admin_view_all_course_instructors() {
           </Button>
         </Link>
       </td>
-    </tr>
-  ));
+    ) : null;
+
+    return (
+      <tr
+        key={element.id}
+        style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#E6F7FF" }}
+      >
+        {baseCells}
+        {actionCell}
+      </tr>
+    );
+  });
 
   return (
     <MantineProvider
@@ -157,16 +188,18 @@ function Admin_view_all_course_instructors() {
                   mb={5}
                 />
               ))}
-              <Link to="/programme_curriculum/acad_admin_add_course_instructor">
-                <Button
-                  variant="filled"
-                  color="blue"
-                  radius="sm"
-                  style={{ height: "35px", marginTop: "10px" }}
-                >
-                  Add Course Instructor
-                </Button>
-              </Link>
+              {isAcadAdmin && (
+                <Link to="/programme_curriculum/acad_admin_add_course_instructor">
+                  <Button
+                    variant="filled"
+                    color="blue"
+                    radius="sm"
+                    style={{ height: "35px", marginTop: "10px" }}
+                  >
+                    Add Course Instructor
+                  </Button>
+                </Link>
+              )}
             </Grid.Col>
           )}
           <Grid.Col span={isMobile ? 12 : 9}>
@@ -190,84 +223,30 @@ function Admin_view_all_course_instructors() {
               <Table style={{ backgroundColor: "white", padding: "20px" }}>
                 <thead>
                   <tr>
-                    <th
-                      style={{
-                        padding: "15px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Code
-                    </th>
-                    <th
-                      style={{
-                        padding: "15px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Course Name
-                    </th>
-                    <th
-                      style={{
-                        padding: "15px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Version
-                    </th>
-                    <th
-                      style={{
-                        padding: "15px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Instructor
-                    </th>
-                    <th
-                      style={{
-                        padding: "15px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Year
-                    </th>
-                    <th
-                      style={{
-                        padding: "15px 20px",
-                        backgroundColor: "#C5E2F6",
-                        color: "#3498db",
-                        fontSize: "16px",
-                        textAlign: "center",
-                        borderRight: "1px solid #d3d3d3",
-                      }}
-                    >
-                      Actions
-                    </th>
+                    {tableColumns.map((column) => (
+                      <th
+                        key={column.key}
+                        style={{
+                          padding: "15px 20px",
+                          backgroundColor: "#C5E2F6",
+                          color: "#3498db",
+                          fontSize: "16px",
+                          textAlign: "center",
+                          borderRight: "1px solid #d3d3d3",
+                        }}
+                      >
+                        {column.label}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="5" style={{ textAlign: "center" }}>
+                      <td
+                        colSpan={tableColumns.length}
+                        style={{ textAlign: "center" }}
+                      >
                         Loading...
                       </td>
                     </tr>
@@ -275,7 +254,10 @@ function Admin_view_all_course_instructors() {
                     rows
                   ) : (
                     <tr>
-                      <td colSpan="5" style={{ textAlign: "center" }}>
+                      <td
+                        colSpan={tableColumns.length}
+                        style={{ textAlign: "center" }}
+                      >
                         No instructors found
                       </td>
                     </tr>
@@ -306,16 +288,18 @@ function Admin_view_all_course_instructors() {
                   mb={5}
                 />
               ))}
-              <Link to="/programme_curriculum/acad_admin_add_course_instructor">
-                <Button
-                  variant="filled"
-                  color="blue"
-                  radius="sm"
-                  style={{ height: "35px", marginTop: "10px" }}
-                >
-                  Add Course Instructor
-                </Button>
-              </Link>
+              {isAcadAdmin && (
+                <Link to="/programme_curriculum/acad_admin_add_course_instructor">
+                  <Button
+                    variant="filled"
+                    color="blue"
+                    radius="sm"
+                    style={{ height: "35px", marginTop: "10px" }}
+                  >
+                    Add Course Instructor
+                  </Button>
+                </Link>
+              )}
             </Grid.Col>
           )}
         </Grid>

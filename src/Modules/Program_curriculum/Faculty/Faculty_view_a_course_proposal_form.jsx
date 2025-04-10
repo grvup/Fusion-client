@@ -1,6 +1,6 @@
 import { Button, Card, Grid, Table, Text } from "@mantine/core";
 import React from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 
 function Faculty_view_a_course_proposal_form() {
   const [searchParams] = useSearchParams();
@@ -390,14 +390,14 @@ function Faculty_view_a_course_proposal_form() {
         {/* Buttons Grid */}
         <Grid className="button-grid" style={{ margin: "0 3vw 0 1vw" }}>
           <Grid.Col span={15}>
-            <a
-              href={`/programme_curriculum/faculty_forward_form?course=${courseDetails.code}`}
+            <Link
+              to={`/programme_curriculum/faculty_forward_form?course=${courseDetails.code}`}
               style={{ textDecoration: "none" }}
             >
               <Button fullWidth variant="filled" color="blue">
                 EDIT COURSE
               </Button>
-            </a>
+            </Link>
           </Grid.Col>
         </Grid>
       </div>

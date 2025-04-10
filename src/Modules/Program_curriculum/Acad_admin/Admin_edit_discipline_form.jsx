@@ -137,6 +137,9 @@ function Admin_edit_discipline_form() {
       alert("An error occurred. Please try again.");
     }
   };
+  const handleCancel = () => {
+    navigate("/programme_curriculum/acad_discipline_view");
+  };
 
   return (
     <div
@@ -232,7 +235,11 @@ function Admin_edit_discipline_form() {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
+                <Button
+                  variant="outline"
+                  className="cancel-btn"
+                  onClick={handleCancel}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn" loading={loading}>

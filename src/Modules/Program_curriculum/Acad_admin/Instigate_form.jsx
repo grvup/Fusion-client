@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Adjust the import path as needed
 import { Breadcrumbs, Anchor, Group, Text, Switch, Button, Textarea } from "@mantine/core";
 
 function InstigateSemesterForm() {
@@ -22,9 +23,9 @@ function InstigateSemesterForm() {
     { title: "Curriculums", href: "#" },
     { title: "CSE UG Curriculum", href: "#" },
   ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
+    <Link to={item.href} key={index}>
       {item.title}
-    </Anchor>
+    </Link>
   ));
 
   return (

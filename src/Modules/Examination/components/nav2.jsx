@@ -27,16 +27,25 @@ export default function Nav() {
     }
   };
 
+  // Styles for the active tab
   const activeLinkStyle = {
-    borderBottom: "2px solid  #1E90FF",
-    // paddingBottom: "0.25rem",
+    backgroundColor: "#15abff13", // Light blue background (same as Dashboard)
+    color: "#15abff", // Blue text (same as Dashboard)
+     // Bold text (same as Dashboard)
+    borderBottom: "2px solid #15abff", // Blue bottom border
+    borderBottomLeftRadius: "4px", // Curved bottom-left corner
+    borderBottomRightRadius: "4px", // Curved bottom-right corner
   };
 
+  // Default styles for all tabs
   const defaultLinkStyle = {
     textDecoration: "none",
-    padding: "0px 10px",
-    color: "black",
-    display: "inline-block",
+    padding: "10px 15px", // Add padding for better spacing
+    color: "black", // Black text for non-selected tabs
+    display: "block", // Ensure the link takes up the full width of the parent
+    width: "100%", // Ensure the link takes up the full width of the parent
+    textAlign: "center", // Center the text
+    borderBottom: "2px solid #e0e0e0", // Straight non-blue border (same as Dashboard)
   };
 
   // Tabs data
@@ -44,7 +53,12 @@ export default function Nav() {
     {
       title: "Submit",
       path: "/examination/submit-grades",
-      roles: ["acadadmin", "Professor"],
+      roles: ["acadadmin"],
+    },
+    {
+      title: "Submit",
+      path: "/examination/submit-grades-prof",
+      roles: ["Professor","Assistant Professor","Associate Professor"],
     },
     {
       title: "Verify",
@@ -67,6 +81,12 @@ export default function Nav() {
       path: "/examination/validate",
       roles: ["Dean Academic"],
     },
+    {
+      title: "Download Grades",
+      path: "/examination/download-grades-prof",
+      roles: ["Professor","Assistant Professor","Associate Professor"],
+    },
+    
     { title: "Result", path: "/examination/result", roles: ["Student"] },
   ];
 
@@ -105,19 +125,15 @@ export default function Nav() {
             style={{
               display: "flex",
               alignItems: "center",
-              padding: "0 15px",
-              // borderRight:
-              //   index === filteredTabs.length - 1 ? "none" : "2px solid black",
+              padding: "0", // Remove padding from the parent div
             }}
           >
             <NavLink
               to={tab.path}
-              className="borderclass"
-              style={({ isActive }) =>
-                isActive
-                  ? { ...defaultLinkStyle, ...activeLinkStyle }
-                  : defaultLinkStyle
-              }
+              style={({ isActive }) => ({
+                ...defaultLinkStyle,
+                ...(isActive ? activeLinkStyle : {}),
+              })}
             >
               {tab.title}
             </NavLink>
