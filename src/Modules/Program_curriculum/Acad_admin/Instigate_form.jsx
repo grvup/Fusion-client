@@ -18,15 +18,15 @@ function InstigateSemesterForm() {
     });
   };
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-  ].map((item, index) => (
-    <Link to={item.href} key={index}>
-      {item.title}
-    </Link>
-  ));
+  // const breadcrumbItems = [
+  //   { title: "Program and Curriculum", href: "#" },
+  //   { title: "Curriculums", href: "#" },
+  //   { title: "CSE UG Curriculum", href: "#" },
+  // ].map((item, index) => (
+  //   <Link to={item.href} key={index}>
+  //     {item.title}
+  //   </Link>
+  // ));
 
   return (
     <div style={containerStyle}>

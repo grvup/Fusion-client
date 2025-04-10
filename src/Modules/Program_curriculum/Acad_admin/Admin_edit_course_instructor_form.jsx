@@ -91,6 +91,7 @@ function Admin_edit_course_instructor() {
   }, [id]);
 
   const handleSubmit = async (values) => {
+    localStorage.setItem("AdminInstructorsCacheChange", "true");
     try {
       const response = await fetch(
         `${host}/programme_curriculum/api/admin_update_course_instructor/${id}/`,

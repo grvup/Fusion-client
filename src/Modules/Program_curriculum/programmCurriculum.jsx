@@ -19,8 +19,8 @@ import ViewAllBatches from "./View_all_batches";
 import ViewACourse from "./View_a_course";
 import ViewAllWorkingCurriculums from "./View_all_working_curriculums";
 import ViewAllProgrammes from "./View_all_programmes";
-import BDesAcadView from "./Acad_admin/BDesAcadView";
-import BDesstudView from "./Student/BDesStudView";
+import ProgrammeCurriculumView from "./Acad_admin/ProgrammeCurriculumView";
+import ProgrammeCurriculumStudView from "./Student/ProgrammeCurriculumStudView";
 import DisciplineAcad from "./Acad_admin/DisciplineAcad";
 import DisciplineStud from "./Student/DisciplineStud";
 import FacultyCourseProposal from "./Faculty/Faculty_course_proposal";
@@ -34,7 +34,7 @@ import ViewInwardFile from "./Faculty/ViewInwardFile";
 import ViewSemesterOfACurriculum from "./ViewSemesterOfACurriculum";
 import InwardFile from "./Faculty/InwardFiles";
 import OutwardFile from "./Faculty/OutwardFiles";
-import BDesView from "./Faculty/BDesView";
+import ProgrammeCurriculumFacultyView from "./Faculty/ProgrammeCurriculumFacultyView";
 import Discipline from "./Faculty/Discipline";
 import StudCourseSlotDetails from "./Student/StudCourseSlotDetails";
 import StudSemesterInfo from "./Student/StudSemesterinfo";
@@ -184,7 +184,7 @@ export default function ProgrammeCurriculumRoutes() {
             <ProtectedRoute allowedRoles={ADMIN_ROLES}>
               <Layout>
                 <NavTab />
-                <BDesAcadView />
+                <ProgrammeCurriculumView />
               </Layout>
             </ProtectedRoute>
           }
@@ -373,7 +373,7 @@ export default function ProgrammeCurriculumRoutes() {
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>
                 <NavTab />
-                <BDesView />
+                <ProgrammeCurriculumFacultyView />
               </Layout>
             </ProtectedRoute>
           }
@@ -496,7 +496,7 @@ export default function ProgrammeCurriculumRoutes() {
             <ProtectedRoute allowedRoles={[...STUDENT_ROLES, ...FACULTY_ROLES]}>
               <Layout>
                 <NavTab />
-                <BDesstudView />
+                <ProgrammeCurriculumStudView />
               </Layout>
             </ProtectedRoute>
           }

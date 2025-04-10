@@ -80,19 +80,22 @@ function Admin_view_all_course_instructors() {
 
   // Filtered data based on search inputs
   const filteredData = instructors.filter((item) => {
-    // Ensure `instructor_id_id` and `year` exist and are not null/undefined
-    const instructorId = item.instructor_id_id || ""; // Default to empty string if undefined
-    const year = item.year || ""; // Default to empty string if undefined
-
-    // Convert to string and lowercase for comparison
+    // Safely extract values or default to empty strings
+    const instructorFirst = item.faculty_first_name || "";
+    const instructorLast = item.faculty_last_name || "";
+    const year = item.year || "";
+    const name = item.course_name || "";
+  
+    // Combine first and last names for filtering
+    const fullName = `${instructorFirst} ${instructorLast}`.toLowerCase();
+  
     return (
-      instructorId
-        .toString()
-        .toLowerCase()
-        .includes(filters.instructor.toLowerCase()) &&
-      year.toString().toLowerCase().includes(filters.year.toLowerCase())
+      fullName.includes(filters.instructor.toLowerCase()) &&
+      year.toString().toLowerCase().includes(filters.year.toLowerCase()) &&
+      name.toLowerCase().includes(filters.name.toLowerCase())
     );
   });
+  
   const cellStyle = {
     padding: "15px 20px",
     textAlign: "center",
@@ -170,7 +173,7 @@ function Admin_view_all_course_instructors() {
           {isMobile && (
             <Grid.Col span={12}>
               {[
-                { label: "Name", field: "name" },
+                { label: "Course Name", field: "name" },
                 { label: "Instructor", field: "instructor" },
                 { label: "Year", field: "year" },
               ].map((filter) => (
@@ -270,7 +273,7 @@ function Admin_view_all_course_instructors() {
           {!isMobile && (
             <Grid.Col span={3}>
               {[
-                { label: "Name", field: "name" },
+                { label: "Course Name", field: "name" },
                 { label: "Instructor", field: "instructor" },
                 { label: "Year", field: "year" },
               ].map((filter) => (

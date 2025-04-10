@@ -186,6 +186,8 @@ function Admin_add_course_slot_form() {
   // ));
 
   const handleSubmit = async (values) => {
+    const cacheChangeKey = `CurriculumCacheChange_${curriculumid}`;
+    localStorage.setItem(cacheChangeKey, "true");
     setLoading(true);
     try {
       const formData = {
@@ -211,9 +213,8 @@ function Admin_add_course_slot_form() {
 
       if (response.status === 200) {
         // onSuccess?.();
-        // Redirect to curriculum semesters page
-        window.location.href = `/programme_curriculum/view_curriculum/?curriculum=${curriculumid}`;
-      }
+        navigate(`/programme_curriculum/view_curriculum?curriculum=${curriculumid}`);
+      }      
     } catch (err) {
       console.error("Error submitting course slot:", err);
       // Handle error appropriately

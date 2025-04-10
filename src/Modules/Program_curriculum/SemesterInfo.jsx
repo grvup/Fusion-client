@@ -50,6 +50,8 @@ export default function SemesterInfo() {
 
   // console.log(semcourseSlots)
   const handleDeleteCourseSlot = async () => {
+    const cacheChangeKey = `CurriculumCacheChange_${curriculumId}`;
+      localStorage.setItem(cacheChangeKey, "true");
     if (!slotToDelete) return; // Add safety check
 
     try {

@@ -104,7 +104,7 @@ function Admin_add_batch_form() {
       console.log(response);
       if (response.data.message) {
         alert("Batch added successfully!");
-        window.location.href = "/programme_curriculum/admin_batches/"; // Redirect to batches page
+        navigate("/programme_curriculum/admin_batches/"); // Redirect to batches page
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add batch");

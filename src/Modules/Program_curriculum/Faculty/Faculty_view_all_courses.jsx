@@ -67,7 +67,7 @@ function Admin_view_a_courses() {
         <Container
           style={{ padding: "20px", maxWidth: "100%", height: "100vh" }}
         >
-          <LoadingOverlay visible={true} overlayBlur={2} />
+          <LoadingOverlay visible={false} overlayBlur={2} />
         </Container>
       </MantineProvider>
     );
@@ -152,7 +152,7 @@ function Admin_view_a_courses() {
                 <thead>
                   <tr>
                     {[
-                      "Course Code",
+                      "Code",
                       "Course Name",
                       "Version",
                       "Credits",

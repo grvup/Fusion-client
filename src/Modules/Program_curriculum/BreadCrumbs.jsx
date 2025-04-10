@@ -76,6 +76,7 @@ const pageNameMappings = {
   "faculty_inward_files": "Inward Files",
   "stud_curriculum_view": "Curriculum-Details",
   "stud_semester_info": "Semester Information",
+  "semester_info": "Semester Information",
   "stud_course_slot_details": "Course-Slot Details",
   "faculty_course_view": "Course Details",
   "faculty_forward_form": "Edit Course Form",
@@ -92,6 +93,7 @@ const pageNameMappings = {
   "student_courses": "Courses",
   "student_course": "Course-Details",
   "admin_edit_course_slot_form": "Edit Course Slot Form",
+  "faculty_course_instructor": "Course Instructor",
   
   // Add more mappings as needed...
 };
@@ -141,12 +143,14 @@ const Breadcrumb = () => {
 
       // Append non-base pages while avoiding duplicates
       if (!basePages.includes(currentPage.split("?")[0])) {
-        const existingIndex = prev.findIndex(b => b.path === `/programme_curriculum/${currentPage}`);
-        if (existingIndex === -1) {
-          updatedBreadcrumbs = [...prev, { name: formatBreadcrumbName(currentPage), path: `/programme_curriculum/${currentPage}` }];
-        } else {
-          updatedBreadcrumbs = prev.slice(0, existingIndex + 1);
-        }
+        const currentName = formatBreadcrumbName(currentPage);
+const existingIndex = prev.findIndex(b => b.name === currentName);
+if (existingIndex === -1) {
+  updatedBreadcrumbs = [...prev, { name: currentName, path: `/programme_curriculum/${currentPage}` }];
+} else {
+  updatedBreadcrumbs = prev.slice(0, existingIndex + 1);
+}
+
       }
 
       localStorage.setItem(localStorageKey, JSON.stringify(updatedBreadcrumbs)); // Cache breadcrumbs

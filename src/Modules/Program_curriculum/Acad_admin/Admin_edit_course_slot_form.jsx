@@ -164,6 +164,8 @@ function Admin_edit_course_slot_form() {
   );
 
   const handleSubmit = async (values) => {
+    const cacheChangeKey = `CurriculumCacheChange_${curriculumid}`;
+    localStorage.setItem(cacheChangeKey, "true");
     setLoading(true);
     try {
       const formData = {
@@ -188,7 +190,7 @@ function Admin_edit_course_slot_form() {
       );
 
       if (response.status === 200) {
-        window.location.href = `/programme_curriculum/view_curriculum/?curriculum=${curriculumid}`;
+        navigate(`/programme_curriculum/view_curriculum/?curriculum=${curriculumid}`);
       }
     } catch (err) {
       console.error("Error updating course slot:", err);

@@ -139,7 +139,7 @@
 
 .semester-dropdown {
   position: absolute;
-  right: 200px;
+  right: 198px;
   top: 110px;
   background-color: white;
   border: 1px solid #ddd;
@@ -153,7 +153,7 @@
 }
 .editbatch-dropdown {
   position: absolute;
-  right: 200px;
+  right: 198px;
   top: 260px;
   background-color: white;
   border: 1px solid #ddd;
@@ -169,7 +169,7 @@
 }
 .Linkbatch-dropdown {
   position: absolute;
-  right: 200px;
+  right: 198px;
   top: 310px;
   background-color: white;
   border: 1px solid #ddd;
@@ -223,7 +223,7 @@
 
 .instigate-semester-dropdown {
   position: absolute;
-  right: 200px;
+  right: 198px;
   top: 118px;
   background-color: white;
   border: 1px solid #ddd;

@@ -30,6 +30,7 @@ function Admin_add_programme_form() {
   const handleSubmit = async (values) => {
     const apiUrl = `${host}/programme_curriculum/api/admin_add_programme/`;
     const token = localStorage.getItem("token");
+    localStorage.setItem("AdminProgrammesCachechange", "true");
     console.log(values)
     try {
       setLoading(true);

@@ -82,6 +82,7 @@ function Admin_add_course_instructor() {
   }, []);
 
   const handleSubmit = async (values) => {
+    localStorage.setItem("AdminInstructorsCacheChange", "true");
     console.log(values);
     const token = localStorage.getItem("authToken");
   
