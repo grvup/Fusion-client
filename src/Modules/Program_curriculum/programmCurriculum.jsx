@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PropTypes from 'prop-types';
 import { Layout } from "../../components/layout";
 import AdminViewAllCourses from "./Acad_admin/Admin_view_all_courses";
 import AdminViewACourse from "./Acad_admin/Admin_view_a_course";
@@ -64,72 +65,74 @@ import BreadcrumbTabsAcadadmin from "./Acad_admin/BreadcrumbTabsAcadadmin";
 import BreadcrumbTabs from "./Student/BreadcrumbTabsStudent";
 import BreadcrumbTabsFaculty from "./Faculty/BreadcrumbTagsFaculty";
 
-export default function ProgrammeCurriculumRoutes() {
+// Define role groups outside component
+const ADMIN_ROLES = ["acadadmin", "studentacadadmin"];
+const FACULTY_ROLES = [
+  "Professor",
+  "Assistant Professor",
+  "Associate Professor",
+  "Dean Academic",
+  "HOD (CSE)",
+  "HOD (ECE)",
+  "HOD (ME)",
+  "HOD (NS)",
+  "HOD (Design)",
+  "HOD (Liberal Arts)",
+];
+const STUDENT_ROLES = ["student", "Guest-User"];
+
+// Protected route component moved outside
+const ProtectedRoute = ({ allowedRoles, children }) => {
   const role = useSelector((state) => state.user.role);
+  const [isLoading, setIsLoading] = useState(role === "Guest-User");
+  const [hasAccess, setHasAccess] = useState(allowedRoles.includes(role));
 
-  // Define role groups
-  const ADMIN_ROLES = ["acadadmin", "studentacadadmin"];
-  const FACULTY_ROLES = [
-    "Professor",
-    "Assistant Professor",
-    "Associate Professor",
-    "Dean Academic",
-    "HOD (CSE)",
-    "HOD (ECE)",
-    "HOD (ME)",
-    "HOD (NS)",
-    "HOD (Design)",
-    "HOD (Liberal Arts)",
-  ];
-  const STUDENT_ROLES = ["student", "Guest-User"];
-
-  // Protected route component with timeout
-  const ProtectedRoute = ({ allowedRoles, children }) => {
-    const [isLoading, setIsLoading] = useState(role === "Guest-User");
-    const [hasAccess, setHasAccess] = useState(allowedRoles.includes(role));
-
-    useEffect(() => {
-      let timer;
-      if (role === "Guest-User") {
-        timer = setTimeout(() => {
-          setHasAccess(allowedRoles.includes(role));
-          setIsLoading(false);
-        }, 2000);
-      } else {
+  useEffect(() => {
+    let timer;
+    if (role === "Guest-User") {
+      timer = setTimeout(() => {
         setHasAccess(allowedRoles.includes(role));
         setIsLoading(false);
-      }
-
-      return () => {
-        if (timer) clearTimeout(timer);
-      };
-    }, [role, allowedRoles]);
-
-    if (isLoading) {
-      return <div>Loading...</div>;
+      }, 2000);
+    } else {
+      setHasAccess(allowedRoles.includes(role));
+      setIsLoading(false);
     }
 
-    return hasAccess ? children : <Navigate to="/dashboard" />;
-  };
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [role, allowedRoles]);
 
-  // Determine which navigation tabs to show based on role
-  const NavTab = () => {
-    const TabComponent = STUDENT_ROLES.includes(role)
-      ? BreadcrumbTabs
-      : FACULTY_ROLES.includes(role)
-        ? BreadcrumbTabsFaculty
-        : ADMIN_ROLES.includes(role)
-          ? BreadcrumbTabsAcadadmin
-          : () => null;
+  if (isLoading) return <div>Loading...</div>;
+  return hasAccess ? children : <Navigate to="/dashboard" />;
+};
 
-    return (
-      <>
-        <Breadcrumb />
-        <TabComponent />
-      </>
-    );
-  };
+ProtectedRoute.propTypes = {
+  allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
+  children: PropTypes.node.isRequired
+};
 
+// NavTab component moved outside
+const NavTab = () => {
+  const role = useSelector((state) => state.user.role);
+  const TabComponent = STUDENT_ROLES.includes(role)
+    ? BreadcrumbTabs
+    : FACULTY_ROLES.includes(role)
+      ? BreadcrumbTabsFaculty
+      : ADMIN_ROLES.includes(role)
+        ? BreadcrumbTabsAcadadmin
+        : () => null;
+
+  return (
+    <>
+      <Breadcrumb />
+      <TabComponent />
+    </>
+  );
+};
+
+export default function ProgrammeCurriculumRoutes() {
   return (
     <>
       <Routes>
@@ -247,7 +250,7 @@ export default function ProgrammeCurriculumRoutes() {
           }
         />
         <Route
-          path="/faculty_course_view"
+          path="/faculty_course_view/:id"
           element={
             <ProtectedRoute allowedRoles={FACULTY_ROLES}>
               <Layout>

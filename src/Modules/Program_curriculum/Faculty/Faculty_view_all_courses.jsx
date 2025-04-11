@@ -192,7 +192,7 @@ function Admin_view_a_courses() {
                         }}
                       >
                         <Link
-                          to={`/programme_curriculum/faculty_course_view?course=${course.code}`}
+                          to={`/programme_curriculum/faculty_course_view/${course.id}`}
                           style={{
                             color: "#3498db",
                             textDecoration: "none",

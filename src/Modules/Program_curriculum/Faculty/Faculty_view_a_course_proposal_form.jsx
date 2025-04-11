@@ -1,6 +1,6 @@
-import { Button, Card, Grid, Table, Text } from "@mantine/core";
+import { Card, Table, Text } from "@mantine/core";
 import React from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 function Faculty_view_a_course_proposal_form() {
   const [searchParams] = useSearchParams();
@@ -46,6 +46,7 @@ function Faculty_view_a_course_proposal_form() {
       "Object-Oriented Programming in Java by Alan Turing",
     ],
   };
+  console.log(courseDetails);
 
   return (
     <div
@@ -53,342 +54,218 @@ function Faculty_view_a_course_proposal_form() {
       style={{ display: "flex", flexDirection: "column" }}
     >
       {/* Course Details Card */}
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex",width: "100%", justifyContent: "center" }}>
         <Card shadow="sm" padding="lg" className="course-card">
           <Text size="lg" weight={700} className="course-title">
-            {courseDetails.code} - {courseDetails.name} - v
-            {courseDetails.version}
+            {courseProposal.fields.code} - {courseProposal.fields.name}
           </Text>
-          {courseProposalData.length > 0 ? (
-            courseProposalData.map((proposal, index) => (
-              <Table className="course-table" striped highlightOnHover>
-                <tbody>
-                  <tr key={index}>
-                    <td
-                      style={{
-                        width: "50%",
-                        color: "blue",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Course Code
+          <Table className="course-table" striped highlightOnHover>
+            <tbody>
+              <tr>
+                <td style={{ width: "50%", color: "blue", fontWeight: "bold" }}>
+                  Course Code
+                </td>
+                <td style={{ width: "50%" }}>{courseProposal.fields.code}</td>
+              </tr>
+              <tr>
+                <td style={{ color: "blue", fontWeight: "bold" }}>Course Name</td>
+                <td>{courseProposal.fields.name}</td>
+              </tr>
+              <tr>
+                <td style={{ color: "blue", fontWeight: "bold" }}>Version</td>
+                <td>{courseProposal.fields.version}</td>
+              </tr>
+
+              {/* Contact Hours Section */}
+              <tr>
+                <td style={{ padding: "0" }}>
+                  <tr>
+                    <td rowSpan="5" style={{ width: "10%", color: "blue", fontWeight: "bold" }}>
+                      Contact Hours
                     </td>
-                    <td style={{ width: "50%" }}>{proposal.code}</td>
+                    <td style={{ width: "10%", color: "blue", fontWeight: "bold" }}>
+                      Lecture
+                    </td>
                   </tr>
                   <tr>
-                    <td style={{ color: "blue", fontWeight: "bold" }}>
-                      Course Name
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Tutorial
                     </td>
-                    <td>{proposal.name}</td>
                   </tr>
                   <tr>
-                    {/* <td style={{ color: "blue", fontWeight: "bold" }}>
-                      Version
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Lab
                     </td>
-                    <td>{courseDetails.version}</td> */}
-                  </tr>
-
-                  <tr>
-                    <td style={{ padding: "0" }}>
-                      <tr>
-                        <td
-                          rowSpan="5"
-                          style={{
-                            width: "10%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          contactHours
-                        </td>
-                        <td
-                          style={{
-                            width: "10%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Lecture
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Tutorial
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Lab
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Discussion
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Project
-                        </td>
-                      </tr>
-                    </td>
-
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.lecture_hours}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.tutorial_hours}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.pratical_hours}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.discussion_hours}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.project_hours}
-                      </td>
-                    </tr>
                   </tr>
                   <tr>
-                    <td style={{ color: "blue", fontWeight: "bold" }}>
-                      Credits
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Discussion
                     </td>
-                    <td>{proposal.credit}</td>
                   </tr>
-
                   <tr>
-                    <td style={{ padding: "0" }}>
-                      <tr>
-                        <td
-                          rowSpan="2"
-                          style={{
-                            width: "10%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Pre-requisites
-                        </td>
-                        <td
-                          style={{
-                            width: "10%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Info
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Courses
-                        </td>
-                      </tr>
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Project
                     </td>
-
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.pre_requisits}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {courseDetails.prerequisites.Courses}
-                      </td>
-                    </tr>
                   </tr>
+                </td>
 
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.lecture_hours}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.tutorial_hours}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.pratical_hours}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.discussion_hours}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.project_hours}
+                  </td>
+                </tr>
+              </tr>
+
+              <tr>
+                <td style={{ color: "blue", fontWeight: "bold" }}>Credits</td>
+                <td>{courseProposal.fields.credits}</td>
+              </tr>
+
+              {/* Prerequisites Section */}
+              <tr>
+                <td style={{ padding: "0" }}>
                   <tr>
-                    <td style={{ color: "blue", fontWeight: "bold" }}>
-                      Syllabus
+                    <td rowSpan="2" style={{ width: "10%", color: "blue", fontWeight: "bold" }}>
+                      Pre-requisites
                     </td>
-                    <td>{proposal.syllabus}</td>
+                    <td style={{ width: "10%", color: "blue", fontWeight: "bold" }}>
+                      Info
+                    </td>
                   </tr>
-
                   <tr>
-                    <td style={{ padding: "0" }}>
-                      <tr>
-                        <td
-                          rowSpan="7"
-                          style={{
-                            width: "10%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Evaluation Schema
-                        </td>
-                        <td
-                          style={{
-                            width: "10%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Quiz-1
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Mid-Sem-Exam
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Quiz-2
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          End-Sem-Exam
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Project
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Lab
-                        </td>
-                      </tr>
-                      <tr>
-                        <td
-                          style={{
-                            width: "15%",
-                            color: "blue",
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Course Attendance
-                        </td>
-                      </tr>
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Courses
                     </td>
-
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.percent_quiz_1}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.percent_midsem}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.percent_quiz_2}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.percent_endSem}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.percent_project}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.percent_lab_evaluation}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style={{ width: "3%", backgroundColor: "white" }}>
-                        {proposal.percent_course_attendance}
-                      </td>
-                    </tr>
                   </tr>
+                </td>
 
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.pre_requisits}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.prerequisites_courses}
+                  </td>
+                </tr>
+              </tr>
+
+              <tr>
+                <td style={{ color: "blue", fontWeight: "bold" }}>Syllabus</td>
+                <td>{courseProposal.fields.syllabus}</td>
+              </tr>
+
+              {/* Evaluation Schema Section */}
+              <tr>
+                <td style={{ padding: "0" }}>
                   <tr>
-                    <td style={{ color: "blue", fontWeight: "bold" }}>
-                      References & Books
+                    <td rowSpan="7" style={{ width: "10%", color: "blue", fontWeight: "bold" }}>
+                      Evaluation Schema
                     </td>
-                    <td>{proposal.ref_books}</td>
+                    <td style={{ width: "10%", color: "blue", fontWeight: "bold" }}>
+                      Quiz-1
+                    </td>
                   </tr>
-                </tbody>
-              </Table>
-            ))
-          ) : (
-            <p>No data</p>
-          )}
+                  <tr>
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Mid-Sem-Exam
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Quiz-2
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      End-Sem-Exam
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Project
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Lab
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ width: "15%", color: "blue", fontWeight: "bold" }}>
+                      Course Attendance
+                    </td>
+                  </tr>
+                </td>
+
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.percent_quiz_1}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.percent_midsem}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.percent_quiz_2}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.percent_endsem}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.percent_project}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.percent_lab_evaluation}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ width: "3%", backgroundColor: "white" }}>
+                    {courseProposal.fields.percent_course_attendance}
+                  </td>
+                </tr>
+              </tr>
+
+              <tr>
+                <td style={{ color: "blue", fontWeight: "bold" }}>References & Books</td>
+                <td>{courseProposal.fields.ref_books}</td>
+              </tr>
+            </tbody>
+          </Table>
         </Card>
 
         {/* Buttons Grid */}
-        <Grid className="button-grid" style={{ margin: "0 3vw 0 1vw" }}>
+        {/* <Grid className="button-grid" style={{ margin: "0 3vw 0 1vw" }}>
           <Grid.Col span={15}>
             <Link
               to={`/programme_curriculum/faculty_forward_form?course=${courseDetails.code}`}
@@ -399,7 +276,7 @@ function Faculty_view_a_course_proposal_form() {
               </Button>
             </Link>
           </Grid.Col>
-        </Grid>
+        </Grid> */}
       </div>
 
       <style>{`
@@ -419,6 +296,7 @@ function Faculty_view_a_course_proposal_form() {
           background-color: white;
           border-radius: 8px;
           padding: 20px;
+          overflow-x: scroll;
         }
 
         .course-title {
