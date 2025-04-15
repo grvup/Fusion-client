@@ -40,6 +40,7 @@ function FacultyCourseForwardForm() {
     }
     return formatted.replace(/(AM|PM)/, (match) => match.toLowerCase());
   }
+
   const form = useForm({
     initialValues: {
       fileId: "",
@@ -61,22 +62,18 @@ function FacultyCourseForwardForm() {
     (proposal) => proposal.id === parseInt(id, 10),
   );
 
-  console.log(courseProposal);
   const [superiorData, setSuperiorData] = useState(null);
   const [receiverOptions, setReceiverOptions] = useState([]);
   const [designationOptions, setDesignationOptions] = useState([]);
   const [disciplines, setDisciplines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log(form.values);
-  // const courseProposalData = Object.entries(courseProposal.fields);
-  // console.log(courseProposalData);
+
   useEffect(() => {
     const fetchSuperiorData = async () => {
       try {
         const response = await fetchFacultySuperiorData(username, role);
         const data = await response.json();
-        console.log(data);
         setSuperiorData(data.superior_data);
         if (data.superior_data) {
           setReceiverOptions([
@@ -103,10 +100,6 @@ function FacultyCourseForwardForm() {
     const fetchDisciplines = async () => {
       try {
         const response = await fetchDisciplinesData();
-        // console.log(response);
-
-        // const data = [...d.name, ...d.acronym, ...d.id];
-
         const disciplineList = response.map((discipline) => ({
           value: discipline.id.toString(),
           label: `${discipline.name} (${discipline.acronym})`,
@@ -121,7 +114,6 @@ function FacultyCourseForwardForm() {
     fetchDisciplines();
 
     if (id) {
-      // Fetch data from API and set form values
       form.setValues({
         fileId: courseProposal.file_id,
         uploader: username,
@@ -141,15 +133,38 @@ function FacultyCourseForwardForm() {
     }
   }, [id]);
 
-  if (loading) return <div>Loading...</div>;
-  //   if (error) return <div>Error: {error}</div>;
-  if (!superiorData) return <div>No superior data found</div>;
+  const handleReject = async () => {
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const response = await fetch(
+        `${host}/programme_curriculum/api/reject_form/${id}/?username=${username}&des=${role}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (response.ok) {
+        alert("Proposal rejected successfully!");
+        navigate("/programme_curriculum/faculty_outward_files");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to reject proposal");
+      }
+    } catch (err) {
+      console.error("Rejection error:", err);
+      alert(`Error rejecting proposal: ${err.message}`);
+    }
+  };
 
   const handleSubmit = async (values) => {
     const token = localStorage.getItem("authToken");
 
     try {
-      // Prepare the payload with all form values
       const payload = {
         fileId: values.fileId,
         uploader: values.uploader,
@@ -165,31 +180,26 @@ function FacultyCourseForwardForm() {
           method: "POST",
           headers: {
             Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
         },
       );
 
       if (response.ok) {
-        // alert("Form submitted successfully!");
         navigate("/programme_curriculum/faculty_outward_files");
-      }
-      if (!response.ok) {
+      } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to submit form");
       }
-
-      const responseData = await response.json();
-      alert("Form submitted successfully!");
-      console.log("Submission successful:", responseData);
-      // Optionally redirect or reset the form
-      // navigate('/success-page');
-      // form.reset();
-    } catch (errors) {
-      console.error("Submission error:", errors);
-      alert(`Error submitting form: ${error.message}`);
+    } catch (e) {
+      console.error("Submission error:", e);
+      alert(`Error submitting form: ${e.message}`);
     }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (!superiorData) return <div>No superior data found</div>;
 
   return (
     <div
@@ -212,7 +222,6 @@ function FacultyCourseForwardForm() {
           marginTop: "1rem",
         }}
       >
-        {/* Form Section */}
         <div
           style={{
             maxWidth: "1200px",
@@ -319,8 +328,12 @@ function FacultyCourseForwardForm() {
             </Stack>
 
             <Group position="right" mt="lg">
-              <Button variant="outline" className="cancel-btn">
-                Cancel
+              <Button
+                variant="outline"
+                className="cancel-btn"
+                onClick={handleReject}
+              >
+                Reject
               </Button>
               <Button type="submit" className="submit-btn">
                 Submit
