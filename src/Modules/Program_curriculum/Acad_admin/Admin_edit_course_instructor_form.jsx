@@ -91,6 +91,7 @@ function Admin_edit_course_instructor() {
   }, [id]);
 
   const handleSubmit = async (values) => {
+    localStorage.setItem("AdminInstructorsCacheChange", "true");
     try {
       const response = await fetch(
         `${host}/programme_curriculum/api/admin_update_course_instructor/${id}/`,
@@ -124,6 +125,9 @@ function Admin_edit_course_instructor() {
   if (loading) {
     return <div>Loading...</div>;
   }
+  const handleCancel = () => {
+    navigate("/programme_curriculum/admin_course_instructor");
+  };
 
   return (
     <div
@@ -219,7 +223,11 @@ function Admin_edit_course_instructor() {
                 />
 
                 <Group position="right" mt="lg">
-                  <Button variant="outline" className="cancel-btn">
+                  <Button
+                    variant="outline"
+                    className="cancel-btn"
+                    onClick={handleCancel}
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" className="submit-btn">

@@ -125,7 +125,7 @@ function Admin_edit_course_form() {
   const handleSubmit = async (values) => {
     const apiUrl = `${host}/programme_curriculum/api/admin_update_course/${id}/`;
     const token = localStorage.getItem("authToken");
-
+    localStorage.setItem("AdminCoursesCachechange", "true");
     const payload = {
       name: values.courseName,
       code: values.courseCode,

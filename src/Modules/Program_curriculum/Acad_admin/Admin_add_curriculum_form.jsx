@@ -113,6 +113,9 @@ function AdminAddCurriculumForm() {
       setLoading(false);
     }
   };
+  const handleCancel = () => {
+    navigate("/programme_curriculum/acad_view_all_working_curriculums");
+  };
 
   return (
     <Container
@@ -226,12 +229,12 @@ function AdminAddCurriculumForm() {
 
             <Group position="right" mt="lg">
               <Button
-                variant="outline"
-                onClick={() => form.reset()}
-                className="cancel-btn"
-              >
-                Cancel
-              </Button>
+                                                                     variant="outline"
+                                                                     className="cancel-btn"
+                                                                     onClick={handleCancel}
+                                                                   >
+                                                                     Cancel
+                                                                   </Button>
               <Button type="submit" className="submit-btn" loading={loading}>
                 Submit
               </Button>

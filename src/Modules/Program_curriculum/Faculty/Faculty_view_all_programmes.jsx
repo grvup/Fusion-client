@@ -7,6 +7,7 @@ import {
   Text,
 } from "@mantine/core";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { fetchAllProgrammes } from "../api/api";
 
 function ViewAllProgrammes() {
@@ -51,12 +52,12 @@ function ViewAllProgrammes() {
             borderRight: "1px solid #d3d3d3",
           }}
         >
-          <a
-            href={`/programme_curriculum/curriculums/${element.id}`}
+          <Link
+            to={`/programme_curriculum/curriculums/${element.id}`}
             style={{ color: "#3498db", textDecoration: "none" }}
           >
             {element.name}
-          </a>
+          </Link>
         </td>
         <td
           style={{

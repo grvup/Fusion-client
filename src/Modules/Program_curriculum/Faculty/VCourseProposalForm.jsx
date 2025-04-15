@@ -29,7 +29,11 @@ function VCourseProposalForm() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const id = searchParams.get("id");
-  const courseProposals = JSON.parse(sessionStorage.getItem("courseProposals"));
+  const update = searchParams.get("update");
+
+  const courseProposals = JSON.parse(
+    sessionStorage.getItem(update === "0" ? "courseProposals" : "updateProposals")
+  );
   const courseProposal = courseProposals.find(
     (proposal) => proposal.pk === parseInt(id, 10),
   );
@@ -145,7 +149,7 @@ function VCourseProposalForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit form");
+        alert(errorData.message || "Failed to submit form");
       }
       if (response.ok) {
         // alert("Form submitted successfully!");

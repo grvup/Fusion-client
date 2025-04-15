@@ -36,6 +36,8 @@ function CourseSlotDetails() {
 
   const handleDeleteCourseSlot = async () => {
     try {
+      const cacheChangeKey = `CurriculumCacheChange_${curriculumId}`;
+      localStorage.setItem(cacheChangeKey, "true");
       const token = localStorage.getItem("authToken");
       const response = await axios.delete(
         `${host}/programme_curriculum/api/admin_delete_courseslot/${courseslotId}/`,

@@ -79,7 +79,7 @@ function Admin_add_discipline_form() {
       setLoading(true);
       const response = await fetch(apiUrl, {
         method: "POST",
-        headers:{
+        headers: {
           Authorization: `Token ${token}`,
         },
         body: JSON.stringify(payload),
@@ -113,6 +113,9 @@ function Admin_add_discipline_form() {
   //     {item.title}
   //   </Anchor>
   // ));
+  const handleCancel = () => {
+    navigate("/programme_curriculum/acad_discipline_view");
+  };
 
   return (
     <div
@@ -214,7 +217,11 @@ function Admin_add_discipline_form() {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
+                <Button
+                  variant="outline"
+                  className="cancel-btn"
+                  onClick={handleCancel}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" className="submit-btn" loading={loading}>

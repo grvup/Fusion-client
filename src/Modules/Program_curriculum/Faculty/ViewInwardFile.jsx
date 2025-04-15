@@ -78,7 +78,7 @@ function ViewInward() {
   const [viewfileData, setViewFileData] = useState([]); // State to hold the fetched data
   const [viewcourseData, setViewCourseData] = useState([]); // State to hold the fetched data
   const [activeTab, setActiveTab] = useState("notesheet"); // State to track the active tab
-  console.log(viewfileData, viewcourseData);
+  // console.log(viewfileData, viewcourseData);
   useEffect(() => {
     const fetchData = async (uname, des) => {
       try {
@@ -89,17 +89,18 @@ function ViewInward() {
         const data = await response.json();
         console.log(data);
         setNoteData({
-          createdBy: data.data.tracking?.current_id || "",
-          designation: data.data.tracking?.current_design || "",
+          createdBy: data.data.proposal?.uploader || "",
+          designation: data.data.proposal?.designation || "",
           fileId: data.data.proposal?.id || "",
           subject: data.data.proposal?.subject || "",
           description: data.data.proposal?.description || "",
           sentBy: data.data.tracking?.current_id || "",
+          sentByDesignation:data.data.tracking?.current_design || "",
           receivedBy: data.data.tracking?.receive_id || "",
           receivedByDesignation: data.data.tracking?.receive_design || "",
           remarks: data.data.tracking?.remarks || "",
-          uploader: data.data.proposal?.uploader || "",
-          uploaderDesignation: data.data.tracking?.current_design || "",
+          uploader: data.data.tracking?.receive_id || "",
+          uploaderDesignation: data.data.tracking?.receive_design || "",
           discipline: data.data.tracking?.disciplines_name || "",
           disciplineAcronym: data.data.tracking?.disciplines_acronym || "",
           forwarddate: data.data.tracking?.forward_date || "",
@@ -313,7 +314,7 @@ function ViewInward() {
               {/* <Group position="apart" style={{ marginTop: "10px" }}> */}
               <Text style={textStyle}>
                 {" "}
-                <b>Sent By:</b> {noteData.sentBy} - {noteData.designation}, {formatDateWithRounding(noteData.forwarddate)}
+                <b>Sent By:</b> {noteData.sentBy} - {noteData.sentByDesignation}, {formatDateWithRounding(noteData.forwarddate)}
               </Text>
             </Box>
             <Box

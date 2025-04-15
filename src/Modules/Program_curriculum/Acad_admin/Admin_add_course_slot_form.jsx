@@ -14,7 +14,7 @@ import {
   MultiSelect,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 // import { useSearchParams } from 'react-router-dom';
 import {
@@ -37,6 +37,7 @@ function Admin_add_course_slot_form() {
   const [searchValue, setSearchValue] = useState("");
   // const [semesterData, setSemesterData] = useState(null);
   const [semesterOptions, setSemesterOptions] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadCourseSlotChoices = async () => {
@@ -185,6 +186,8 @@ function Admin_add_course_slot_form() {
   // ));
 
   const handleSubmit = async (values) => {
+    const cacheChangeKey = `CurriculumCacheChange_${curriculumid}`;
+    localStorage.setItem(cacheChangeKey, "true");
     setLoading(true);
     try {
       const formData = {
@@ -210,9 +213,8 @@ function Admin_add_course_slot_form() {
 
       if (response.status === 200) {
         // onSuccess?.();
-        // Redirect to curriculum semesters page
-        window.location.href = `/programme_curriculum/view_curriculum/?curriculum=${curriculumid}`;
-      }
+        navigate(`/programme_curriculum/view_curriculum?curriculum=${curriculumid}`);
+      }      
     } catch (err) {
       console.error("Error submitting course slot:", err);
       // Handle error appropriately
@@ -221,6 +223,11 @@ function Admin_add_course_slot_form() {
     }
   };
   console.log(form.values);
+  const handleCancel = () => {
+    navigate(
+      `/programme_curriculum/view_curriculum?curriculum=${curriculumid}`,
+    );
+  };
   return (
     <div
       style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
@@ -395,9 +402,13 @@ function Admin_add_course_slot_form() {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
-                  Cancel
-                </Button>
+                <Button
+                                 variant="outline"
+                                 className="cancel-btn"
+                                 onClick={handleCancel}
+                               >
+                                 Cancel
+                               </Button>
                 <Button type="submit" className="submit-btn">
                   Submit
                 </Button>

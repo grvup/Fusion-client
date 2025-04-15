@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom"; // Adjust the import path as needed
 import { Breadcrumbs, Anchor, Group, Text, Switch, Button, Textarea } from "@mantine/core";
 
 function InstigateSemesterForm() {
@@ -17,15 +18,15 @@ function InstigateSemesterForm() {
     });
   };
 
-  const breadcrumbItems = [
-    { title: "Program and Curriculum", href: "#" },
-    { title: "Curriculums", href: "#" },
-    { title: "CSE UG Curriculum", href: "#" },
-  ].map((item, index) => (
-    <Anchor href={item.href} key={index}>
-      {item.title}
-    </Anchor>
-  ));
+  // const breadcrumbItems = [
+  //   { title: "Program and Curriculum", href: "#" },
+  //   { title: "Curriculums", href: "#" },
+  //   { title: "CSE UG Curriculum", href: "#" },
+  // ].map((item, index) => (
+  //   <Link to={item.href} key={index}>
+  //     {item.title}
+  //   </Link>
+  // ));
 
   return (
     <div style={containerStyle}>

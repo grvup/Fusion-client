@@ -82,6 +82,7 @@ function Admin_add_course_instructor() {
   }, []);
 
   const handleSubmit = async (values) => {
+    localStorage.setItem("AdminInstructorsCacheChange", "true");
     console.log(values);
     const token = localStorage.getItem("authToken");
   
@@ -163,8 +164,7 @@ function Admin_add_course_instructor() {
     }
   };
   const handleCancel = () => {
-    setFile(null);
-    setUploadedFile(null);
+    navigate("/programme_curriculum/admin_course_instructor");
   };
 
   return (
@@ -286,9 +286,13 @@ function Admin_add_course_instructor() {
                     />
 
                     <Group position="right" mt="lg">
-                      <Button variant="outline" className="cancel-btn">
-                        Cancel
-                      </Button>
+                      <Button
+                                        variant="outline"
+                                        className="cancel-btn"
+                                        onClick={handleCancel}
+                                      >
+                                        Cancel
+                                      </Button>
                       <Button type="submit" className="submit-btn">
                         Submit
                       </Button>

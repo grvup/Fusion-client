@@ -86,9 +86,9 @@ function InwardFilesTable({ inwardFiles, username, role, onArchive }) {
                       style={{ backgroundColor: "#2ecc71" }}
                       onClick={() => {
                         if (role === "Dean Academic") {
-                          window.location.href = `/programme_curriculum/forward_course_forms_II/?id=${inward.id}`;
+                          navigate(`/programme_curriculum/forward_course_forms_II/?id=${inward.id}`);
                         } else {
-                          window.location.href = `/programme_curriculum/forward_course_forms/?id=${inward.id}`;
+                          navigate(`/programme_curriculum/forward_course_forms/?id=${inward.id}`);
                         }
                       }}
                     >

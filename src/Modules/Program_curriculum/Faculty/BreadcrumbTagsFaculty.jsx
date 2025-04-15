@@ -45,6 +45,10 @@ function BreadcrumbTabsFaculty() {
     { title: "Discipline", url: "/programme_curriculum/faculty_discipline" },
     { title: "Batches", url: "/programme_curriculum/faculty_batches" },
     { title: "Courses", url: "/programme_curriculum/faculty_courses" },
+    {
+      title: "Course Instructor",
+      url: "/programme_curriculum/faculty_course_instructor",
+    },
     // Only show Course Proposal for non-HOD/DEAN roles
     ...(!isHodOrDean ? [{
       title: "Course Proposal",

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Table, ScrollArea, Container, Button } from "@mantine/core";
 import "./Faculty_view_all_courses.css";
 
@@ -114,12 +114,12 @@ function BDesView() {
                 }}
               >
                 <td style={{ padding: "10px" }}>
-                  <a
-                    href={`/programme_curriculum/view_curriculum?curriculum=${curr.id}`}
+                  <Link
+                    to={`/programme_curriculum/view_curriculum?curriculum=${curr.id}`}
                     style={{ textDecoration: "none" }}
                   >
                     {curr.name}
-                  </a>
+                  </Link>
                 </td>
                 <td style={{ padding: "10px" }}>{curr.version}</td>
                 <td

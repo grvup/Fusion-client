@@ -68,8 +68,8 @@ function AcademicPage() {
     tabItems = [{ title: "View Roll List" }];
     tabComponents = [ViewRollList];
   } else {
-    tabItems = [{ title: "View Roll List" }];
-    tabComponents = [ViewRollList];
+    tabItems = [{ title: "Registered Courses" },];
+    tabComponents = [RegisteredCourses];
   }
 
   const ActiveComponent = tabComponents[parseInt(activeTab, 10)];

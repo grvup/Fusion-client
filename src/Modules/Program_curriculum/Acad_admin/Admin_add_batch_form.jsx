@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import axios from "axios";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "@mantine/hooks";
 import {
   fetchDisciplines,
@@ -25,6 +25,9 @@ function Admin_add_batch_form() {
   const [batchNames, setBatchNames] = useState([]); // State for batch names
   const [disciplines, setDisciplines] = useState([]); // State for disciplines
   const [unlinkedCurriculums, setUnlinkedCurriculums] = useState([]); // State for unlinked curriculums
+
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true); // State for loading
   const [error, setError] = useState(null); // State for error handling
 
@@ -101,7 +104,7 @@ function Admin_add_batch_form() {
       console.log(response);
       if (response.data.message) {
         alert("Batch added successfully!");
-        window.location.href = "/programme_curriculum/admin_batches/"; // Redirect to batches page
+        navigate("/programme_curriculum/admin_batches/"); // Redirect to batches page
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to add batch");
@@ -124,6 +127,9 @@ function Admin_add_batch_form() {
   if (error) {
     return <Text color="red">{error}</Text>;
   }
+  const handleCancel = () => {
+    navigate("/programme_curriculum/admin_batches");
+  };
 
   return (
     <div
@@ -248,9 +254,13 @@ function Admin_add_batch_form() {
               </Stack>
 
               <Group position="right" mt="lg">
-                <Button variant="outline" className="cancel-btn">
-                  Cancel
-                </Button>
+                 <Button
+                                                        variant="outline"
+                                                        className="cancel-btn"
+                                                        onClick={handleCancel}
+                                                      >
+                                                        Cancel
+                                                      </Button>
                 <Button type="submit" className="submit-btn">
                   Submit
                 </Button>

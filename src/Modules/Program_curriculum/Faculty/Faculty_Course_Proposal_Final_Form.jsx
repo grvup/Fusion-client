@@ -30,7 +30,7 @@ function FacultyCourseProposalFinalForm() {
       courseName: "",
       courseCode: "",
       courseCredit: 4,
-      courseVersion: 1,
+      courseVersion: 2,
       lectureHours: 3,
       tutorialHours: 1,
       practicalHours: 2,
@@ -191,7 +191,7 @@ function FacultyCourseProposalFinalForm() {
       } else {
         const errorText = await response.text();
         console.error("Error:", errorText);
-        alert("Failed to add course.");
+        alert("Failed to add course."+errorText);
       }
     } catch (error) {
       console.error("Network Error:", error);
@@ -368,10 +368,10 @@ function FacultyCourseProposalFinalForm() {
                         <NumberInput
                           placeholder="1.0"
                           value={form.values.courseVersion}
-                          onChange={(event) =>
+                          onChange={(value) =>
                             form.setFieldValue(
                               "courseVersion",
-                              event.currentTarget.value,
+                              value,
                             )
                           }
                           required
