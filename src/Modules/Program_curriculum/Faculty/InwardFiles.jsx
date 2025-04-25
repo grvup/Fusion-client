@@ -18,7 +18,14 @@ import { host } from "../../../routes/globalRoutes";
 function InwardFilesTable({ inwardFiles, username, role, onArchive }) {
   const navigate = useNavigate();
   return (
-    <div style={{ maxHeight: "61vh", overflowY: "auto", border: "1px solid #d3d3d3", borderRadius: "10px" }}>
+    <div
+      style={{
+        maxHeight: "61vh",
+        overflowY: "auto",
+        border: "1px solid #d3d3d3",
+        borderRadius: "10px",
+      }}
+    >
       <style>
         {`
           div::-webkit-scrollbar {
@@ -29,23 +36,28 @@ function InwardFilesTable({ inwardFiles, username, role, onArchive }) {
       <Table style={{ backgroundColor: "white", padding: "20px", flexGrow: 1 }}>
         <thead>
           <tr>
-            {["Received as", "Send by", "File ID", "Remark", "Date", "Actions"].map(
-              (header, index) => (
-                <th
-                  key={index}
-                  style={{
-                    padding: "15px 20px",
-                    backgroundColor: "#C5E2F6",
-                    color: "#3498db",
-                    fontSize: "16px",
-                    textAlign: "center",
-                    borderRight: "1px solid #d3d3d3",
-                  }}
-                >
-                  {header}
-                </th>
-              ),
-            )}
+            {[
+              "Received as",
+              "Send by",
+              "File ID",
+              "Remark",
+              "Date",
+              "Actions",
+            ].map((header, index) => (
+              <th
+                key={index}
+                style={{
+                  padding: "15px 20px",
+                  backgroundColor: "#C5E2F6",
+                  color: "#3498db",
+                  fontSize: "16px",
+                  textAlign: "center",
+                  borderRight: "1px solid #d3d3d3",
+                }}
+              >
+                {header}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
@@ -53,47 +65,108 @@ function InwardFilesTable({ inwardFiles, username, role, onArchive }) {
             inwardFiles.map((inward, index) => (
               <tr
                 key={index}
-                style={{ backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff" }}
+                style={{
+                  backgroundColor: index % 2 !== 0 ? "#E6F7FF" : "#ffffff",
+                }}
               >
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {inward.receive_id__username}-{inward.receive_design__name}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {inward.current_id}-{inward.current_design}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {inward.file_id}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {inward.remarks}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   {formatDateWithRounding(inward.receive_date)}
                 </td>
-                <td style={{ padding: "15px 20px", textAlign: "center", color: "black", borderRight: "1px solid #d3d3d3" }}>
+                <td
+                  style={{
+                    padding: "15px 20px",
+                    textAlign: "center",
+                    color: "black",
+                    borderRight: "1px solid #d3d3d3",
+                  }}
+                >
                   <Flex justify="space-between" gap={5}>
                     <Button
                       variant="filled"
                       style={{ backgroundColor: "#3498db" }}
                       onClick={() => {
-                        navigate(`/programme_curriculum/view_inward_file/?id=${inward.id}`);
+                        navigate(
+                          `/programme_curriculum/view_inward_file/?id=${inward.id}`,
+                        );
                       }}
                     >
                       View
                     </Button>
-                    <Button
-                      variant="filled"
-                      style={{ backgroundColor: "#2ecc71" }}
-                      onClick={() => {
-                        if (role === "Dean Academic") {
-                          navigate(`/programme_curriculum/forward_course_forms_II/?id=${inward.id}`);
-                        } else {
-                          navigate(`/programme_curriculum/forward_course_forms/?id=${inward.id}`);
-                        }
-                      }}
-                    >
-                      Submit
-                    </Button>
+                    {inward.is_rejected ? (
+                      <Button
+                        variant="filled"
+                        style={{ backgroundColor: "#e74c3c" }}
+                        disabled
+                      >
+                        Rejected
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="filled"
+                        style={{ backgroundColor: "#2ecc71" }}
+                        onClick={() => {
+                          if (role === "Dean Academic") {
+                            navigate(
+                              `/programme_curriculum/forward_course_forms_II/?id=${inward.id}`,
+                            );
+                          } else {
+                            navigate(
+                              `/programme_curriculum/forward_course_forms/?id=${inward.id}`,
+                            );
+                          }
+                        }}
+                      >
+                        Submit
+                      </Button>
+                    )}
+
                     <Button
                       variant="filled"
                       style={{ backgroundColor: "gray" }}
@@ -107,7 +180,10 @@ function InwardFilesTable({ inwardFiles, username, role, onArchive }) {
             ))
           ) : (
             <tr>
-              <td colSpan="6" style={{ textAlign: "center", padding: "15px 20px" }}>
+              <td
+                colSpan="6"
+                style={{ textAlign: "center", padding: "15px 20px" }}
+              >
                 No inward files available.
               </td>
             </tr>

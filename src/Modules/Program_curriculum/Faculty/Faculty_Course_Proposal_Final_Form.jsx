@@ -191,11 +191,39 @@ function FacultyCourseProposalFinalForm() {
       } else {
         const errorText = await response.text();
         console.error("Error:", errorText);
-        alert("Failed to add course."+errorText);
+        alert("Failed to add course." + errorText);
       }
     } catch (error) {
       console.error("Network Error:", error);
       alert("An error occurred. Please try again.");
+    }
+  };
+
+  const handleReject = async () => {
+    const token = localStorage.getItem("authToken");
+
+    try {
+      const response = await fetch(
+        `${host}/programme_curriculum/api/reject_form/${id}/?username=${username}&des=${role}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (response.ok) {
+        alert("Proposal rejected successfully!");
+        navigate("/programme_curriculum/faculty_outward_files");
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to reject proposal");
+      }
+    } catch (err) {
+      console.error("Rejection error:", err);
+      alert(`Error rejecting proposal: ${err.message}`);
     }
   };
 
@@ -369,10 +397,7 @@ function FacultyCourseProposalFinalForm() {
                           placeholder="1.0"
                           value={form.values.courseVersion}
                           onChange={(value) =>
-                            form.setFieldValue(
-                              "courseVersion",
-                              value,
-                            )
+                            form.setFieldValue("courseVersion", value)
                           }
                           required
                           styles={{
@@ -727,9 +752,18 @@ function FacultyCourseProposalFinalForm() {
                   />
                 </Group>
 
-                <Button type="submit" mt="md">
-                  Submit
-                </Button>
+                <Group position="right" mt="md">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    color="red"
+                    onClick={handleReject}
+                    style={{ marginRight: "10px" }}
+                  >
+                    Reject
+                  </Button>
+                  <Button type="submit">Submit</Button>
+                </Group>
               </Stack>
             </form>
           </div>
