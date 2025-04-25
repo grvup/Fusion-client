@@ -225,7 +225,7 @@ function VerifyGrades() {
       const semesterIds = registrations.map((reg) => reg.semester);
       const courseIds = registrations.map((reg) => reg.course_id_id);
       const grades = registrations.map((reg) => reg.grade);
-
+      const remarks = registrations.map((reg) => reg.remarks || "");
       // Check if any registrations need resubmission
       const allowResubmission = registrations.some(
         (reg) => reg.remarks.trim() !== "",
@@ -240,6 +240,7 @@ function VerifyGrades() {
         course_ids: courseIds,
         grades: grades,
         allow_resubmission: allowResubmission,
+        remarks: remarks,
       };
 
       const response = await axios.post(moderate_student_grades, requestData, {

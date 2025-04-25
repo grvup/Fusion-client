@@ -19,7 +19,7 @@ function CheckResult() {
   const [spi, setSpi] = useState(0);
   const [su, setSu] = useState(0);
   const [tu, setTu] = useState(0);
-
+  const [cpi,setCpi] = useState(0);
   const handleSearch = async () => {
     const token = localStorage.getItem("authToken"); // Get the token from localStorage
 // console.log(token);
@@ -36,12 +36,13 @@ function CheckResult() {
           headers: {Authorization: `Token ${token}`}
         }
       );
-      const { courses, spi, su, tu } = response.data;
+      const { courses, spi, su, tu,cpi } = response.data;
     //  console.log(selectedSemester); 
       setResultData(courses);
       setSpi(spi);
       setSu(su);
       setTu(tu);
+      setCpi(cpi);
       // console.log(courses);
       // console.log(spi, su, tu);
       setShowContent(true);
@@ -118,12 +119,16 @@ function CheckResult() {
                 <span>SPI</span>
               </div>
               <div className="box">
+                <span style={{ fontSize: "50px" }}>{cpi}</span>
+                <span>Present CPI</span>
+              </div>
+              <div className="box">
                 <span style={{ fontSize: "50px" }}>{su}</span>
-                <span>SU</span>
+                <span>Semester Credits</span>
               </div>
               <div className="box">
                 <span style={{ fontSize: "50px" }}>{tu}</span>
-                <span>TU</span>
+                <span>Total Earned Credits</span>
               </div>
             </div>
           </ScrollArea>

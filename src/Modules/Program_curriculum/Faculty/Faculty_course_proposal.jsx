@@ -23,8 +23,8 @@ function CourseProposalTable({ courseProposals, onArchiveSuccess }) {
   const navigate = useNavigate();
 
   const handleNavigation = (id, flag) => {
-    const storageKey = "courseProposals";
-    sessionStorage.setItem(storageKey, JSON.stringify(courseProposals));
+    // const storageKey = "courseProposals";
+    // sessionStorage.setItem(storageKey, JSON.stringify(courseProposals));
     navigate(
       `/programme_curriculum/view_a_course_proposal_form?proposalid=${id}&update=${flag ? 1 : 0}`,
     );
@@ -540,6 +540,7 @@ function Admin_course_proposal_form() {
                   )?.is_rejected || false,
               },
             })) || [];
+            sessionStorage.setItem("courseProposals", JSON.stringify(processedNewProposals));
 
           const processedUpdateProposals =
             proposalResponse.updateProposals?.map((proposal) => ({
@@ -553,6 +554,8 @@ function Admin_course_proposal_form() {
                   )?.is_rejected || false,
               },
             })) || [];
+            sessionStorage.setItem("updateProposals", JSON.stringify(processedUpdateProposals));
+
 
           setProposals({
             newProposals: processedNewProposals,
